@@ -36,16 +36,16 @@ compileTestKotlin.kotlinOptions {
 
 
 tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
-    outputDirectory.set(File("/Users/sundaiyue/Desktop/koto/koto-framework", "dokkadocs"))
+    outputDirectory.set(File(rootDir, "dokkadocs"))
     dokkaSourceSets {
         named("main") {
             moduleName.set("Koto Core")
             includes.from("packages.md")
             sourceLink {
-                localDirectory.set(file("/Users/sundaiyue/Desktop/koto/koto-framework/koto-core/src/main/kotlin/com/kotoframework"))
+                localDirectory.set(file("src/main/kotlin/com/kotoframework"))
                 remoteUrl.set(
                     URL(
-                        "https://github.com/kotoframework/kotoframework/tree/master/src/main/kotlin"
+                        "https://github.com/kotoframework/kotoframework/tree/main/koto-core/src/main/kotlin/com/kotoframework"
                     )
                 )
                 remoteLineSuffix.set("#L")
