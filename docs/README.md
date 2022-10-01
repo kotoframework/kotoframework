@@ -6,7 +6,7 @@ Koto SQL Framework for Kotlin
 
 <img src="https://cdn.leinbo.com/assets/images/koto-logo.png" alt="koto" style="zoom: 33%;" />
 
-official website: [https://koto.leinbo.com](https://kotoframework.com)
+official website: [https://kotoframework.com](https://kotoframework.com)
 ### ❓What is "koto"？
 
 > An easy-to-use, flexible, lightweight data persistence layer ORM framework designed for kotlin.
