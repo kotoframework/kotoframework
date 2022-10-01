@@ -1,4 +1,4 @@
-rootProject.name = "koto-framework"
+rootProject.name = "kotoframework"
 include("koto-core")
 include("koto-basic-wrapper")
 include("koto-spring-wrapper")

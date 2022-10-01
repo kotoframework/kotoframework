@@ -1,0 +1,3 @@
+- ![alt 语言](https://cdn.leinbo.com/assets/images/translate.svg?30px*30px)
+  - [:cn: 简体中文](/zh-cn/)
+  - [:uk: English](/)
