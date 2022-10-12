@@ -2,7 +2,7 @@ package com.kotoframework.beans
 
 import com.kotoframework.interfaces.KotoDataSet
 import com.kotoframework.interfaces.KotoJdbcWrapper
-import com.kotoframework.utils.Common.rmRedudantBlk
+import com.kotoframework.utils.Extension.rmRedudantBlk
 import com.kotoframework.utils.Jdbc
 import com.kotoframework.utils.Jdbc.defaultJdbcHandler
 import java.io.File
@@ -16,7 +16,7 @@ import kotlin.reflect.KClass
 class KotoResultSet<T>(
     override var sql: String,
     override val paramMap: Map<String, Any?>,
-    val jdbcjdbcWrapper: KotoJdbcWrapper? = null,
+    val kotoJdbcWrapper: KotoJdbcWrapper? = null,
     private val kClass: KClass<*>
 ) : KotoDataSet {
     init {
@@ -35,7 +35,7 @@ class KotoResultSet<T>(
      * @return
      * @author ousc
      */
-    fun query(jdbcWrapper: KotoJdbcWrapper? = jdbcjdbcWrapper): List<Map<String, Any>> {
+    fun query(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): List<Map<String, Any>> {
         return Jdbc.query(jdbcWrapper, sql, paramMap)
     }
 
@@ -48,7 +48,7 @@ class KotoResultSet<T>(
      * @author ousc
      */
     @Suppress("UNCHECKED_CAST")
-    inline fun <reified K> queryForList(jdbcWrapper: KotoJdbcWrapper? = jdbcjdbcWrapper): List<K> {
+    inline fun <reified K> queryForList(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): List<K> {
         return defaultJdbcHandler!!.forList(jdbcWrapper, sql, paramMap, K::class) as List<K>
     }
 
@@ -60,7 +60,7 @@ class KotoResultSet<T>(
      * @return
      * @author ousc
      */
-    inline fun <reified K> queryForObject(jdbcWrapper: KotoJdbcWrapper? = jdbcjdbcWrapper): K {
+    inline fun <reified K> queryForObject(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): K {
         return defaultJdbcHandler!!.forObject(jdbcWrapper, sql, paramMap, false, K::class) as K
     }
 
@@ -72,7 +72,7 @@ class KotoResultSet<T>(
      * @return
      * @author ousc
      */
-    inline fun <reified K> queryForObjectOrNull(jdbcWrapper: KotoJdbcWrapper? = jdbcjdbcWrapper): K? {
+    inline fun <reified K> queryForObjectOrNull(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): K? {
         return defaultJdbcHandler!!.forObjectOrNull(jdbcWrapper, sql, paramMap, K::class) as K?
     }
 
@@ -86,7 +86,7 @@ class KotoResultSet<T>(
     @JvmName("queryForList1")
     @Suppress("UNCHECKED_CAST")
     fun queryForList(
-        jdbcWrapper: KotoJdbcWrapper? = jdbcjdbcWrapper
+        jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper
     ): List<T> {
         return defaultJdbcHandler!!.forList(jdbcWrapper, sql, paramMap, kClass) as List<T>
     }
@@ -101,7 +101,7 @@ class KotoResultSet<T>(
     @JvmName("queryForObject1")
     @Suppress("UNCHECKED_CAST")
     fun queryForObject(
-        jdbcWrapper: KotoJdbcWrapper? = jdbcjdbcWrapper
+        jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper
     ): T {
         return defaultJdbcHandler!!.forObject(jdbcWrapper, sql, paramMap, false, kClass) as T
     }
@@ -116,7 +116,7 @@ class KotoResultSet<T>(
     @JvmName("queryForObjectOrNull1")
     @Suppress("UNCHECKED_CAST")
     fun queryForObjectOrNull(
-        jdbcWrapper: KotoJdbcWrapper? = jdbcjdbcWrapper
+        jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper
     ): T? {
         return defaultJdbcHandler!!.forObjectOrNull(jdbcWrapper, sql, paramMap, kClass) as T?
     }

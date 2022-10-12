@@ -16,9 +16,9 @@ import com.kotoframework.utils.Printer.errorPrintln
  */
 open class OperateWhere<T : KPojo>(
     KPojo: T,
-    val kotoJdbcjdbcWrapper: KotoJdbcWrapper? = null,
+    kotoJdbcWrapper: KotoJdbcWrapper? = null,
     val addCondition: AddCondition<T>? = null
-) : Where<T>(KPojo, kotoJdbcjdbcWrapper, Unknown::class, addCondition) {
+) : Where<T>(KPojo, kotoJdbcWrapper, Unknown::class, addCondition) {
 
     init {
         super.allowNull(true)
@@ -34,11 +34,24 @@ open class OperateWhere<T : KPojo>(
         return this
     }
 
+    /**
+     * The `RemoveWhere` class is a class that is used to build the `WHERE` clause of an `Delete` statement. It has a
+     * `where()` function that returns a `RemoveWhere<T>` object
+     *
+     * @return A RemoveWhere object
+     */
     internal fun getRemoveWhere(): RemoveWhere<T> {
-        return RemoveWhere(KPojo, kotoJdbcjdbcWrapper, addCondition).where(this)
+        return RemoveWhere(KPojo, kotoJdbcWrapper, addCondition).where(this)
     }
 
+    /**
+     *
+     * The `UpdateWhere` class is a class that is used to build the `WHERE` clause of an `UPDATE` statement. It has a
+     * `where()` function that returns a `UpdateWhere<T>` object
+     *
+     * @return UpdateWhere<T>
+     */
     internal fun getUpdateWhere(): UpdateWhere<T> {
-        return UpdateWhere(KPojo, kotoJdbcjdbcWrapper, addCondition).where(this)
+        return UpdateWhere(KPojo, kotoJdbcWrapper, addCondition).where(this)
     }
 }

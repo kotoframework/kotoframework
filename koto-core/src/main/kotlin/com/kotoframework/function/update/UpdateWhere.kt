@@ -27,7 +27,7 @@ class UpdateWhere<T : KPojo>(
         return KotoOperationSet(result.sql, result.paramMap)
     }
 
-    fun execute(jdbcWrapper: KotoJdbcWrapper? = jdbcjdbcWrapper): KotoExecuteResult {
+    fun execute(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): KotoExecuteResult {
         val koto = this.build()
         return Jdbc.execute(jdbcWrapper, koto.sql, koto.paramMap)
     }

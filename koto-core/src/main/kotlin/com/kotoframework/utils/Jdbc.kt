@@ -1,13 +1,13 @@
 package com.kotoframework.utils
 
 import com.kotoframework.beans.KotoExecuteResult
-import com.kotoframework.core.condition.BaseCondition
+import com.kotoframework.core.condition.Criteria
 import com.kotoframework.*
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.interfaces.KotoQueryHandler
-import com.kotoframework.utils.Common.isNullOrBlank
-import com.kotoframework.utils.Common.lineToHump
-import com.kotoframework.utils.Common.yes
+import com.kotoframework.utils.Extension.isNullOrBlank
+import com.kotoframework.utils.Extension.lineToHump
+import com.kotoframework.utils.Extension.yes
 import com.kotoframework.utils.Log.log
 import java.util.*
 
@@ -102,7 +102,7 @@ object Jdbc {
      * @return A string of SQL
      */
     fun joinSqlStatement(
-        conditions: List<BaseCondition?>,
+        conditions: List<Criteria?>,
         paramMap: MutableMap<String, Any?>,
         nullAllowed: Boolean = false,
         join: String = "and",

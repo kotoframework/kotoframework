@@ -5,6 +5,7 @@ import com.kotoframework.definition.*
 import com.kotoframework.core.where.Where
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoJdbcWrapper
+import com.kotoframework.utils.Extension.isNullOrBlank
 import com.kotoframework.utils.Jdbc.defaultJdbcHandler
 import kotlin.reflect.KClass
 
@@ -13,10 +14,10 @@ import kotlin.reflect.KClass
  */
 class SelectWhere<T : KPojo>(
     kPojo: T,
-    jdbcWrapper: KotoJdbcWrapper? = null,
+    kotoJdbcWrapper: KotoJdbcWrapper? = null,
     addCondition: AddCondition<T>? = null,
     override val kClass: KClass<*>
-) : Where<T>(kPojo, jdbcWrapper, kClass, addCondition) {
+) : Where<T>(kPojo, kotoJdbcWrapper, kClass, addCondition) {
 
     override fun where(where: Where<T>): SelectWhere<T> {
         super.where(where)
@@ -54,10 +55,14 @@ class SelectWhere<T : KPojo>(
         return this
     }
 
-    private fun groupOrOrderBy(type: String, vararg field: Field): String {
+    private fun groupOrOrderBy(type: String, vararg field: Field?): String {
+        if (field.none { !it.isNullOrBlank() }) {
+            return ""
+        }
         var str = " $type by "
         field.forEach {
-            val fieldName = if (it.columnName.contains(
+            if(it.isNullOrBlank()) return@forEach
+            val fieldName = if (it!!.columnName.contains(
                     " as ",
                     true
                 ) || it.columnName.contains("(")
@@ -68,12 +73,12 @@ class SelectWhere<T : KPojo>(
         return str.substring(0, str.length - 1)
     }
 
-    fun orderBy(vararg field: Field): SelectWhere<T> {
+    fun orderBy(vararg field: Field?): SelectWhere<T> {
         this.orderBy = groupOrOrderBy("order", *field)
         return this
     }
 
-    fun groupBy(vararg field: Field): SelectWhere<T> {
+    fun groupBy(vararg field: Field?): SelectWhere<T> {
         this.groupBy = groupOrOrderBy("group", *field)
         return this
     }
@@ -98,32 +103,32 @@ class SelectWhere<T : KPojo>(
     override fun build(): KotoResultSet<T> {
         validate()
         val result = super.build()
-        return KotoResultSet(result.sql, result.paramMap, jdbcjdbcWrapper, kClass)
+        return KotoResultSet(result.sql, result.paramMap, kotoJdbcWrapper, kClass)
     }
 
-    fun query(jdbcWrapper: KotoJdbcWrapper? = jdbcjdbcWrapper): List<Map<String, Any>> {
+    fun query(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): List<Map<String, Any>> {
         validate()
         return build().query(jdbcWrapper)
     }
 
-    inline fun <reified K> queryForList(jdbcWrapper: KotoJdbcWrapper? = jdbcjdbcWrapper): List<K> {
+    inline fun <reified K> queryForList(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): List<K> {
         validate()
         return build().queryForList<K>(jdbcWrapper)
     }
 
-    inline fun <reified K> queryForObject(jdbcWrapper: KotoJdbcWrapper? = jdbcjdbcWrapper): K {
+    inline fun <reified K> queryForObject(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): K {
         validate()
         return build().queryForObject<K>(jdbcWrapper)
     }
 
-    inline fun <reified K> queryForObjectOrNull(jdbcWrapper: KotoJdbcWrapper? = jdbcjdbcWrapper): K? {
+    inline fun <reified K> queryForObjectOrNull(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): K? {
         validate()
         return build().queryForObjectOrNull<K>(jdbcWrapper)
     }
 
     @JvmName("queryForList1")
     @Suppress("UNCHECKED_CAST")
-    fun queryForList(jdbcWrapper: KotoJdbcWrapper? = jdbcjdbcWrapper): List<T> {
+    fun queryForList(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): List<T> {
         validate()
         build().let {
             return defaultJdbcHandler!!.forList(
@@ -136,7 +141,7 @@ class SelectWhere<T : KPojo>(
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun queryForObject(jdbcWrapper: KotoJdbcWrapper? = jdbcjdbcWrapper): T {
+    fun queryForObject(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): T {
         validate()
         build().let {
             return defaultJdbcHandler!!.forObject(jdbcWrapper, it.sql, it.paramMap, false, kClass) as T
@@ -144,7 +149,7 @@ class SelectWhere<T : KPojo>(
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun queryForObjectOrNull(jdbcWrapper: KotoJdbcWrapper? = jdbcjdbcWrapper): T? {
+    fun queryForObjectOrNull(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): T? {
         validate()
         build().let {
             return defaultJdbcHandler!!.forObjectOrNull(jdbcWrapper, it.sql, it.paramMap, kClass) as T?

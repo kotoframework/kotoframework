@@ -1,7 +1,7 @@
 package com.kotoframework
 
 import com.kotoframework.interfaces.KotoJdbcWrapper
-import com.kotoframework.utils.Common.toKPojo
+import com.kotoframework.utils.Extension.toKPojo
 import org.apache.commons.dbcp2.BasicDataSource
 import javax.sql.DataSource
 

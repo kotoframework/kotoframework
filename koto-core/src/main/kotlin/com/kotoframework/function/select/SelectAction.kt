@@ -1,12 +1,12 @@
 package com.kotoframework.function.select
 
-import com.kotoframework.core.condition.BaseCondition
+import com.kotoframework.core.condition.Criteria
 import com.kotoframework.core.where.Where
 import com.kotoframework.definition.*
 import com.kotoframework.ConditionType
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoJdbcWrapper
-import com.kotoframework.utils.Common.toMutableMap
+import com.kotoframework.utils.Extension.toMutableMap
 import kotlin.reflect.KClass
 
 /**
@@ -15,7 +15,7 @@ import kotlin.reflect.KClass
 class SelectAction<T : KPojo>(
     private val sql: String,
     private val kPojo: T,
-    val jdbcjdbcWrapper: KotoJdbcWrapper? = null,
+    val kotoJdbcWrapper: KotoJdbcWrapper? = null,
     private val kClass: KClass<T>,
 ) {
     var paramMap = mutableMapOf<String, Any?>()
@@ -31,45 +31,45 @@ class SelectAction<T : KPojo>(
      * @return Nothing.
      */
     fun where(addCondition: AddCondition<T>? = null): SelectWhere<T> {
-        return Where(kPojo, jdbcjdbcWrapper, kClass) { addCondition?.invoke(kPojo) }.prefix("$sql where ")
+        return Where(kPojo, kotoJdbcWrapper, kClass) { addCondition?.invoke(kPojo) }.prefix("$sql where ")
     }
 
-    fun where(vararg condition: BaseCondition?): SelectWhere<T> {
+    fun where(vararg condition: Criteria?): SelectWhere<T> {
         return Where(
-            kPojo, jdbcjdbcWrapper, kClass
-        ) { BaseCondition(type = ConditionType.AND, collections = condition.toList()) }.prefix("$sql where ")
+            kPojo, kotoJdbcWrapper, kClass
+        ) { Criteria(type = ConditionType.AND, collections = condition.toList()) }.prefix("$sql where ")
     }
 
     fun by(vararg fields: Field): SelectWhere<T> {
         return where(*fields.map { it.selectBy }.toTypedArray())
     }
 
-    fun query(jdbcWrapper: KotoJdbcWrapper? = jdbcjdbcWrapper): List<Map<String, Any>> {
+    fun query(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): List<Map<String, Any>> {
         return where().query(jdbcWrapper)
     }
 
-    inline fun <reified T> queryForList(jdbcWrapper: KotoJdbcWrapper? = jdbcjdbcWrapper): List<T> {
+    inline fun <reified T> queryForList(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): List<T> {
         return where().queryForList<T>(jdbcWrapper)
     }
 
-    inline fun <reified T> queryForObject(jdbcWrapper: KotoJdbcWrapper? = jdbcjdbcWrapper): T {
+    inline fun <reified T> queryForObject(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): T {
         return where().queryForObject<T>(jdbcWrapper)
     }
 
-    inline fun <reified T> queryForObjectOrNull(jdbcWrapper: KotoJdbcWrapper? = jdbcjdbcWrapper): T {
+    inline fun <reified T> queryForObjectOrNull(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): T {
         return where().queryForObject<T>(jdbcWrapper)
     }
 
     @JvmName("queryForList1")
-    fun queryForList(jdbcWrapper: KotoJdbcWrapper? = jdbcjdbcWrapper): List<T> {
+    fun queryForList(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): List<T> {
         return where().queryForList(jdbcWrapper)
     }
 
-    fun queryForObject(jdbcWrapper: KotoJdbcWrapper? = jdbcjdbcWrapper): T {
+    fun queryForObject(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): T {
         return where().queryForObject(jdbcWrapper)
     }
 
-    fun queryForObjectOrNull(jdbcWrapper: KotoJdbcWrapper? = jdbcjdbcWrapper): T? {
+    fun queryForObjectOrNull(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): T? {
         return where().queryForObjectOrNull(jdbcWrapper)
     }
 }

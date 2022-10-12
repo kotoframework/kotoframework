@@ -4,8 +4,8 @@ import com.kotoframework.KotoApp.softDeleteColumn
 import com.kotoframework.beans.Unknown
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoJdbcWrapper
-import com.kotoframework.utils.Common.tableMeta
-import com.kotoframework.utils.Common.tableName
+import com.kotoframework.utils.Extension.tableMeta
+import com.kotoframework.utils.Extension.tableName
 import com.kotoframework.utils.Jdbc
 
 /**

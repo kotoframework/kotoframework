@@ -8,7 +8,7 @@ import com.kotoframework.utils.Jdbc.getJdbcWrapper
 /**
  * Created by ousc on 2022/4/9 08:50
  */
-class Statistic(private val tableName: String, private val JdbcjdbcWrapper: KotoJdbcWrapper? = null) {
+class Statistic(private val tableName: String, private val kotoJdbcWrapper: KotoJdbcWrapper? = null) {
     private var total = true
     private var mode: String = "pastAll"
     private var days = 0
@@ -63,7 +63,7 @@ class Statistic(private val tableName: String, private val JdbcjdbcWrapper: Koto
                 true -> "select count(1) from $tableName where ${
                     deleted(
                         0,
-                        JdbcjdbcWrapper,
+                        kotoJdbcWrapper,
                         tableName
                     )
                 }" + when (mode) {
@@ -76,7 +76,7 @@ class Statistic(private val tableName: String, private val JdbcjdbcWrapper: Koto
                 else -> "select count(1) num, DATE_FORMAT(create_time,'%Y-%m-%d') date from $tableName where ${
                     deleted(
                         0,
-                        JdbcjdbcWrapper,
+                        kotoJdbcWrapper,
                         tableName
                     )
                 } and DATE_FORMAT(create_time,'%Y-%m-%d')>=date_sub(curdate(),interval ${this.days} day) and DATE_FORMAT(create_time,'%Y-%m-%d')<=curdate() group by DATE_FORMAT(create_time,'%Y-%m-%d')"
@@ -89,7 +89,7 @@ class Statistic(private val tableName: String, private val JdbcjdbcWrapper: Koto
      * @param jdbcTemplate JdbcTemplate
      * @return The number of rows in the table.
      */
-    fun queryForObject(jdbcWrapper: KotoJdbcWrapper? = JdbcjdbcWrapper): Int {
+    fun queryForObject(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): Int {
         val wrapper = getJdbcWrapper(jdbcWrapper)
         Log.log(wrapper, sql, listOf(mapOf("type" to this.total)), "statistic")
         return wrapper.queryForObject(sql, mapOf(), Int::class.java)!!
@@ -106,7 +106,7 @@ class Statistic(private val tableName: String, private val JdbcjdbcWrapper: Koto
      * @param jdbcTemplate JdbcTemplate
      * @return A StatisticResult object with a list of counts and a list of dates.
      */
-    fun queryForList(jdbcWrapper: KotoJdbcWrapper? = JdbcjdbcWrapper): StatisticResult {
+    fun queryForList(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): StatisticResult {
         val wrapper = getJdbcWrapper(jdbcWrapper)
         Log.log(wrapper, sql, listOf(), "statistic")
         val list = wrapper.queryForList(sql, mapOf())

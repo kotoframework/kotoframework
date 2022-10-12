@@ -9,9 +9,9 @@ import com.kotoframework.definition.columnName
 import com.kotoframework.definition.propertyName
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.utils.Common.currentTime
-import com.kotoframework.utils.Common.isNullOrBlank
-import com.kotoframework.utils.Common.lineToHump
-import com.kotoframework.utils.Common.rmRedudantBlk
+import com.kotoframework.utils.Extension.isNullOrBlank
+import com.kotoframework.utils.Extension.lineToHump
+import com.kotoframework.utils.Extension.rmRedudantBlk
 import kotlin.reflect.full.declaredMemberProperties
 
 /**

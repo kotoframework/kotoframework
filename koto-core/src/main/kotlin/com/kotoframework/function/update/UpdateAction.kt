@@ -5,14 +5,14 @@ import com.kotoframework.core.where.Where
 import com.kotoframework.definition.*
 import com.kotoframework.*
 import com.kotoframework.interfaces.KPojo
-import com.kotoframework.core.condition.BaseCondition
+import com.kotoframework.core.condition.Criteria
 import com.kotoframework.core.condition.arbitrary
 import com.kotoframework.core.condition.eq
 import com.kotoframework.core.condition.isNull
 import com.kotoframework.utils.Common.currentTime
-import com.kotoframework.utils.Common.lineToHump
-import com.kotoframework.utils.Common.rmRedudantBlk
-import com.kotoframework.utils.Common.tableName
+import com.kotoframework.utils.Extension.lineToHump
+import com.kotoframework.utils.Extension.rmRedudantBlk
+import com.kotoframework.utils.Extension.tableName
 
 /**
  * Created by ousc on 2022/4/18 13:22
@@ -37,7 +37,7 @@ class UpdateAction<T : KPojo>(
             UpdateSetClause(KPojo, excepted = expects).build()
         } else {
             UpdateSetClause(KPojo, excepted = expects) {
-                BaseCondition(
+                Criteria(
                     type = ConditionType.AND,
                     collections = fields.map { it.columnName.lineToHump().eq(reName = it.propertyName) })
             }.build()
@@ -60,7 +60,7 @@ class UpdateAction<T : KPojo>(
             .prefixOW("$sql where ").getUpdateWhere()
     }
 
-    fun where(vararg condition: BaseCondition?): UpdateWhere<T> {
+    fun where(vararg condition: Criteria?): UpdateWhere<T> {
         return Where(KPojo) { condition.toList().arbitrary() }.map(*paramMap.toList().toTypedArray())
             .prefixOW("$sql where ").getUpdateWhere()
     }

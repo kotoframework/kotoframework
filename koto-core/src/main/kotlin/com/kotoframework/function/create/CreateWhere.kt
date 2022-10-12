@@ -9,14 +9,13 @@ import com.kotoframework.definition.*
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.core.annotations.Default
 import com.kotoframework.core.annotations.NeedTableIndexes
-import com.kotoframework.core.condition.BaseCondition
 import com.kotoframework.core.condition.arbitrary
-import com.kotoframework.utils.Common
+import com.kotoframework.utils.Common.deleted
 import com.kotoframework.utils.Common.currentTime
 import com.kotoframework.utils.Common.getParameter
-import com.kotoframework.utils.Common.isNullOrBlank
-import com.kotoframework.utils.Common.lineToHump
-import com.kotoframework.utils.Common.rmRedudantBlk
+import com.kotoframework.utils.Extension.isNullOrBlank
+import com.kotoframework.utils.Extension.lineToHump
+import com.kotoframework.utils.Extension.rmRedudantBlk
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
 
@@ -29,7 +28,7 @@ class CreateWhere<T : KPojo>(KPojo: T) : Where<T>(KPojo) {
     private var replaceInto = false
     private var duplicateUpdate = false
 
-    @NeedTableIndexes()
+    @NeedTableIndexes
     fun onDuplicateUpdate(vararg fields: Field): CreateWhere<T> {
         if (fields.isEmpty()) {
             this.duplicateUpdate = false
@@ -162,9 +161,9 @@ class CreateWhere<T : KPojo>(KPojo: T) : Where<T>(KPojo) {
                         ","
                     ) { ":${it}" }
                 } from dual where not exists (select 1 from $tableName where ${
-                    Common.deleted(
+                    deleted(
                         deleted,
-                        jdbcjdbcWrapper,
+                        kotoJdbcWrapper,
                         tableName
                     )
                 } and ${

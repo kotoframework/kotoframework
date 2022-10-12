@@ -4,14 +4,13 @@ import com.kotoframework.beans.KotoResultSet
 import com.kotoframework.beans.Unknown
 import com.kotoframework.core.condition.eq
 import com.kotoframework.definition.AddCondition
-import com.kotoframework.core.where.OperateWhere
 import com.kotoframework.function.select.SelectWhere
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoDataSet
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.utils.Common
 import com.kotoframework.utils.Common.copyProperties
-import com.kotoframework.utils.Common.rmRedudantBlk
+import com.kotoframework.utils.Extension.rmRedudantBlk
 import com.kotoframework.utils.Jdbc.joinSqlStatement
 import kotlin.reflect.KClass
 
@@ -20,7 +19,7 @@ import kotlin.reflect.KClass
  */
 open class Where<T : KPojo>(
     var KPojo: T,
-    var jdbcjdbcWrapper: KotoJdbcWrapper? = null,
+    var kotoJdbcWrapper: KotoJdbcWrapper? = null,
     open val kClass: KClass<*> = Unknown::class,
     addCondition: AddCondition<T>? = null
 ) : BaseWhere<T>(KPojo, addCondition) {
@@ -47,7 +46,7 @@ open class Where<T : KPojo>(
     fun page(pageIndex: Int, pageSize: Int): SelectWhere<T> {
         finalMap["pageIndex"] = pageIndex
         finalMap["pageSize"] = pageSize
-        return SelectWhere(KPojo, jdbcjdbcWrapper, kClass = this.kClass).where(this)
+        return SelectWhere(KPojo, kotoJdbcWrapper, kClass = this.kClass).where(this)
     }
 
     /**
@@ -58,7 +57,7 @@ open class Where<T : KPojo>(
      */
     open fun prefix(sql: String): SelectWhere<T> {
         this.prefix = sql
-        return SelectWhere(KPojo, jdbcjdbcWrapper, kClass = this.kClass).where(this)
+        return SelectWhere(KPojo, kotoJdbcWrapper, kClass = this.kClass).where(this)
     }
 
     /**
@@ -69,7 +68,7 @@ open class Where<T : KPojo>(
      */
     internal fun prefixOW(sql: String): OperateWhere<T> {
         this.prefix = sql
-        return OperateWhere(KPojo, jdbcjdbcWrapper).where(this)
+        return OperateWhere(KPojo, kotoJdbcWrapper).where(this)
     }
 
     /**
@@ -90,7 +89,7 @@ open class Where<T : KPojo>(
      */
     open fun distinct(): SelectWhere<T> {
         this.distinct = true
-        return SelectWhere(KPojo, jdbcjdbcWrapper, kClass = kClass).where(this)
+        return SelectWhere(KPojo, kotoJdbcWrapper, kClass = kClass).where(this)
     }
 
     /**
@@ -167,14 +166,14 @@ open class Where<T : KPojo>(
         if (limitOne) suffix = "$suffix limit 1"
 
         val sql = " ${
-            listOf(Common.deleted(deleted, jdbcjdbcWrapper, tableName), finalSql).filter { it.isNotBlank() }
+            listOf(Common.deleted(deleted, kotoJdbcWrapper, tableName), finalSql).filter { it.isNotBlank() }
                 .joinToString(" and ")
         } "
 
         return KotoResultSet<T>(
             "$prefix $sql $groupBy $orderBy $suffix".rmRedudantBlk(),
             paramMap,
-            jdbcjdbcWrapper,
+            kotoJdbcWrapper,
             kClass
         )
     }

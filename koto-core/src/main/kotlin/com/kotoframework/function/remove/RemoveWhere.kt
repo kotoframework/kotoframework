@@ -14,9 +14,9 @@ import com.kotoframework.utils.Jdbc
  */
 class RemoveWhere<T : KPojo>(
     KPojo: T,
-    kotoJdbcjdbcWrapper: KotoJdbcWrapper? = null,
+    kotoJdbcWrapper: KotoJdbcWrapper? = null,
     addCondition: AddCondition<T>? = null
-) : OperateWhere<T>(KPojo, kotoJdbcjdbcWrapper, addCondition) {
+) : OperateWhere<T>(KPojo, kotoJdbcWrapper, addCondition) {
     override fun where(where: Where<T>): RemoveWhere<T> {
         super.where(where)
         return this
@@ -27,7 +27,7 @@ class RemoveWhere<T : KPojo>(
         return KotoOperationSet(result.sql, result.paramMap)
     }
 
-    fun execute(jdbcWrapper: KotoJdbcWrapper? = jdbcjdbcWrapper): KotoExecuteResult {
+    fun execute(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): KotoExecuteResult {
         val koto = this.build()
         return Jdbc.execute(jdbcWrapper, koto.sql, koto.paramMap)
     }

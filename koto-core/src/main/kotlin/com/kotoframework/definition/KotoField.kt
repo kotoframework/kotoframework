@@ -2,10 +2,10 @@ package com.kotoframework.definition
 
 import com.kotoframework.SortType
 import com.kotoframework.core.annotations.Column
-import com.kotoframework.core.condition.BaseCondition
+import com.kotoframework.core.condition.Criteria
 import com.kotoframework.core.condition.eq
-import com.kotoframework.utils.Common.humpToLine
-import com.kotoframework.utils.Common.lineToHump
+import com.kotoframework.utils.Extension.humpToLine
+import com.kotoframework.utils.Extension.lineToHump
 import com.kotoframework.utils.Jdbc
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
@@ -62,7 +62,7 @@ internal val Field.aliasName: String
         else -> this.toString()
     }
 
-internal val Field.selectBy: BaseCondition?
+internal val Field.selectBy: Criteria?
     get() = this.fd.propertyName.eq(if (this is Pair<*, *>) second else null)
 
 internal val Field.direction: String

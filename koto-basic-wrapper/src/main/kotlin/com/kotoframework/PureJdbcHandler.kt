@@ -5,9 +5,9 @@ import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.interfaces.KotoQueryHandler
 import com.kotoframework.utils.Printer
-import com.kotoframework.utils.Common.isAssignableFrom
-import com.kotoframework.utils.Common.no
-import com.kotoframework.utils.Common.toKPojo
+import com.kotoframework.utils.Extension.isAssignableFrom
+import com.kotoframework.utils.Extension.no
+import com.kotoframework.utils.Extension.toKPojo
 import com.kotoframework.utils.Log
 import com.kotoframework.utils.Jdbc
 import javax.sql.DataSource

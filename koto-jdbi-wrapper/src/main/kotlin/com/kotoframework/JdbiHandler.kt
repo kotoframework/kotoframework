@@ -4,9 +4,9 @@ import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.interfaces.KotoQueryHandler
 import com.kotoframework.utils.Printer
-import com.kotoframework.utils.Common.isAssignableFrom
-import com.kotoframework.utils.Common.no
-import com.kotoframework.utils.Common.toKPojo
+import com.kotoframework.utils.Extension.isAssignableFrom
+import com.kotoframework.utils.Extension.no
+import com.kotoframework.utils.Extension.toKPojo
 import com.kotoframework.utils.Log
 import com.kotoframework.utils.Jdbc
 import kotlin.reflect.KClass
@@ -16,13 +16,13 @@ import kotlin.reflect.KClass
  */
 class JdbiHandler : KotoQueryHandler() {
     override fun forList(
-        jdbi: KotoJdbcWrapper?,
+        jdbc: KotoJdbcWrapper?,
         sql: String,
         paramMap: Map<String, Any?>,
         kClass: KClass<*>
     ): List<Any> {
         val wrapper =
-            ((jdbi?: Jdbc.defaultJdbcWrapper) as JdbiWrapper)
+            ((jdbc?: Jdbc.defaultJdbcWrapper) as JdbiWrapper)
         val unwrapped = wrapper.getJdbi()
         Log.log(wrapper, sql, listOf(paramMap), "query")
         return if (kClass isAssignableFrom KPojo::class) {

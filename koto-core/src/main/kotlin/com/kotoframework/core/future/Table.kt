@@ -38,215 +38,334 @@ inline fun <reified A : KPojo> table(
     statement(A::class.javaInstance())
 }
 
-inline fun <reified A : KPojo, reified B : KPojo> from(
-    kPojo1: A,
-    kPojo2: B,
-    statement: Statement2<A, B, AssociateWhere<A, B, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown>>
-): AssociateWhere<A, B, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown> {
+/*
+    * The function `from` is a function that takes two kPojo objects as parameters and returns a `AssociateWhere<T1, T2>` object
+ */
+inline fun <reified T1 : KPojo, reified T2 : KPojo> from(
+    kPojo1: T1,
+    kPojo2: T2,
+    statement: Statement2<T1, T2, AssociateWhere<T1, T2, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown>>
+): AssociateWhere<T1, T2, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown> {
     return statement(kPojo1, kPojo2)
 }
 
-inline fun <reified A : KPojo, reified B : KPojo> from(
-    statement: Statement2<A, B, AssociateWhere<A, B, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown>>
-): AssociateWhere<A, B, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown> {
-    return statement(A::class.javaInstance(), B::class.javaInstance())
-}
-
-inline fun <reified A : KPojo, reified B : KPojo, reified C : KPojo> from(
-    kPojo1: A,
-    kPojo2: B,
-    kPojo3: C,
-    statement: Statement3<A, B, C, AssociateWhere<A, B, C, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown>>
-): AssociateWhere<A, B, C, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown> {
+/*
+    * The function `from` is a function that takes three kPojo objects as parameters and returns a `AssociateWhere<T1, T2, T3>` object
+ */
+inline fun <reified T1 : KPojo, reified T2 : KPojo, reified T3 : KPojo> from(
+    kPojo1: T1,
+    kPojo2: T2,
+    kPojo3: T3,
+    statement: Statement3<T1, T2, T3, AssociateWhere<T1, T2, T3, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown>>
+): AssociateWhere<T1, T2, T3, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown> {
     return statement(kPojo1, kPojo2, kPojo3)
 }
 
-inline fun <reified A : KPojo, reified B : KPojo, reified C : KPojo> from(
-    statement: Statement3<A, B, C, AssociateWhere<A, B, C, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown>>
-): AssociateWhere<A, B, C, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown> {
-    return statement(A::class.javaInstance(), B::class.javaInstance(), C::class.javaInstance())
-}
-
-inline fun <reified A : KPojo, reified B : KPojo, reified C : KPojo, reified D : KPojo> from(
-    kPojo1: A,
-    kPojo2: B,
-    kPojo3: C,
-    kPojo4: D,
-    statement: Statement4<A, B, C, D, AssociateWhere<A, B, C, D, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown>>
-): AssociateWhere<A, B, C, D, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown> {
+/*
+    * The function `from` is a function that takes four kPojo objects as parameters and returns a `AssociateWhere<T1, T2, T3, T4>` object
+ */
+inline fun <reified T1 : KPojo, reified T2 : KPojo, reified T3 : KPojo, reified T4 : KPojo> from(
+    kPojo1: T1,
+    kPojo2: T2,
+    kPojo3: T3,
+    kPojo4: T4,
+    statement: Statement4<T1, T2, T3, T4, AssociateWhere<T1, T2, T3, T4, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown>>
+): AssociateWhere<T1, T2, T3, T4, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown> {
     return statement(kPojo1, kPojo2, kPojo3, kPojo4)
 }
 
-inline fun <reified A : KPojo, reified B : KPojo, reified C : KPojo, reified D : KPojo> from(
-    statement: Statement4<A, B, C, D, AssociateWhere<A, B, C, D, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown>>
-): AssociateWhere<A, B, C, D, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown> {
-    return statement(A::class.javaInstance(), B::class.javaInstance(), C::class.javaInstance(), D::class.javaInstance())
-}
-
-inline fun <reified A : KPojo, reified B : KPojo, reified C : KPojo, reified D : KPojo, reified E : KPojo> from(
-    kPojo1: A,
-    kPojo2: B,
-    kPojo3: C,
-    kPojo4: D,
-    kPojo5: E,
-    statement: Statement5<A, B, C, D, E, AssociateWhere<A, B, C, D, E, Unknown, Unknown, Unknown, Unknown, Unknown>>
-): AssociateWhere<A, B, C, D, E, Unknown, Unknown, Unknown, Unknown, Unknown> {
+/*
+    * The function `from` is a function that takes five kPojo objects as parameters and returns a `AssociateWhere<T1, T2, T3, T4, T5>` object
+ */
+inline fun <reified T1 : KPojo, reified T2 : KPojo, reified T3 : KPojo, reified T4 : KPojo, reified T5 : KPojo> from(
+    kPojo1: T1,
+    kPojo2: T2,
+    kPojo3: T3,
+    kPojo4: T4,
+    kPojo5: T5,
+    statement: Statement5<T1, T2, T3, T4, T5, AssociateWhere<T1, T2, T3, T4, T5, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown>>
+): AssociateWhere<T1, T2, T3, T4, T5, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown> {
     return statement(kPojo1, kPojo2, kPojo3, kPojo4, kPojo5)
 }
 
-inline fun <reified A : KPojo, reified B : KPojo, reified C : KPojo, reified D : KPojo, reified E : KPojo> from(
-    statement: Statement5<A, B, C, D, E, AssociateWhere<A, B, C, D, E, Unknown, Unknown, Unknown, Unknown, Unknown>>
-): AssociateWhere<A, B, C, D, E, Unknown, Unknown, Unknown, Unknown, Unknown> {
-    return statement(
-        A::class.javaInstance(),
-        B::class.javaInstance(),
-        C::class.javaInstance(),
-        D::class.javaInstance(),
-        E::class.javaInstance()
-    )
-}
-
-inline fun <reified A : KPojo, reified B : KPojo, reified C : KPojo, reified D : KPojo, reified E : KPojo, reified F : KPojo> from(
-    kPojo1: A,
-    kPojo2: B,
-    kPojo3: C,
-    kPojo4: D,
-    kPojo5: E,
-    kPojo6: F,
-    statement: Statement6<A, B, C, D, E, F, AssociateWhere<A, B, C, D, E, F, Unknown, Unknown, Unknown, Unknown>>
-): AssociateWhere<A, B, C, D, E, F, Unknown, Unknown, Unknown, Unknown> {
+/*
+    * The function `from` is a function that takes six kPojo objects as parameters and returns a `AssociateWhere<T1, T2, T3, T4, T5, T6>` object
+ */
+inline fun <reified T1 : KPojo, reified T2 : KPojo, reified T3 : KPojo, reified T4 : KPojo, reified T5 : KPojo, reified T6 : KPojo> from(
+    kPojo1: T1,
+    kPojo2: T2,
+    kPojo3: T3,
+    kPojo4: T4,
+    kPojo5: T5,
+    kPojo6: T6,
+    statement: Statement6<T1, T2, T3, T4, T5, T6, AssociateWhere<T1, T2, T3, T4, T5, T6, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown>>
+): AssociateWhere<T1, T2, T3, T4, T5, T6, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown> {
     return statement(kPojo1, kPojo2, kPojo3, kPojo4, kPojo5, kPojo6)
 }
 
-inline fun <reified A : KPojo, reified B : KPojo, reified C : KPojo, reified D : KPojo, reified E : KPojo, reified F : KPojo> from(
-    statement: Statement6<A, B, C, D, E, F, AssociateWhere<A, B, C, D, E, F, Unknown, Unknown, Unknown, Unknown>>
-): AssociateWhere<A, B, C, D, E, F, Unknown, Unknown, Unknown, Unknown> {
-    return statement(
-        A::class.javaInstance(),
-        B::class.javaInstance(),
-        C::class.javaInstance(),
-        D::class.javaInstance(),
-        E::class.javaInstance(),
-        F::class.javaInstance()
-    )
-}
-
-inline fun <reified A : KPojo, reified B : KPojo, reified C : KPojo, reified D : KPojo, reified E : KPojo, reified F : KPojo, reified G : KPojo> from(
-    kPojo1: A,
-    kPojo2: B,
-    kPojo3: C,
-    kPojo4: D,
-    kPojo5: E,
-    kPojo6: F,
-    kPojo7: G,
-    statement: Statement7<A, B, C, D, E, F, G, AssociateWhere<A, B, C, D, E, F, G, Unknown, Unknown, Unknown>>
-): AssociateWhere<A, B, C, D, E, F, G, Unknown, Unknown, Unknown> {
+/*
+    * The function `from` is a function that takes seven kPojo objects as parameters and returns a `AssociateWhere<T1, T2, T3, T4, T5, T6, T7>` object
+ */
+inline fun <reified T1 : KPojo, reified T2 : KPojo, reified T3 : KPojo, reified T4 : KPojo, reified T5 : KPojo, reified T6 : KPojo, reified T7 : KPojo> from(
+    kPojo1: T1,
+    kPojo2: T2,
+    kPojo3: T3,
+    kPojo4: T4,
+    kPojo5: T5,
+    kPojo6: T6,
+    kPojo7: T7,
+    statement: Statement7<T1, T2, T3, T4, T5, T6, T7, AssociateWhere<T1, T2, T3, T4, T5, T6, T7, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown>>
+): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown> {
     return statement(kPojo1, kPojo2, kPojo3, kPojo4, kPojo5, kPojo6, kPojo7)
 }
 
-inline fun <reified A : KPojo, reified B : KPojo, reified C : KPojo, reified D : KPojo, reified E : KPojo, reified F : KPojo, reified G : KPojo> from(
-    statement: Statement7<A, B, C, D, E, F, G, AssociateWhere<A, B, C, D, E, F, G, Unknown, Unknown, Unknown>>
-): AssociateWhere<A, B, C, D, E, F, G, Unknown, Unknown, Unknown> {
-    return statement(
-        A::class.javaInstance(),
-        B::class.javaInstance(),
-        C::class.javaInstance(),
-        D::class.javaInstance(),
-        E::class.javaInstance(),
-        F::class.javaInstance(),
-        G::class.javaInstance()
-    )
-}
-
-inline fun <reified A : KPojo, reified B : KPojo, reified C : KPojo, reified D : KPojo, reified E : KPojo, reified F : KPojo, reified G : KPojo, reified H : KPojo> from(
-    kPojo1: A,
-    kPojo2: B,
-    kPojo3: C,
-    kPojo4: D,
-    kPojo5: E,
-    kPojo6: F,
-    kPojo7: G,
-    kPojo8: H,
-    statement: Statement8<A, B, C, D, E, F, G, H, AssociateWhere<A, B, C, D, E, F, G, H, Unknown, Unknown>>
-): AssociateWhere<A, B, C, D, E, F, G, H, Unknown, Unknown> {
+/*
+    * The function `from` is a function that takes eight kPojo objects as parameters and returns a `AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8>` object
+ */
+inline fun <reified T1 : KPojo, reified T2 : KPojo, reified T3 : KPojo, reified T4 : KPojo, reified T5 : KPojo, reified T6 : KPojo, reified T7 : KPojo, reified T8 : KPojo> from(
+    kPojo1: T1,
+    kPojo2: T2,
+    kPojo3: T3,
+    kPojo4: T4,
+    kPojo5: T5,
+    kPojo6: T6,
+    kPojo7: T7,
+    kPojo8: T8,
+    statement: Statement8<T1, T2, T3, T4, T5, T6, T7, T8, AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown>>
+): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown> {
     return statement(kPojo1, kPojo2, kPojo3, kPojo4, kPojo5, kPojo6, kPojo7, kPojo8)
 }
 
-inline fun <reified A : KPojo, reified B : KPojo, reified C : KPojo, reified D : KPojo, reified E : KPojo, reified F : KPojo, reified G : KPojo, reified H : KPojo> from(
-    statement: Statement8<A, B, C, D, E, F, G, H, AssociateWhere<A, B, C, D, E, F, G, H, Unknown, Unknown>>
-): AssociateWhere<A, B, C, D, E, F, G, H, Unknown, Unknown> {
-    return statement(
-        A::class.javaInstance(),
-        B::class.javaInstance(),
-        C::class.javaInstance(),
-        D::class.javaInstance(),
-        E::class.javaInstance(),
-        F::class.javaInstance(),
-        G::class.javaInstance(),
-        H::class.javaInstance()
-    )
-}
-
-inline fun <reified A : KPojo, reified B : KPojo, reified C : KPojo, reified D : KPojo, reified E : KPojo, reified F : KPojo, reified G : KPojo, reified H : KPojo, reified I : KPojo> from(
-    kPojo1: A,
-    kPojo2: B,
-    kPojo3: C,
-    kPojo4: D,
-    kPojo5: E,
-    kPojo6: F,
-    kPojo7: G,
-    kPojo8: H,
-    kPojo9: I,
-    statement: Statement9<A, B, C, D, E, F, G, H, I, AssociateWhere<A, B, C, D, E, F, G, H, I, Unknown>>
-): AssociateWhere<A, B, C, D, E, F, G, H, I, Unknown> {
+/*
+    * The function `from` is a function that takes nine kPojo objects as parameters and returns a `AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9>` object
+ */
+inline fun <reified T1 : KPojo, reified T2 : KPojo, reified T3 : KPojo, reified T4 : KPojo, reified T5 : KPojo, reified T6 : KPojo, reified T7 : KPojo, reified T8 : KPojo, reified T9 : KPojo> from(
+    kPojo1: T1,
+    kPojo2: T2,
+    kPojo3: T3,
+    kPojo4: T4,
+    kPojo5: T5,
+    kPojo6: T6,
+    kPojo7: T7,
+    kPojo8: T8,
+    kPojo9: T9,
+    statement: Statement9<T1, T2, T3, T4, T5, T6, T7, T8, T9, AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown>>
+): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown> {
     return statement(kPojo1, kPojo2, kPojo3, kPojo4, kPojo5, kPojo6, kPojo7, kPojo8, kPojo9)
 }
 
-inline fun <reified A : KPojo, reified B : KPojo, reified C : KPojo, reified D : KPojo, reified E : KPojo, reified F : KPojo, reified G : KPojo, reified H : KPojo, reified I : KPojo> from(
-    statement: Statement9<A, B, C, D, E, F, G, H, I, AssociateWhere<A, B, C, D, E, F, G, H, I, Unknown>>
-): AssociateWhere<A, B, C, D, E, F, G, H, I, Unknown> {
-    return statement(
-        A::class.javaInstance(),
-        B::class.javaInstance(),
-        C::class.javaInstance(),
-        D::class.javaInstance(),
-        E::class.javaInstance(),
-        F::class.javaInstance(),
-        G::class.javaInstance(),
-        H::class.javaInstance(),
-        I::class.javaInstance()
-    )
-}
-
-inline fun <reified A : KPojo, reified B : KPojo, reified C : KPojo, reified D : KPojo, reified E : KPojo, reified F : KPojo, reified G : KPojo, reified H : KPojo, reified I : KPojo, reified J : KPojo> from(
-    kPojo1: A,
-    kPojo2: B,
-    kPojo3: C,
-    kPojo4: D,
-    kPojo5: E,
-    kPojo6: F,
-    kPojo7: G,
-    kPojo8: H,
-    kPojo9: I,
-    kPojo10: J,
-    statement: Statement10<A, B, C, D, E, F, G, H, I, J, AssociateWhere<A, B, C, D, E, F, G, H, I, J>>
-): AssociateWhere<A, B, C, D, E, F, G, H, I, J> {
+/*
+    * The function `from` is a function that takes ten kPojo objects as parameters and returns a `AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>` object
+ */
+inline fun <reified T1 : KPojo, reified T2 : KPojo, reified T3 : KPojo, reified T4 : KPojo, reified T5 : KPojo, reified T6 : KPojo, reified T7 : KPojo, reified T8 : KPojo, reified T9 : KPojo, reified T10 : KPojo> from(
+    kPojo1: T1,
+    kPojo2: T2,
+    kPojo3: T3,
+    kPojo4: T4,
+    kPojo5: T5,
+    kPojo6: T6,
+    kPojo7: T7,
+    kPojo8: T8,
+    kPojo9: T9,
+    kPojo10: T10,
+    statement: Statement10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown>>
+): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, Unknown, Unknown, Unknown, Unknown, Unknown, Unknown> {
     return statement(kPojo1, kPojo2, kPojo3, kPojo4, kPojo5, kPojo6, kPojo7, kPojo8, kPojo9, kPojo10)
 }
 
-inline fun <reified A : KPojo, reified B : KPojo, reified C : KPojo, reified D : KPojo, reified E : KPojo, reified F : KPojo, reified G : KPojo, reified H : KPojo, reified I : KPojo, reified J : KPojo> from(
-    statement: Statement10<A, B, C, D, E, F, G, H, I, J, AssociateWhere<A, B, C, D, E, F, G, H, I, J>>
-): AssociateWhere<A, B, C, D, E, F, G, H, I, J> {
+/*
+    * The function `from` is a function that takes eleven kPojo objects as parameters and returns a `AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>` object
+ */
+inline fun <reified T1 : KPojo, reified T2 : KPojo, reified T3 : KPojo, reified T4 : KPojo, reified T5 : KPojo, reified T6 : KPojo, reified T7 : KPojo, reified T8 : KPojo, reified T9 : KPojo, reified T10 : KPojo, reified T11 : KPojo> from(
+    kPojo1: T1,
+    kPojo2: T2,
+    kPojo3: T3,
+    kPojo4: T4,
+    kPojo5: T5,
+    kPojo6: T6,
+    kPojo7: T7,
+    kPojo8: T8,
+    kPojo9: T9,
+    kPojo10: T10,
+    kPojo11: T11,
+    statement: Statement11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, Unknown, Unknown, Unknown, Unknown, Unknown>>
+): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, Unknown, Unknown, Unknown, Unknown, Unknown> {
+    return statement(kPojo1, kPojo2, kPojo3, kPojo4, kPojo5, kPojo6, kPojo7, kPojo8, kPojo9, kPojo10, kPojo11)
+}
+
+/*
+    * The function `from` is a function that takes twelve kPojo objects as parameters and returns a `AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>` object
+ */
+inline fun <reified T1 : KPojo, reified T2 : KPojo, reified T3 : KPojo, reified T4 : KPojo, reified T5 : KPojo, reified T6 : KPojo, reified T7 : KPojo, reified T8 : KPojo, reified T9 : KPojo, reified T10 : KPojo, reified T11 : KPojo, reified T12 : KPojo> from(
+    kPojo1: T1,
+    kPojo2: T2,
+    kPojo3: T3,
+    kPojo4: T4,
+    kPojo5: T5,
+    kPojo6: T6,
+    kPojo7: T7,
+    kPojo8: T8,
+    kPojo9: T9,
+    kPojo10: T10,
+    kPojo11: T11,
+    kPojo12: T12,
+    statement: Statement12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, Unknown, Unknown, Unknown, Unknown>>
+): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, Unknown, Unknown, Unknown, Unknown> {
+    return statement(kPojo1, kPojo2, kPojo3, kPojo4, kPojo5, kPojo6, kPojo7, kPojo8, kPojo9, kPojo10, kPojo11, kPojo12)
+}
+
+/*
+    * The function `from` is a function that takes thirteen kPojo objects as parameters and returns a `AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>` object
+ */
+inline fun <reified T1 : KPojo, reified T2 : KPojo, reified T3 : KPojo, reified T4 : KPojo, reified T5 : KPojo, reified T6 : KPojo, reified T7 : KPojo, reified T8 : KPojo, reified T9 : KPojo, reified T10 : KPojo, reified T11 : KPojo, reified T12 : KPojo, reified T13 : KPojo> from(
+    kPojo1: T1,
+    kPojo2: T2,
+    kPojo3: T3,
+    kPojo4: T4,
+    kPojo5: T5,
+    kPojo6: T6,
+    kPojo7: T7,
+    kPojo8: T8,
+    kPojo9: T9,
+    kPojo10: T10,
+    kPojo11: T11,
+    kPojo12: T12,
+    kPojo13: T13,
+    statement: Statement13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, Unknown, Unknown, Unknown>>
+): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, Unknown, Unknown, Unknown> {
     return statement(
-        A::class.javaInstance(),
-        B::class.javaInstance(),
-        C::class.javaInstance(),
-        D::class.javaInstance(),
-        E::class.javaInstance(),
-        F::class.javaInstance(),
-        G::class.javaInstance(),
-        H::class.javaInstance(),
-        I::class.javaInstance(),
-        J::class.javaInstance()
+        kPojo1,
+        kPojo2,
+        kPojo3,
+        kPojo4,
+        kPojo5,
+        kPojo6,
+        kPojo7,
+        kPojo8,
+        kPojo9,
+        kPojo10,
+        kPojo11,
+        kPojo12,
+        kPojo13
+    )
+}
+
+/*
+    * The function `from` is a function that takes fourteen kPojo objects as parameters and returns a `AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>` object
+ */
+inline fun <reified T1 : KPojo, reified T2 : KPojo, reified T3 : KPojo, reified T4 : KPojo, reified T5 : KPojo, reified T6 : KPojo, reified T7 : KPojo, reified T8 : KPojo, reified T9 : KPojo, reified T10 : KPojo, reified T11 : KPojo, reified T12 : KPojo, reified T13 : KPojo, reified T14 : KPojo> from(
+    kPojo1: T1,
+    kPojo2: T2,
+    kPojo3: T3,
+    kPojo4: T4,
+    kPojo5: T5,
+    kPojo6: T6,
+    kPojo7: T7,
+    kPojo8: T8,
+    kPojo9: T9,
+    kPojo10: T10,
+    kPojo11: T11,
+    kPojo12: T12,
+    kPojo13: T13,
+    kPojo14: T14,
+    statement: Statement14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, Unknown, Unknown>>
+): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, Unknown, Unknown> {
+    return statement(
+        kPojo1,
+        kPojo2,
+        kPojo3,
+        kPojo4,
+        kPojo5,
+        kPojo6,
+        kPojo7,
+        kPojo8,
+        kPojo9,
+        kPojo10,
+        kPojo11,
+        kPojo12,
+        kPojo13,
+        kPojo14
+    )
+}
+
+/*
+    * The function `from` is a function that takes fifteen kPojo objects as parameters and returns a `AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>` object
+ */
+inline fun <reified T1 : KPojo, reified T2 : KPojo, reified T3 : KPojo, reified T4 : KPojo, reified T5 : KPojo, reified T6 : KPojo, reified T7 : KPojo, reified T8 : KPojo, reified T9 : KPojo, reified T10 : KPojo, reified T11 : KPojo, reified T12 : KPojo, reified T13 : KPojo, reified T14 : KPojo, reified T15 : KPojo> from(
+    kPojo1: T1,
+    kPojo2: T2,
+    kPojo3: T3,
+    kPojo4: T4,
+    kPojo5: T5,
+    kPojo6: T6,
+    kPojo7: T7,
+    kPojo8: T8,
+    kPojo9: T9,
+    kPojo10: T10,
+    kPojo11: T11,
+    kPojo12: T12,
+    kPojo13: T13,
+    kPojo14: T14,
+    kPojo15: T15,
+    statement: Statement15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, Unknown>>
+): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, Unknown> {
+    return statement(
+        kPojo1,
+        kPojo2,
+        kPojo3,
+        kPojo4,
+        kPojo5,
+        kPojo6,
+        kPojo7,
+        kPojo8,
+        kPojo9,
+        kPojo10,
+        kPojo11,
+        kPojo12,
+        kPojo13,
+        kPojo14,
+        kPojo15
+    )
+}
+
+/*
+    * The function `from` is a function that takes sixteen kPojo objects as parameters and returns a `AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>` object
+ */
+inline fun <reified T1 : KPojo, reified T2 : KPojo, reified T3 : KPojo, reified T4 : KPojo, reified T5 : KPojo, reified T6 : KPojo, reified T7 : KPojo, reified T8 : KPojo, reified T9 : KPojo, reified T10 : KPojo, reified T11 : KPojo, reified T12 : KPojo, reified T13 : KPojo, reified T14 : KPojo, reified T15 : KPojo, reified T16 : KPojo> from(
+    kPojo1: T1,
+    kPojo2: T2,
+    kPojo3: T3,
+    kPojo4: T4,
+    kPojo5: T5,
+    kPojo6: T6,
+    kPojo7: T7,
+    kPojo8: T8,
+    kPojo9: T9,
+    kPojo10: T10,
+    kPojo11: T11,
+    kPojo12: T12,
+    kPojo13: T13,
+    kPojo14: T14,
+    kPojo15: T15,
+    kPojo16: T16,
+    statement: Statement16<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>>
+): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> {
+    return statement(
+        kPojo1,
+        kPojo2,
+        kPojo3,
+        kPojo4,
+        kPojo5,
+        kPojo6,
+        kPojo7,
+        kPojo8,
+        kPojo9,
+        kPojo10,
+        kPojo11,
+        kPojo12,
+        kPojo13,
+        kPojo14,
+        kPojo15,
+        kPojo16
     )
 }

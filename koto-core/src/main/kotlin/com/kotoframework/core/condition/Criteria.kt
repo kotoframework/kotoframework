@@ -6,7 +6,7 @@ import com.kotoframework.utils.SqlGenerator
 /**
  * Created by ousc on 2022/4/18 10:55
  **/
-open class BaseCondition(
+open class Criteria(
     val parameterName: String? = null, // original parameter name
     var not: Boolean = false, // whether the condition is not
     var type: ConditionType? = null, // condition type
@@ -17,7 +17,7 @@ open class BaseCondition(
     val humpToLine: Boolean? = KotoApp.hump2line, // whether to convert the parameter name from hump to line
     val value: Any? = null, // value
     val tableName: String? = "", // table name
-    val collections: List<BaseCondition?> = mutableListOf() // collection of conditions
+    val collections: List<Criteria?> = mutableListOf() // collection of conditions
 ) {
     init {
         sql = SqlGenerator.generate(this)
@@ -53,8 +53,8 @@ class LikeCondition(
     humpToLine: Boolean? = true,
     value: Any? = null,
     tableName: String? = "",
-    collections: List<BaseCondition?> = mutableListOf()
-) : BaseCondition(
+    collections: List<Criteria?> = mutableListOf()
+) : Criteria(
     parameterName,
     not,
     type,

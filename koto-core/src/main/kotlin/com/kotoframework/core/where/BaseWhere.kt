@@ -1,11 +1,11 @@
 package com.kotoframework.core.where
 
 import com.kotoframework.definition.AddCondition
-import com.kotoframework.core.condition.BaseCondition
+import com.kotoframework.core.condition.Criteria
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoDataSet
-import com.kotoframework.utils.Common.tableName
-import com.kotoframework.utils.Common.toMutableMap
+import com.kotoframework.utils.Extension.tableName
+import com.kotoframework.utils.Extension.toMutableMap
 
 /**
  * Created by ousc on 2022/5/9 23:52
@@ -15,7 +15,7 @@ abstract class BaseWhere<T : KPojo>(
     KPojo: T,
     addCondition: AddCondition<T>? = null
 ) {
-    internal var conditions = mutableListOf<BaseCondition?>()
+    internal var conditions = mutableListOf<Criteria?>()
     internal var paramMap = mutableMapOf<String, Any?>()
     internal var tableName: String = KPojo.tableName
     internal var finalMap = mutableMapOf<String, Any?>()

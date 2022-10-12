@@ -1,21 +1,18 @@
 package com.kotoframework.function.remove
 
-import com.kotoframework.core.condition.BaseCondition
+import com.kotoframework.core.condition.Criteria
 import com.kotoframework.core.condition.eq
 import com.kotoframework.beans.KotoOperationSet
 import com.kotoframework.core.where.Where
 import com.kotoframework.definition.AddCondition
-import com.kotoframework.ConditionType
-import com.kotoframework.*
 import com.kotoframework.core.condition.arbitrary
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.core.condition.isNull
-import com.kotoframework.core.where.OperateWhere
 import com.kotoframework.utils.Common.currentTime
 import com.kotoframework.utils.Common.deleted
-import com.kotoframework.utils.Common.rmRedudantBlk
-import com.kotoframework.utils.Common.toMap
+import com.kotoframework.utils.Extension.rmRedudantBlk
+import com.kotoframework.utils.Extension.toMap
 
 /**
  * Created by ousc on 2022/4/18 13:22
@@ -39,7 +36,7 @@ class RemoveAction<T : KPojo>(
         ).prefixOW("$sql where ").getRemoveWhere()
     }
 
-    fun where(vararg condition: BaseCondition?): RemoveWhere<T> {
+    fun where(vararg condition: Criteria?): RemoveWhere<T> {
         paramMap["updateTime"] = currentTime
         return Where(KPojo, jdbcWrapper) { condition.toList().arbitrary() }.map(
             *paramMap.toList().toTypedArray()

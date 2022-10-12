@@ -51,9 +51,9 @@ class Condition(var parameterName: String = "Unknown") {
         humpToLine: Boolean,
         not: Boolean = false,
         tableName: String? = null
-    ): BaseCondition? {
+    ): Criteria? {
         if (iif != null && !iif) return null
-        return BaseCondition(
+        return Criteria(
             parameterName = parameterName,
             type = EQUAL,
             reName = getReName(reName),
@@ -70,7 +70,7 @@ class Condition(var parameterName: String = "Unknown") {
         iif: Boolean?,
         humpToLine: Boolean,
         tableName: String? = null
-    ): BaseCondition? {
+    ): Criteria? {
         return eq(value, reName, iif, humpToLine, true, tableName)
     }
 
@@ -80,9 +80,9 @@ class Condition(var parameterName: String = "Unknown") {
         iif: Boolean?,
         humpToLine: Boolean,
         tableName: String? = null
-    ): BaseCondition? {
+    ): Criteria? {
         if (iif != null && !iif) return null
-        return BaseCondition(
+        return Criteria(
             parameterName = parameterName,
             type = GT,
             reName = getReName(reName, "Min"),
@@ -98,9 +98,9 @@ class Condition(var parameterName: String = "Unknown") {
         iif: Boolean?,
         humpToLine: Boolean,
         tableName: String? = null
-    ): BaseCondition? {
+    ): Criteria? {
         if (iif != null && !iif) return null
-        return BaseCondition(
+        return Criteria(
             parameterName = parameterName,
             type = GE,
             reName = getReName(reName, "Min"),
@@ -116,9 +116,9 @@ class Condition(var parameterName: String = "Unknown") {
         iif: Boolean?,
         humpToLine: Boolean,
         tableName: String? = null
-    ): BaseCondition? {
+    ): Criteria? {
         if (iif != null && !iif) return null
-        return BaseCondition(
+        return Criteria(
             parameterName = parameterName,
             type = LT,
             reName = getReName(reName, "Max"),
@@ -134,9 +134,9 @@ class Condition(var parameterName: String = "Unknown") {
         iif: Boolean?,
         humpToLine: Boolean,
         tableName: String? = null
-    ): BaseCondition? {
+    ): Criteria? {
         if (iif != null && !iif) return null
-        return BaseCondition(
+        return Criteria(
             parameterName = parameterName,
             type = LE,
             reName = getReName(reName, "Max"),
@@ -153,9 +153,9 @@ class Condition(var parameterName: String = "Unknown") {
         humpToLine: Boolean,
         not: Boolean = false,
         tableName: String? = null
-    ): BaseCondition? {
+    ): Criteria? {
         if (iif != null && !iif) return null
-        return BaseCondition(
+        return Criteria(
             parameterName = parameterName,
             type = BETWEEN,
             reName = getReName(reName),
@@ -172,7 +172,7 @@ class Condition(var parameterName: String = "Unknown") {
         iif: Boolean?,
         humpToLine: Boolean,
         tableName: String? = null
-    ): BaseCondition? {
+    ): Criteria? {
         return between(range, reName, iif, humpToLine, true, tableName)
     }
 
@@ -192,9 +192,9 @@ class Condition(var parameterName: String = "Unknown") {
         humpToLine: Boolean,
         not: Boolean = false,
         tableName: String? = null
-    ): BaseCondition? {
+    ): Criteria? {
         if (iif != null && !iif) return null
-        return BaseCondition(
+        return Criteria(
             parameterName = parameterName,
             type = IN,
             reName = getReName(reName),
@@ -219,7 +219,7 @@ class Condition(var parameterName: String = "Unknown") {
         iif: Boolean?,
         humpToLine: Boolean,
         tableName: String? = null
-    ): BaseCondition? {
+    ): Criteria? {
         return isIn(list, reName, iif, humpToLine, true, tableName)
     }
 
@@ -235,9 +235,9 @@ class Condition(var parameterName: String = "Unknown") {
         humpToLine: Boolean,
         not: Boolean = false,
         tableName: String? = null
-    ): BaseCondition? {
+    ): Criteria? {
         if (iif != null && !iif) return null
-        return BaseCondition(
+        return Criteria(
             parameterName = parameterName,
             type = ISNULL,
             reName = parameterName,
@@ -248,7 +248,7 @@ class Condition(var parameterName: String = "Unknown") {
     }
 
     /**
-     * If the `iif` parameter is not null, then return a `BaseCondition` object with the `type` property set to
+     * If the `iif` parameter is not null, then return a `Criteria` object with the `type` property set to
      * `ConditionType.NOTNULL`
      *
      * @param iif If you want to ignore the condition, you can set it to false.
@@ -259,7 +259,7 @@ class Condition(var parameterName: String = "Unknown") {
         iif: Boolean?,
         humpToLine: Boolean,
         tableName: String? = null
-    ): BaseCondition? {
+    ): Criteria? {
         return isNull(iif, humpToLine, true, tableName)
     }
 }

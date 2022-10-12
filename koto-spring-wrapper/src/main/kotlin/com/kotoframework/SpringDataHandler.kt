@@ -6,9 +6,9 @@ import com.kotoframework.utils.Jdbc
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.interfaces.KotoQueryHandler
-import com.kotoframework.utils.Common.isAssignableFrom
-import com.kotoframework.utils.Common.no
-import com.kotoframework.utils.Common.toKPojo
+import com.kotoframework.utils.Extension.isAssignableFrom
+import com.kotoframework.utils.Extension.no
+import com.kotoframework.utils.Extension.toKPojo
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.dao.IncorrectResultSizeDataAccessException
 import org.springframework.jdbc.core.SingleColumnRowMapper

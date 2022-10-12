@@ -10,8 +10,8 @@ import com.kotoframework.definition.aliasName
 import com.kotoframework.definition.columnName
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.core.condition.receiver
-import com.kotoframework.utils.Common.rmRedudantBlk
-import com.kotoframework.utils.Common.tableName
+import com.kotoframework.utils.Extension.rmRedudantBlk
+import com.kotoframework.utils.Extension.tableName
 import kotlin.reflect.KProperty1
 
 /**

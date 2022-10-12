@@ -1,9 +1,9 @@
 package com.kotoframework.utils
 
-import com.kotoframework.core.condition.BaseCondition
+import com.kotoframework.core.condition.Criteria
 import com.kotoframework.*
 import com.kotoframework.utils.Common.getParameter
-import com.kotoframework.utils.Common.yes
+import com.kotoframework.utils.Extension.yes
 
 
 /**
@@ -16,7 +16,7 @@ object SqlGenerator {
      * @param condition The condition object
      * @return A string that is the SQL query.
      */
-    fun generate(condition: BaseCondition): String {
+    fun generate(condition: Criteria): String {
         val realName = when {
             !condition.reName.isNullOrBlank() -> condition.reName
             !condition.parameterName.isNullOrBlank() -> condition.parameterName

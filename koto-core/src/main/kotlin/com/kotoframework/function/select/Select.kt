@@ -5,9 +5,9 @@ import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.core.annotations.DateTimeFormat
 import com.kotoframework.utils.Common.toSqlDate
-import com.kotoframework.utils.Common.lineToHump
-import com.kotoframework.utils.Common.tableMeta
-import com.kotoframework.utils.Common.yes
+import com.kotoframework.utils.Extension.lineToHump
+import com.kotoframework.utils.Extension.tableMeta
+import com.kotoframework.utils.Extension.yes
 import com.kotoframework.utils.Jdbc
 import com.kotoframework.utils.Jdbc.dbName
 import com.kotoframework.utils.Jdbc.initMetaData
@@ -102,8 +102,8 @@ internal fun getSql(
     sql: String, field: Field, type: String, dateTimeFormat: Map<String, String>
 ): String {
     return when {
-        type == "date" -> "$sql DATE_FORMAT(`${field.columnName}`, '${dateTimeFormat[field.aliasName]?.toSqlDate() ?: "%Y-%m-%d"}') as `${field.aliasName}`"
-        type == "datetime" -> "$sql DATE_FORMAT(`${field.columnName}`, '${dateTimeFormat[field.aliasName]?.toSqlDate() ?: "%Y-%m-%d %H:%i:%s"}') as `${field.aliasName}`"
+        type == "date" -> "$sql DATE_FORMAT(`${field.columnName}`, '${toSqlDate(dateTimeFormat[field.aliasName]) ?: "%Y-%m-%d"}') as `${field.aliasName}`"
+        type == "datetime" -> "$sql DATE_FORMAT(`${field.columnName}`, '${toSqlDate(dateTimeFormat[field.aliasName]) ?: "%Y-%m-%d %H:%i:%s"}') as `${field.aliasName}`"
         else -> {
             if (field.columnName.contains("(") || field.columnName.lowercase().contains(" as ")) {
                 "$sql ${field.columnName}"
