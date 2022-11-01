@@ -8,13 +8,13 @@
 
 ```kotlin
 KotoApp.setDataSource(url, username, password, driverClassName)
-````
+```
 
 or
 
 ```kotlin
 KotoApp.init(BasicDataSource)
-````
+```
 
 ##### Dynamic/multi-source configuration:
 
@@ -26,7 +26,7 @@ KotoApp.setDynamicDataSource { namedJdbc }
 // val namedJdbc: NamedParameterJdbcTemplate get() = {
 // ...
 // }
-````
+```
 
 Use <code>koto-basic-wrapper</code> and other wrapper methods similar to change the incoming object type
 
@@ -36,7 +36,7 @@ KotoApp.setDynamicDataSource { ds/jdbi/... }
 // val ds: DataSource/Jdbi/... get() = {
 // ...
 // }
-````
+```
 
 ## Global log generation configuration
 
@@ -49,7 +49,7 @@ If you don't want to generate a log, you can call configLog("") to set it to emp
 
 ```kotlin
 KotoApp.setLogPath("console,C:/logs,/Users/user/logs")
-````
+```
 
 ## Global soft delete function configuration
 
@@ -57,7 +57,7 @@ KotoApp.setLogPath("console,C:/logs,/Users/user/logs")
 
 ```kotlin
 KotoApp.setSoftDelete(true, "deleted")
-````
+```
 
 ## Global entity class suffix
 
@@ -65,7 +65,7 @@ Entity class suffix, koto uses KPojo's class name after underscore as the table 
 
 ```kotlin
 KotoApp.setKPojoSuffix("Entity/Pojo/Dto/...")
-````
+```
 
 
 
@@ -75,7 +75,7 @@ When the KPojo attribute in koto is mapped to the column name of the data table,
 
 ```kotlin
 KotoApp.setHump2line(false)
-````
+```
 
 
 
@@ -87,7 +87,7 @@ KotoApp
 .setLogPath(pathToLog)
 .setSoftDelete() //default is true, "deleted"
 .setKPojoSuffix("Entity/Pojo/KPojo/...")
-````
+```
 
 
 
@@ -110,7 +110,7 @@ Through the <code>Table</code> annotation, you can specify the bound table name 
 ```kotlin
 @Table(name = "user")
 data class Alphabet(var id: Int? = null, var name: String? = null): KPojo
-````
+```
 
 
 
@@ -123,7 +123,7 @@ Annotated by <code>SoftDelete</code> to configure a single tombstone open state 
 ```kotlin
 @SoftDelete(enable = true, column = "column_for_deleted")
 data class User(var id: Int? = null, var name: String? = null): KPojo
-````
+```
 
 
 
@@ -140,7 +140,7 @@ data class User(
   var id: Int? = null,
   @Column(name = "username") var name: String? = null
 ): KPojo
-````
+```
 
 
 
@@ -154,7 +154,7 @@ data class User(
   var name: String? = null,
   @Default(value = "No introduce.") var introduce: String? = null
 ): KPojo
-````
+```
 
 
 
@@ -176,4 +176,4 @@ data class User(
   var name: String? = null,
   @DateTimeFormat(pattern = "%Y/%m/%d")var regDate: String? = null
 ): KPojo
-````
+```

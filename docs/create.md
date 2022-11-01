@@ -1,9 +1,9 @@
-# ➕插入行
+# ➕ Insert line
 
-我们在本文的开头定义两个实体类，它们分别对应两张数据表：
+We define two entity classes at the beginning of this article, which correspond to two data tables:
 
 ```kotlin
-//以下是常见的普通Pojo类，只需继承「KPojo」interface，即可拥有ORM和toMap()/toMutableMap()的能力
+//The following are common common Pojo classes, you only need to inherit the "KPojo" interface, you can have ORM and toMap()/toMutableMap() capabilities
 data class Movie(
   var id: Int? = null,
   var movieName: String? = null,
@@ -20,26 +20,26 @@ data class Director(
 
 val movie = Movie(
   id = 1,
-  movieName = "Titanic", 
-  description = "The film is set in 1912 when the Titanic hit an iceberg and sank on its maiden voyage. It tells the story of two people from different classes, jack and Ruth, who abandon their worldly prejudices and fall in love. Jack finally gives up his life to Ruth's touching story.", 
-  publishDate = "1997-12-19", 
-  movieType =  "Feature film",
+  movieName = "Titanic",
+  description = "The film is set in 1912 when the Titanic hit an iceberg and sank on its maiden voyage. It tells the story of two people from different classes, jack and Ruth, who abandon their worldly prejudices and fall in love. Jack finally gives up his life to Ruth's touching story.",
+  publishDate = "1997-12-19",
+  movieType = "Feature film",
   directorName = "James Cameron"
 )
 ```
 
-在koto的介绍中，您已经见过一些简单的查询语句，首先我们学习最简单的创建方法：
+In the introduction of koto, you have seen some simple query statements, first let's learn the easiest way to create:
 
-## 简单插入行
+## simple insert row
 
 ```kotlin
 create(movie).execute()
-//insert into movie (`id`, `movie_name`, `description`, `publish_date`, `movie_type`, `director_name`, `update_time`, `create_time`) values (:id,:movieName,:description,:publish_date,:movie_type,:director_name,:update_time,:create_time`)
+//insert into movie (`id`, `movie_name`, `description`, `publish_date`, `movie_type`, `director_name`, `update_time`, `create_time`) values ​​(:id,:movieName,:description,: publish_date,:movie_type,:director_name,:update_time,:create_time`)
 ```
 
 
 
-## ` .onId()`存在Id相同行则更新行
+## `.onId()` If there is a row with the same Id, update the row
 
 ```kotlin
 create(movie).onId(1).execute()
@@ -47,9 +47,9 @@ create(movie).onId(1).execute()
 
 
 
-## `.update(...Fields)`更新部分列
+## `.update(...Fields)` update some columns
 
-可以通过.update(...Fiels)只更新部分列，若不使用`.update()`默认更新整行数据：
+You can update only some of the columns through .update(...Fiels), if you don't use `.update()` to update the entire row of data by default:
 
 ```kotlin
 create(movie).onId(1).update("publishDate").execute()
@@ -57,9 +57,9 @@ create(movie).onId(1).update("publishDate").execute()
 
 
 
-## `.except(...Field)`排除更新部分列
+## `.except(...Field)` to exclude some columns from updating
 
-可以通过.except(...Field)排除更新部分列：
+Some columns can be excluded from updating with .except(...Field):
 
 ```kotlin
 create(movie).onId(1).expect("movieName").execute()
@@ -67,27 +67,27 @@ create(movie).onId(1).expect("movieName").execute()
 
 
 
-## `.onDuplicateUpdate(...Field)`根据unique索引规则更新行
+## `.onDuplicateUpdate(...Field)` update rows according to unique index rules
 
-若待插入的数据违背当前表的索引规则，则会根据索引更新记录，否则会插入一行数据。
+If the data to be inserted violates the index rules of the current table, the record will be updated according to the index, otherwise a row of data will be inserted.
 
-与`.update()`用法类似，onDuplicateUpdate接受多个列名作为参数，当传入的参数为空时，更新整行，否则只更新传入的部分列。
+Similar to the usage of `.update()`, onDuplicateUpdate accepts multiple column names as parameters. When the passed parameter is empty, the entire row is updated, otherwise only part of the passed columns is updated.
 
-该函数可以与`.except()`共同使用
+This function can be used with `.except()`
 
 ```kotlin
-create(movie).onDuplicateUpdate().execute() 
+create(movie).onDuplicateUpdate().execute()
 
-create(movie).onDuplicateUpdate().expect(movie::movieName).execute() 
+create(movie).onDuplicateUpdate().expect(movie::movieName).execute()
 ```
 
 
 
-## `.on(...Field)`根据某些字段更新行
+## `.on(...Field)` update row based on some fields
 
-on()可以实现当已存在某行的数据的指定几列与待插入数据值相等时，更新该条记录，否则插入数据
+on() can realize that when the specified columns of the existing data of a row are equal to the value of the data to be inserted, the record is updated, otherwise the data is inserted
 
-该函数可以与`.update()|.except()`共同使用
+This function can be used together with `.update()|.except()`
 
 ```kotlin
 create(movie)
@@ -97,7 +97,7 @@ create(movie)
 
 
 
-## `List<KotoOperationSet>.batchExecute()`批量插入行
+## `List<KotoOperationSet>.batchExecute()` batch insert rows
 
 ```kotlin
 fun batchCreate(movies: List<Movie>) {
@@ -109,9 +109,9 @@ fun batchCreate(movies: List<Movie>) {
 
 
 
-## 不使用默认数据源，动态指定数据源
+## Do not use the default data source, dynamically specify the data source
 
-koto 支持您提供动态源，具体使用您使用的包装如果由扩展的数据功能，例如使用 koto-spring-wrapper：
+koto supports you to provide dynamic sources, specifically using the wrapper you use if extended by the data functionality, e.g. using koto-spring-wrapper:
 
 ```kotlin
 val db = NamedParameterJdbcTemplate(dataSource).wrapper()

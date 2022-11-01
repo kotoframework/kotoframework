@@ -23,7 +23,7 @@ val movie = Movie(
   movieType = "Feature film",
   directorName = "James Cameron"
 )
-````
+```
 
 
 
@@ -31,7 +31,7 @@ val movie = Movie(
 
 ```kotlin
 remove("movie").byId(1).execute()
-````
+```
 
 
 
@@ -39,7 +39,7 @@ remove("movie").byId(1).execute()
 
 ```kotlin
 remove("movie").byIds(listOf(1, 2, 3, 4)).execute()
-````
+```
 
 
 
@@ -53,7 +53,7 @@ remove("movie")
         "directorName" to "James Cameron"
     )
     .execute()
-````
+```
 
 
 
@@ -68,7 +68,7 @@ remove(movie).by(movie::movieName).execute() //Delete by some conditions in comb
 
 remove(movie).by(movie::movieName, movie::directorName to "koto").execute() // Combine by() to delete through some conditions and overwrite the value of KPojo
 
-````
+```
 
 
 
@@ -93,7 +93,7 @@ remove(movie).where(
   "movieType".eq(),
   "publishDate".eq()
 ).execute()
-````
+```
 
 ## `.soft()` tombstone
 
@@ -101,7 +101,7 @@ remove(movie).where(
 
 ```kotlin
 remove("movie").soft().byId(1).execute()
-````
+```
 
 
 
@@ -113,7 +113,7 @@ fun batchRemove(movies: List<Movie>) {
         remove(it).build()
     }.batchExecute()
 }
-````
+```
 
 
 
@@ -124,4 +124,4 @@ koto supports you to provide dynamic sources, specifically using the wrapper you
 ```kotlin
 val db = NamedParameterJdbcTemplate(dataSource).wrapper()
 db.remove("table_name").byId(1).execute()
-````
+```

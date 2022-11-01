@@ -17,7 +17,7 @@ data class Director(
   var id: Int? = null,
   var name: String? = null
 ) : KPojo
-````
+```
 
 
 
@@ -37,7 +37,7 @@ fun search(movie: Movie){
 val result = select(searchMovie).by("movieName", Movie::director to "xxx", ...).queryForObject()
 }
 //Multiple conditions in by need to be satisfied at the same time, that is, they are connected using and
-````
+```
 
 
 
@@ -53,7 +53,7 @@ The <code>query</code> function is the most basic function, it will return a Lis
 val movies = select<Movie>().where{ it::movieName.like("%xxx") }.query()
 
 // movies: List<Map<String, Any>>
-````
+```
 
 ### 2.`.queryForList()`
 
@@ -67,7 +67,7 @@ val movies = select<Movie>().where{ it::id.notEq(1) }.queryForList()
 val movieNames = select(Movie(id = 1), "movieName").where{ it.notEq }.queryForList<String>() //Query a single column
 
 //movieNames: List<String>
-````
+```
 
 ### 3.`.queryForObject()`
 
@@ -77,7 +77,7 @@ The <code>queryForObject</code> function can query a single result and provide t
 val movie = select(Movie(id = 1)).by(Movie::id).queryForObject()
 
 //movie: Movie
-````
+```
 
 ### 4. `.queryForObjectOrNull()`
 
@@ -87,7 +87,7 @@ The function is basically the same as queryForObject, but returns null instead o
 val movie = select(Movie(id = 1)).where().queryForObjectOrNull()
 
 //movie: Movie?
-````
+```
 
 ## `.where(...conditions)` complete query conditions
 
@@ -105,7 +105,7 @@ val movies = select(movie) // automatically pass the value
     .query() // return result set
 
 //movies: List<Map<String, Any>>
-````
+```
 
 
 
@@ -126,7 +126,7 @@ val movies = select(
 )
 .where()
 .query()
-````
+```
 
 koto provides built-in functions:
 
@@ -136,7 +136,7 @@ koto provides built-in functions:
  fun COUNT(field: Field)
  fun MAX(field: Field)
  fun MIN(field: Field)
- ````
+ ```
 
 
 
@@ -154,7 +154,7 @@ val select(
     .where { "xxx".gt(100) }
     .orderBy(movie::updateTime.DESC, movie::id.ASC)
     .query()
-````
+```
 
 
 
@@ -172,7 +172,7 @@ from<Movie>{
 from(Movie(publishDate = "2022-12-31")){
   it.select(it::movieName).where(it::directorName.isIn(listOf("xxx", ...)) and it::publishDate.notBefore).orderBy(it::id.desc())
 }.queryForList<String>()
-````
+```
 
 
 
@@ -183,4 +183,4 @@ Koto itself supports dynamic data sources, and the specific form of use is provi
 ```kotlin
 val namedJdbc = NamedParameterJdbcTemplate(dataSource)
 val movies = namedJdbc.select<Movie>().by("movieName" to "xxx", ...).first().queryForList().query()
-````
+```

@@ -21,7 +21,7 @@ val movie = Movie(
   movieType = "Feature film",
   directorName = "James Cameron"
 )
-````
+```
 
 ## `.byId(Int/Long)` to update a single row by id:
 
@@ -30,7 +30,7 @@ When updating with byId, the `updateTime` column is automatically updated and th
 ```kotlin
 update(movie).byId().execute()
 //or update(movie).byId(1).execute()
-````
+```
 
 
 
@@ -42,7 +42,7 @@ When updating with byIds, the `updateTime` column is automatically updated and t
 update(movie)
     .byIds(listOf(1, 2, 3, 4, 5))
     .execute()
-````
+```
 
 
 
@@ -59,7 +59,7 @@ update(movie)
         "directorName"
     )
 .execute()
-````
+```
 
 
 
@@ -76,7 +76,7 @@ update(movie)
       it::publishDate.after("2022-02-22")
     }
     .execute()
-````
+```
 
 
 
@@ -90,7 +90,7 @@ update(
       it::publishDate.after("2022-02-22")
     }
     .execute()
-````
+```
 
 
 
@@ -105,7 +105,7 @@ fun batchUpdate(movies: List<Movie>) {
         }.build()
     }.batchExecute()
 }
-````
+```
 
 
 
@@ -116,4 +116,4 @@ koto supports you to provide dynamic sources, specifically using the wrapper you
 ```kotlin
 val db = NamedParameterJdbcTemplate(dataSource).wrapper()
 db.update(movie).byId(1).execute()
-````
+```

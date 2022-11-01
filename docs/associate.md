@@ -38,7 +38,7 @@ data class TbShoppingCart(
     val goodId: Int? = null, // good_id
     val qty: Int? = null, // qty
 ) : KPojo
-````
+```
 
 > Limited by the syntax of kotlin generics, currently koto only supports connecting up to 10 tables at a time
 
@@ -55,7 +55,7 @@ associate(
 )
 // or use generic writing:
 associate<TbUser, TbGoodCategory, TbGood, TbShoppingCart>()
-````
+```
 
 
 
@@ -70,7 +70,7 @@ associate<TbUser, TbGoodCategory, TbGood, TbShoppingCart>()
     good::categoryId.eq(goodCategory::id) and
     good::id.eq(shoppingCart::goodId)
   }
-````
+```
 
 
 
@@ -107,15 +107,15 @@ associate<TbUser, TbGoodCategory, TbGood, TbShoppingCart>()
       shoppingCart::updateTime to "ut"//Manually alias by passing in Pair
     )
   }
-````
+```
 
 
 
 ## `.where()` Set query conditions and complete the query
 
-````
+```
 **Please note that the condition should be added in where or on, and placing it in different places may affect the query results. **
-````
+```
 
 ```kotlin
 associate<TbUser, TbGoodCategory, TbGood, TbShoppingCart>()
@@ -143,7 +143,7 @@ associate<TbUser, TbGoodCategory, TbGood, TbShoppingCart>()
   .groupBy(TbUser::age)
   .page(1, 10)
 .query()
-````
+```
 
 
 
@@ -171,4 +171,4 @@ shoppingCart::qty
 .page(1, 10)
 }
 .build()
-````
+```

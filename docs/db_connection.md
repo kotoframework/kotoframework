@@ -8,25 +8,25 @@ Before this, you need to introduce the apache-commons-dbcp2 data connection pool
 
 maven:
 
-````xml
+```xml
 <dependency>
     <groupId>org.apache.commons</groupId>
     <artifactId>commons-dbcp2</artifactId>
     <version>2.9.0</version>
 </dependency>
-````
+```
 
 gradle(Groovy):
 
-````groovy
+```groovy
 implementation 'org.apache.commons:commons-dbcp2:2.9.0'
-````
+```
 
 gradle(Kts):
 
 ```kotlin
 implementation("org.apache.commons:commons-dbcp2:2.9.0")
-````
+```
 
 
 

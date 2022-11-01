@@ -4,25 +4,25 @@
 
 koto is already published to the maven central repository, so if you use maven, just add a dependency to the `pom.xml` file:
 
-````xml
+```xml
 <dependency>
     <groupId>com.kotoframework</groupId>
     <artifactId>koto-core</artifactId>
     <version>1.0.1</version>
 </dependency>
-````
+```
 
 ##### gradle(Groovy):
 
-````groovy
+```groovy
 compile "com.kotoframework:koto-core:${koto.version}"
-````
+```
 
 ##### gradle(Kts):
 
 ```kotlin
 complie("com.kotoframework:koto-core:${koto.version}")
-````
+```
 
 
 
@@ -36,25 +36,25 @@ If your project is using other data persistence layer frameworks, such as spring
 
 ##### maven
 
-````xml
+```xml
 <dependency>
     <groupId>com.kotoframework</groupId>
     <artifactId>koto-spring-wrapper</artifactId>
     <version>1.0.1</version>
 </dependency>
-````
+```
 
 ##### gradle(Groovy):
 
-````groovy
+```groovy
 compile "com.kotoframework:koto-spring-wrapper:${koto.version}"
-````
+```
 
 ##### gradle(Kts):
 
 ```kotlin
 complie("com.kotoframework:koto-spring-wrapper:${koto.version}")
-````
+```
 
 
 
@@ -64,22 +64,22 @@ If you only use koto for data query, you can use koto to use koto-basic-wrapper,
 
 ##### maven
 
-````xml
+```xml
 <dependency>
     <groupId>com.kotoframework</groupId>
     <artifactId>koto-basic-wrapper</artifactId>
     <version>1.0.1</version>
 </dependency>
-````
+```
 
 ##### gradle(Groovy):
 
-````groovy
+```groovy
 compile "com.kotoframework:koto-basic-wrapper:1.0.1"
-````
+```
 
 ##### gradle(Kts):
 
 ```kotlin
 complie("com.kotoframework:koto-basic-wrapper:1.0.1")
-````
+```
