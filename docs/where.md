@@ -1,8 +1,8 @@
-# Where条件对象
+# Where condition object
 
-where条件对象提供了定义复杂查询/删除/更新条件的功能。
+The where condition object provides the ability to define complex query/delete/update conditions.
 
-你可以使用where条件对象组成复杂的查询条件在select、remove、update、associate中使用，如:
+You can use where condition objects to form complex query conditions for use in select, remove, update, associate, such as:
 
 ```kotlin
 select().where(...).query()
@@ -11,7 +11,7 @@ associate().where(...).query()
 remove().where(...).execute()
 ```
 
-示例KPojo类及查询条件：
+Example KPojo class and query conditions:
 
 ```kotlin
 data class User(
@@ -35,16 +35,16 @@ val user = User(
 )
 ```
 
-## 使用方法：
+## Instructions:
 
-### 1.基本用法
+### 1. Basic usage
 
-不传值默认会根据传入的KPojo自动生成条件：
+If no value is passed, the condition will be automatically generated based on the incoming KPojo:
 
 ```kotlin
 val koto = xxx(user).where().build()
 ```
-结果：
+result:
 ```kotlin
 //koto.sql
 "userName = :userName and active = :active and sex = :sex and age = :age and deleted = 0"
@@ -58,14 +58,14 @@ mapOf(
 )
 ```
 
-### 2.复杂查询用法：
+### 2. Complex query usage:
 
 ```kotlin
 val koto = xxx(user).where { // it: User
-    it::userName.eq() and // koto通过Kotlin的反射机制，自动获取属性名
+    it::userName.eq() and // koto automatically obtains the property name through Kotlin's reflection mechanism
     it::active.eq() and
     it::nickName.like(pos = Left) and
-    "telephone".notEq() and // 可以直接使用字符串，属性名称.条件函数名()
+    "telephone".notEq() and // Strings can be used directly, property names. Conditional function names()
     it::roles.isIn(listOf(1, 2, 3)) and
     "emailAddress".isNull() and
     "habit".notNull() and
@@ -75,10 +75,10 @@ val koto = xxx(user).where { // it: User
     "`age` < 50"
 }
 ```
-结果：
+result:
 ```kotlin
 //koto.sql
-"deleted = 0 and `user_name` = :userName and `active` = :active and `nick_name` like :nickName and `telephone` != :telephone and `roles` in (:roles) and `email_address` is null and `habit` is not null and DATE_FORMAT(`birthday`, '%Y-%m-%d') = :birthday and `habit` = "basketball" and `sex` is not null and `age` < 50"
+"deleted = 0 and `user_name` = :userName and `active` = :active and `nick_name` like :nickName and `telephone` != :telephone and `roles` in (:roles) and `email_address` is null and ` habit` is not null and DATE_FORMAT(`birthday`, '%Y-%m-%d') = :birthday and `habit` = "basketball" and `sex` is not null and `age` < 50"
 
 //koto:paramMap
 mapOf(
@@ -95,7 +95,7 @@ mapOf(
 )
 ```
 
-### 3. or和and关键词的使用：
+### 3. The use of `or` and `and` keywords:
 
 ```kotlin
 val koto = xxx(user).where{
@@ -108,11 +108,11 @@ val koto = xxx(user).where{
 }.build()
 ```
 
-结果：
+result:
 
 ```kotlin
 //koto.sql:
-"deleted = 0 and (`user_name` = :userName or `nick_name` = :nickName) and (`telephone` = :telephone or `email_address` = :emailAddress) and (`email_address` = :emailAddress or `roles` = :roles) and (`habit` = :habit or `active` = :active) and (`birthday` = :birthday or `age` < :ageMax) and srq is not null"
+"deleted = 0 and (`user_name` = :userName or `nick_name` = :nickName) and (`telephone` = :telephone or `email_address` = :emailAddress) and (`email_address` = :emailAddress or `roles` = : roles) and (`habit` = :habit or `active` = :active) and (`birthday` = :birthday or `age` < :ageMax) and srq is not null"
 
 //koto.paramMap
 mapOf(
@@ -131,43 +131,41 @@ mapOf(
 )
 ```
 
+## Condition type
 
+### Equality reading `.eq()|.notEq()`
 
-## Condition 类型
+.eq() and .notEq() are used for equality/inequality judgment and can accept the following 4 parameters:
 
-### 相等判读`.eq()|.notEq()`
+| parameter name | description | type | default value | global configuration |
+| ------------ | ------------------------------------ ------- | -------- | ------ | -------- |
+| `value` | The value to be judged, if not passed in, it will be read from the KPojo object by default | Any? | null | |
+| `reName` | Rename the key value in paramMap to prevent duplication | String? | null | |
+| `iif` | Remove the condition when `iif` is false | Boolean? | null | |
+| `humpToline` | Whether the attribute name is automatically converted from camel to underscore when it is converted to column name | Boolean | true | ✅ |
 
-.eq()和.notEq()用于相等/不相等判断，可以接受以下4个参数：
-
-| 参数名       | 说明                                        | 类型     | 默认值 | 全局配置 |
-| ------------ | ------------------------------------------- | -------- | ------ | -------- |
-| `value`      | 判断的值，若不传入，则默认从KPojo对象中读取 | Any?     | null   |          |
-| `reName`     | 重命名paramMap中的key值，防止重复           | String?  | null   |          |
-| `iif`        | 当`iif`为false时则去掉该条件                | Boolean? | null   |          |
-| `humpToline` | 属性名转为列名时是否由驼峰自动转换为下划线  | Boolean  | true   | ✅        |
-
-使用示例：
+Example of use:
 
 ```kotlin
 select(User(1), User::userName).where{ it::id.eq() }.query()
-//也可写作：select(User(), User::userName).where{ it::id.eq(1) }.query()
+// can also be written: select(User(), User::userName).where{ it::id.eq(1) }.query()
 // select user_name from user where id = 1
 
 select(User(1), User::userName).where{ it::id.notEq() }.query()
-//也可写作：select(User(), User::userName).where{ it::id.notEq(1) }.query()
+// can also be written: select(User(), User::userName).where{ it::id.notEq(1) }.query()
 // select user_name from user where id != 1
 ```
 
-若不需要接受参数时，可省略括号：
+If you don't need to accept parameters, you can omit the parentheses:
 
 ```kotlin
 select(User(1), User::userName).where{ it::id.eq }.query()
-//该写法等同于上方第一种写法
+//This writing method is equivalent to the first writing method above
 ```
 
-在查询(select/associate)时，若where某条件的值为null，koto会默认删除此条件，若需要在值为null时转换为.isNull()/.notNull(),可以使用.orNull()函数，(在remove/update的where条件中，会自动转换为isNull())
+When querying (select/associate), if the value of a condition where is null, koto will delete this condition by default. If you need to convert the value to .isNull()/.notNull() when the value is null, you can use .orNull() Function, (in the where condition of remove/update, it will be automatically converted to isNull())
 
-此函数不仅在.eq中适用，同时适用于相似判断、数值比较、日期比较等，在下文中不在重复介绍，可见以下示例：
+This function is not only applicable in .eq, but also applicable to similarity judgment, numerical comparison, date comparison, etc., which will not be repeated in the following, but the following examples can be seen:
 
 ```kotlin
 select(User(1), User::userName).where{ it::id.eq() and User::userName.eq() }.query()
@@ -177,161 +175,161 @@ select(User(1), User::userName).where{ it::id.eq() and User::userName.eq().orNul
 // select user_name from user where id = 1 and user_name is null
 ```
 
-在条件后链式调用`.iif(Boolean)`函数可直接修改条件的iif值
+Chaining the `.iif(Boolean)` function after the condition can directly modify the iif value of the condition
 
-此函数不仅在.eq中适用，同时适用于相似判断、数值比较、日期比较等，在下文中不在重复介绍，可见以下示例：
+This function is not only applicable in .eq, but also applicable to similarity judgment, numerical comparison, date comparison, etc., which will not be repeated in the following, but the following examples can be seen:
 
 ```kotlin
 select(User(1, "koto"), User::userName).where{ it::id.eq() and User::userName.eq().iif(false) }.query()
 // select user_name from user where id = 1
 ```
 
-在条件后链式调用`.reName(String)`函数可直接修改条件的reName值
+Chaining the `.reName(String)` function after the condition can directly modify the reName value of the condition
 
-此函数不仅在.eq中适用，同时适用于相似判断、数值比较、日期比较等，在下文中不在重复介绍，可见以下示例：
+This function is not only applicable in .eq, but also applicable to similarity judgment, numerical comparison, date comparison, etc., which will not be repeated in the following, but the following examples can be seen:
 
 ```kotlin
 select(User(1, "koto"), User::userName).where{ it::id.eq() and User::userName.eq().reName("name") }.query()
 //paramMap:
 mapOf(
-  "id": 1,
-  "name": "koto"
+  "id" to 1,
+  "name" to "koto"
 )
 ```
 
 
 
-### 相似判断`.like()|.notLike()`
+### Similarity judgment `.like()|.notLike()`
 
-.like()和.notLike()用于相似判断
+.like() and .notLike() are used for similarity judgment
 
-| 参数名       | 说明                                                 | 类型         | 默认值 | 全局配置 |
-| ------------ | ---------------------------------------------------- | ------------ | ------ | -------- |
-| `expression` | 判断的值，若不传入，则默认从KPojo对象中读取，需带“%” | Any?         | null   |          |
-| `pos`        | 模糊匹配的方向，设定后expression不需加百分号         | LikePosition | Never  |          |
-| `reName`     | 重命名paramMap中的key值，防止重复                    | String?      | null   |          |
-| `iif`        | 当`iif`为false时则去掉该条件                         | Boolean?     | null   |          |
-| `humpToline` | 属性名转为列名时是否由驼峰自动转换为下划线           | Boolean      | true   | ✅        |
+| parameter name | description | type | default value | global configuration |
+| ------------ | ------------------------------------ ---------------- | ------------ | ------ | -------- |
+| `expression` | The value to be judged, if not passed in, it will be read from the KPojo object by default, with "%" | Any? | null | |
+| `pos` | The direction of fuzzy matching, the expression does not need to add a percent sign after setting | LikePosition | Never | |
+| `reName` | Rename the key value in paramMap to prevent duplication | String? | null | |
+| `iif` | Remove the condition when `iif` is false | Boolean? | null | |
+| `humpToline` | Whether the attribute name is automatically converted from camel to underscore when it is converted to column name | Boolean | true | ✅ |
 
-使用示例：
+Example of use:
 
 ```kotlin
 select(User(userName = "%koto"), User::userName).where{ it::userName.like()}.query()
-//也可写作：select(User(), User::userName).where{ it::userName.like("%koto")}.query()
+// can also be written: select(User(), User::userName).where{ it::userName.like("%koto")}.query()
 // select user_name from user where user_name like "%koto"
 
 select(User(userName = "%koto"), User::userName).where{ it::userName.notLike()}.query()
-//也可写作：select(User(), User::userName).where{ it::userName.notLike("%koto")}.query()
+// can also be written: select(User(), User::userName).where{ it::userName.notLike("%koto")}.query()
 // select user_name from user where user_name not like "%koto"
 ```
 
-可以使用.matchLeft()/.matchRight()/.matchboth()链式调用代替设置pos = LikePosition.xxxx，例
+You can use .matchLeft()/.matchRight()/.matchboth() chained calls instead of setting pos = LikePosition.xxxx, e.g.
 
 ```kotlin
 select(User(userName = "%koto"), User::userName).where{user::userName.like("koto").matchLeft()}.query()
-//等同于user::userName.like(pos = Left)
+//equivalent to user::userName.like(pos = Left)
 // select user_name from user where user_name not like "%koto"
 ```
 
-若不需要接受参数时，可省略括号：
+If you don't need to accept parameters, you can omit the parentheses:
 
 ```kotlin
 select(User(userName = "%koto"), User::userName).where{ it::userName.like}.query()
-//该写法等同于上方第一种写法
+//This writing method is equivalent to the first writing method above
 ```
 
-### 数值比较`.gt()|.ge()|.lt()|.le()`
+### Numerical comparison `.gt()|.ge()|.lt()|.le()`
 
-gt、ge、lt、le分别代表大于、大于等于、小于、小于等于判断，用于数值比较可以接受以下4个参数：
+gt, ge, lt, and le represent greater than, greater than or equal to, less than, and less than or equal to judgment, respectively, and can accept the following four parameters for numerical comparison:
 
-| 参数名       | 说明                                        | 类型           | 默认值 | 全局配置 |
-| ------------ | ------------------------------------------- | -------------- | ------ | -------- |
-| `value`      | 判断的值，若不传入，则默认从KPojo对象中读取 | Comparable<*>? | null   |          |
-| `reName`     | 重命名paramMap中的key值，防止重复           | String?        | null   |          |
-| `iif`        | 当`iif`为false时则去掉该条件                | Boolean?       | null   |          |
-| `humpToline` | 属性名转为列名时是否由驼峰自动转换为下划线  | Boolean        | true   | ✅        |
+| parameter name | description | type | default value | global configuration |
+| ------------ | ------------------------------------ ------- | -------------- | ------ | -------- |
+| `value` | The value to be judged, if not passed in, it will be read from the KPojo object by default | Comparable<*>? | null | |
+| `reName` | Rename the key value in paramMap to prevent duplication | String? | null | |
+| `iif` | Remove the condition when `iif` is false | Boolean? | null | |
+| `humpToline` | Whether the attribute name is automatically converted from camel to underscore when it is converted to column name | Boolean | true | ✅ |
 
-使用示例：
+Example of use:
 
 ```kotlin
 select(User(1), User::userName).where{ it::id.gt() }.query()
-//也可写作：select(User(), User::userName).where{ it::id.gt(1) }.query()
+// can also be written: select(User(), User::userName).where{ it::id.gt(1) }.query()
 // select user_name from user where id > 1
 
 select(User(1), User::userName).where{ it::id.ge() }.query()
-//也可写作：select(User(), User::userName).where{ it::id.ge(1) }.query()
+// can also be written: select(User(), User::userName).where{ it::id.ge(1) }.query()
 // select user_name from user where id >= 1
 
 select(User(1), User::userName).where{ it::id.lt() }.query()
-//也可写作：select(User(), User::userName).where{ it::id.lt(1) }.query()
+// can also be written: select(User(), User::userName).where{ it::id.lt(1) }.query()
 // select user_name from user where id < 1
 
 select(User(1), User::userName).where{ it::id.le() }.query()
-//也可写作：select(User(), User::userName).where{ it::id.ge(1) }.query()
+// can also be written: select(User(), User::userName).where{ it::id.ge(1) }.query()
 // select user_name from user where id <= 1
 ```
 
-若不需要接受参数时，可省略括号：
+If you don't need to accept parameters, you can omit the parentheses:
 
 ```kotlin
 select(User(1), User::userName).where{ it::id.gt }.query()
-//该写法等同于上方第一种写法
+//This writing method is equivalent to the first writing method above
 ```
 
 
 
-### 日期比较`.before()|.after()|.notBefore()|.notAfter()`
+### Date comparison `.before()|.after()|.notBefore()|.notAfter()`
 
-before、after、notBefore、notAfter分别代表早于、晚于、不早于、不晚于判断，用于日期比较，可以接受以下4个参数：
+before, after, notBefore, notAfter respectively represent earlier than, later than, not earlier than, not later than judgment, used for date comparison, can accept the following 4 parameters:
 
-| 参数名       | 说明                       | 类型           | 默认值 | 全局配置 |
-| ------------ |--------------------------| -------------- | ------ | -------- |
-| `value`      | 判断的值，若不传入，则默认从KPojo对象中读取 | Comparable<*>? | null   |          |
-| `reName`     | 重命名paramMap中的key值，防止重复   | String?        | null   |          |
-| `iif`        | 当`iif`为false时则去掉该条件      | Boolean?       | null   |          |
-| `humpToline` | 属性名转为列名时是否由驼峰自动转换为下划线    | Boolean        | true   | ✅        |
+| parameter name | description | type | default value | global configuration |
+| ------------ |--------------------------| --------- ----- | ------ | -------- |
+| `value` | The value to be judged, if not passed in, it will be read from the KPojo object by default | Comparable<*>? | null | |
+| `reName` | Rename the key value in paramMap to prevent duplication | String? | null | |
+| `iif` | Remove the condition when `iif` is false | Boolean? | null | |
+| `humpToline` | Whether the attribute name is automatically converted from camel to underscore when it is converted to column name | Boolean | true | ✅ |
 
-使用示例：
+Example of use:
 
 ```kotlin
 select(User(1), User::userName).where{ it::id.gt() }.query()
-//也可写作：select(User(), User::userName).where{ it::id.gt(1) }.query()
+// can also be written: select(User(), User::userName).where{ it::id.gt(1) }.query()
 // select user_name from user where id > 1
 
 select(User(1), User::userName).where{ it::id.ge() }.query()
-//也可写作：select(User(), User::userName).where{ it::id.ge(1) }.query()
+// can also be written: select(User(), User::userName).where{ it::id.ge(1) }.query()
 // select user_name from user where id >= 1
 
 select(User(1), User::userName).where{ it::id.lt() }.query()
-//也可写作：select(User(), User::userName).where{ it::id.lt(1) }.query()
+// can also be written: select(User(), User::userName).where{ it::id.lt(1) }.query()
 // select user_name from user where id < 1
 
 select(User(1), User::userName).where{ it::id.le() }.query()
-//也可写作：select(User(), User::userName).where{ it::id.le(1) }.query()
+// can also be written: select(User(), User::userName).where{ it::id.le(1) }.query()
 // select user_name from user where id <= 1
 ```
 
-若不需要接受参数时，可省略括号：
+If you don't need to accept parameters, you can omit the parentheses:
 
 ```kotlin
 select(User(1), User::userName).where{ it::id.gt }.query()
-//该写法等同于上方第一种写法
+//This writing method is equivalent to the first writing method above
 ```
 
 
 
-### 区间比较`.between()/.notBetween()`
+### Interval comparison `.between()/.notBetween()`
 
-between、notBetween分别代表介于区间、不介于区间判断，用于日期和数值比较，可以接受以下4个参数：
+between and notBetween respectively represent between interval and not between interval judgment, which are used for date and numerical comparison, and can accept the following 4 parameters:
 
-| 参数名       | 说明                                                         | 类型           | 默认值 | 全局配置 |
-| ------------ | ------------------------------------------------------------ | -------------- | ------ | -------- |
-| `value`      | 区间范围，可以为数值、日期等，<strong><u>必须传入</u></strong> | ClosedRange<*> | /      |          |
-| `reName`     | 重命名paramMap中的key值，防止重复                            | String?        | null   |          |
-| `iif`        | 当`iif`为false时则去掉该条件                                 | Boolean?       | null   |          |
-| `humpToline` | 属性名转为列名时是否由驼峰自动转换为下划线                   | Boolean        | true   | ✅        |
+| parameter name | description | type | default value | global configuration |
+| ------------ | ------------------------------------ ------------------------ | -------------- | ------ | --- ----- |
+| `value` | Interval range, can be numeric value, date, etc. <strong><u>must be passed in</u></strong> | ClosedRange<*> | / | |
+| `reName` | Rename the key value in paramMap to prevent duplication | String? | null | |
+| `iif` | Remove the condition when `iif` is false | Boolean? | null | |
+| `humpToline` | Whether the attribute name is automatically converted from camel to underscore when it is converted to column name | Boolean | true | ✅ |
 
-使用示例：
+Example of use:
 
 ```kotlin
 select(User(1), User::userName).where{ it::id.between(1..100) }.query()
@@ -340,21 +338,18 @@ select(User(1), User::userName).where{ it::id.between(1..100) }.query()
 select(User(1), User::userName).where{ it::id.notBetween(1..100) }.query()
 // select user_name from user where id not between 1 and 100
 ```
+### Range judgment `.isIn()|.notIn()`
 
+isIn and notIn respectively represent whether they are in a certain set and can accept the following 4 parameters:
 
+| parameter name | description | type | default value | global configuration |
+| ------------ | ------------------------------------ ------------------------ | ------------- | ------ | ---- ---- |
+| `value` | Collection, can be passed in Array/List/MutatbleList, etc. <strong><u>must be passed in</u></strong> | Collection<*> | / | |
+| `reName` | Rename the key value in paramMap to prevent duplication | String? | null | |
+| `iif` | Remove the condition when `iif` is false | Boolean? | null | |
+| `humpToline` | Whether the attribute name is automatically converted from camel to underscore when it is converted to column name | Boolean | true | ✅ |
 
-### 范围判断`.isIn()|.notIn()`
-
-isIn、notIn分别代表是否处于某集合判断，可以接受以下4个参数：
-
-| 参数名       | 说明                                                         | 类型          | 默认值 | 全局配置 |
-| ------------ | ------------------------------------------------------------ | ------------- | ------ | -------- |
-| `value`      | 集合,可传入Array/List/MutatbleList等，<strong><u>必须传入</u></strong> | Collection<*> | /      |          |
-| `reName`     | 重命名paramMap中的key值，防止重复                            | String?       | null   |          |
-| `iif`        | 当`iif`为false时则去掉该条件                                 | Boolean?      | null   |          |
-| `humpToline` | 属性名转为列名时是否由驼峰自动转换为下划线                   | Boolean       | true   | ✅        |
-
-使用示例：
+Example of use:
 
 ```kotlin
 select(User(1), User::userName).where{ it::id.in(listOf(1, 2, 3)) }.query()
@@ -366,17 +361,17 @@ select(User(1), User::userName).where{it::id.notIn(listOf(1, 2, 3)) }.query()
 
 
 
-### 空值判断`.isNull()|.notNull()`
+### Null value judgment `.isNull()|.notNull()`
 
-isNull、notNull用于空值判断，可以接受以下4个参数：
+isNull and notNull are used for null value judgment and can accept the following 4 parameters:
 
-| 参数名       | 说明                                       | 类型     | 默认值 | 全局配置 |
-| ------------ | ------------------------------------------ | -------- | ------ | -------- |
-| `reName`     | 重命名paramMap中的key值，防止重复          | String?  | null   |          |
-| `iif`        | 当`iif`为false时则去掉该条件               | Boolean? | null   |          |
-| `humpToline` | 属性名转为列名时是否由驼峰自动转换为下划线 | Boolean  | true   | ✅        |
+| parameter name | description | type | default value | global configuration |
+| ------------ | ------------------------------------ ------ | -------- | ------ | -------- |
+| `reName` | Rename the key value in paramMap to prevent duplication | String? | null | |
+| `iif` | Remove the condition when `iif` is false | Boolean? | null | |
+| `humpToline` | Whether the attribute name is automatically converted from camel to underscore when it is converted to column name | Boolean | true | ✅ |
 
-使用示例：
+Example of use:
 
 ```kotlin
 select(User(1), User::userName).where{ it::userName.isNull() }.query()
@@ -386,33 +381,32 @@ select(User(1), User::userName).where{it::id.notNull() }.query()
 // select user_name from user where user_name is not null
 ```
 
-若不需要接受参数时，可省略括号：
+If you don't need to accept parameters, you can omit the parentheses:
 
 ```kotlin
 select(User(1), User::userName).where{ it::userName.isNull }.query()
-//该写法等同于上方第一种写法
+//This writing method is equivalent to the first writing method above
 ```
 
 
 
-### 连接中缀`.and|.or`
+### Connection infix `.and|.or`
 
-请移步<a href="/#/where?id=_3-or和and关键词的使用：">or和and关键词的使用</a>
+Please move to <a href="/#/where?id=_3-Use of or and keywords:">Use of or and and keywords</a>
 
 
 
-## Where Api
+## Where APIs
 
-| 函数名                                    | 说明                                 | 备注              |
-| ----------------------------------------- | ------------------------------------ | ----------------- |
-| `.map(vararg Pair<String,Any?>)`          | 加入/覆盖参数Map值                   |                   |
-| `.suffix(String)`                         | 设置后缀                             |                   |
-| `.first()`                                | limit one                            | 仅查询中使用      |
-| `.page(pageIndex: Int, pageSize: Int)`    | 查询分页                             | 仅查询中使用      |
-| `.deleted()`                              | 查询逻辑删除数据                     | 仅查询中使用      |
-| `.distinct()`                             | 查询不同                             | 仅查询中使用      |
-| `.build()`                                | 生成带有sql和paramMap的KotoDataSet   |                   |
-| `.orderBy(vararg Field)`                  | 排序规则                             | 仅查询中使用      |
-| `.groupBy(vararg Field)`                  | 分组规则                             | 仅查询中使用      |
-| `.allowNull(nullAllowed: Boolean = true)` | 条件的判断值为null时自动转为isNull() | 查询时默认为false |
-
+| function name | description | remarks |
+| ----------------------------------------- | ------- ----------------------------- | ----------------- |
+| `.map(vararg Pair<String,Any?>)` | Add/override parameter Map value | |
+| `.suffix(String)` | set suffix | |
+| `.first()` | limit one | only used in queries |
+| `.page(pageIndex: Int, pageSize: Int)` | query pagination | only used in queries |
+| `.deleted()` | query tombstone data | only used in queries |
+| `.distinct()` | query is different | only used in query |
+| `.build()` | Generate KotoDataSet with sql and paramMap | |
+| `.orderBy(vararg Field)` | Collation | Only used in queries |
+| `.groupBy(vararg Field)` | grouping rules | only used in queries |
+| `.allowNull(nullAllowed: Boolean = true)` | When the judgment value of the condition is null, it is automatically converted to isNull() | The default value is false when querying |
