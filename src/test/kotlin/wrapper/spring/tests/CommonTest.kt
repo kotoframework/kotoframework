@@ -4,8 +4,8 @@ import com.kotoframework.DataSource
 import com.kotoframework.KotoApp
 import com.kotoframework.KotoSpringApp.setDynamicDataSource
 import com.kotoframework.tests.beans.TbUser
-import com.kotoframework.utils.Common.toKPojo
-import com.kotoframework.utils.Common.toMap
+import com.kotoframework.utils.Extension.toKPojo
+import com.kotoframework.utils.Extension.toMap
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 

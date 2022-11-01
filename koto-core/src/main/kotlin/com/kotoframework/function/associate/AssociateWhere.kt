@@ -128,6 +128,12 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
         return this
     }
 
+    private var nullAllowed = false
+    fun allowNull(nullAllowed: Boolean = true): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> {
+        this.nullAllowed = nullAllowed
+        return this
+    }
+
     private fun getFieldName(field: Field): String {
         return when (field) {
             is String -> field
@@ -199,7 +205,7 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
             ) {
                 " $joinType join $it as ${it.lineToHump()} on ${
                     joinSqlStatement(
-                        findOnByTableName(it), getParamMapByTableName(mainTable, it), showAlias = true
+                        findOnByTableName(it), getParamMapByTableName(mainTable, it), nullAllowed, showAlias = true
                     )
                 }"
             }
@@ -269,7 +275,7 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
     private var complex = false
 
     /**
-     * A function that returns an object of type AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>
+     * A function that returns an object of type AssociateWhere<T, E, K, M, Z, U, V, Q, I, J>
      *
      * @return The return type is the same as the class type.
      */
@@ -557,12 +563,6 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
      * The function takes a lambda function as a parameter. The lambda function takes four parameters of type `T`, `E`,
      * `K`, and `M` respectively. The lambda function returns a `String` value. The function returns an object of type
      * `AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>`
-    /**
-     * A function that takes in a function as a parameter.
-     *
-     * @param addOnCondition A lambda function that takes in the 5 kPojos and returns a list of conditions.
-     * @return The next step in the query.
-    */
      *
      * @param addOnCondition A lambda function that takes in the 4 kPojos and returns a list of conditions.
      * @return The next step in the query.
@@ -573,6 +573,12 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
         return this
     }
 
+    /**
+     * A function that takes in a function as a parameter.
+     *
+     * @param addOnCondition A lambda function that takes in the 5 kPojos and returns a list of conditions.
+     * @return The next step in the query.
+     */
     fun where(addOnCondition: AddOnCondition5<T1, T2, T3, T4, T5>): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> {
         ifBlankSelectAll()
         whereConditions = addOnCondition(kPojo1!!, kPojo2!!, kPojo3!!, kPojo4!!, kPojo5!!)
@@ -733,7 +739,7 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
         joinSqlStatement(
             listOf(
                 onConditions
-            ), onParamMap
+            ), onParamMap, nullAllowed
         )
         val whereParamMap = mutableMapOf<String, Any?>()
         paramMaps.values.forEach { paramMap ->
@@ -757,8 +763,8 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
             val whereSql = joinSqlStatement(
                 listOf(
                     whereConditions,
-                    deleted(0, kotoJdbcWrapper, kPojo1!!.tableName, "`${kPojo1!!.tableAlias}`.").declareSql()
-                ), whereParamMap, showAlias = true
+                     deleted(0, kotoJdbcWrapper, kPojo1!!.tableName, "`${kPojo1!!.tableAlias}`.").declareSql()
+                ), whereParamMap, nullAllowed, showAlias = true
             )
             whereParamMap.putAll(onParamMap)
             whereParamMap.putAll(finalMap)

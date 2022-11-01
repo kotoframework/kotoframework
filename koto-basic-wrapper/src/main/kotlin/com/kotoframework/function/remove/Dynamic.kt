@@ -1,6 +1,6 @@
 package com.kotoframework.function.remove
 
-import com.kotoframework.PureJdbcWrapper.Companion.wrapper
+import com.kotoframework.BasicJdbcWrapper.Companion.wrapper
 import com.kotoframework.beans.Unknown
 import com.kotoframework.interfaces.KPojo
 import javax.sql.DataSource

@@ -1,6 +1,6 @@
 package com.kotoframework.interfaces
 
-import com.kotoframework.PureJdbcWrapper.Companion.wrapper
+import com.kotoframework.BasicJdbcWrapper.Companion.wrapper
 import com.kotoframework.beans.KotoExecuteResult
 import com.kotoframework.beans.KotoOperationSet
 import com.kotoframework.utils.Jdbc

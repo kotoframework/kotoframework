@@ -19,7 +19,7 @@ import kotlin.reflect.KClass
  */
 open class Where<T : KPojo>(
     var KPojo: T,
-    var kotoJdbcWrapper: KotoJdbcWrapper? = null,
+    open var kotoJdbcWrapper: KotoJdbcWrapper? = null,
     open val kClass: KClass<*> = Unknown::class,
     addCondition: AddCondition<T>? = null
 ) : BaseWhere<T>(KPojo, addCondition) {

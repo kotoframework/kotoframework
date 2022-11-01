@@ -10,6 +10,7 @@ import com.kotoframework.interfaces.KPojo
 import com.kotoframework.core.annotations.Default
 import com.kotoframework.core.annotations.NeedTableIndexes
 import com.kotoframework.core.condition.arbitrary
+import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.utils.Common.deleted
 import com.kotoframework.utils.Common.currentTime
 import com.kotoframework.utils.Common.getParameter
@@ -22,7 +23,7 @@ import kotlin.reflect.full.findAnnotation
 /**
  * Created by ousc on 2022/5/10 02:42
  */
-class CreateWhere<T : KPojo>(KPojo: T) : Where<T>(KPojo) {
+class CreateWhere<T : KPojo>(KPojo: T, kotoJdbcWrapper: KotoJdbcWrapper?) : Where<T>(KPojo, kotoJdbcWrapper) {
     private var updateFields: List<KotoField> = mutableListOf()
     private var onFields: List<KotoField> = mutableListOf()
     private var replaceInto = false

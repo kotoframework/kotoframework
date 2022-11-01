@@ -1,6 +1,6 @@
 package com.kotoframework.function.select
 
-import com.kotoframework.PureJdbcWrapper.Companion.wrapper
+import com.kotoframework.BasicJdbcWrapper.Companion.wrapper
 import com.kotoframework.function.associate.javaInstance
 import com.kotoframework.interfaces.KPojo
 import javax.sql.DataSource

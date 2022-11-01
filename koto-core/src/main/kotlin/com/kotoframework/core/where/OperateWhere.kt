@@ -1,22 +1,18 @@
 package com.kotoframework.core.where
 
-import com.kotoframework.beans.KotoExecuteResult
-import com.kotoframework.beans.KotoOperationSet
 import com.kotoframework.beans.Unknown
 import com.kotoframework.definition.AddCondition
 import com.kotoframework.function.remove.RemoveWhere
 import com.kotoframework.function.update.UpdateWhere
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoJdbcWrapper
-import com.kotoframework.utils.Jdbc
-import com.kotoframework.utils.Printer.errorPrintln
 
 /**
  * Created by ousc on 2022/5/10 02:31
  */
 open class OperateWhere<T : KPojo>(
     KPojo: T,
-    kotoJdbcWrapper: KotoJdbcWrapper? = null,
+    override var kotoJdbcWrapper: KotoJdbcWrapper? = null,
     val addCondition: AddCondition<T>? = null
 ) : Where<T>(KPojo, kotoJdbcWrapper, Unknown::class, addCondition) {
 

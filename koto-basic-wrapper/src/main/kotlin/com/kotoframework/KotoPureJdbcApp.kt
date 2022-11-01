@@ -1,6 +1,6 @@
 package com.kotoframework
 
-import com.kotoframework.PureJdbcWrapper.Companion.wrapper
+import com.kotoframework.BasicJdbcWrapper.Companion.wrapper
 import com.kotoframework.utils.Jdbc
 import org.apache.commons.dbcp2.BasicDataSource
 import javax.sql.DataSource
@@ -10,10 +10,10 @@ import javax.sql.DataSource
  */
 object KotoPureJdbcApp {
     fun KotoApp.setDynamicDataSource(ds: () -> DataSource): KotoApp {
-        val pureJdbcWrapper = PureJdbcWrapper()
+        val pureJdbcWrapper = BasicJdbcWrapper()
         pureJdbcWrapper.dynamic = ds
         Jdbc.defaultJdbcWrapper = pureJdbcWrapper
-        Jdbc.defaultJdbcHandler = PureJdbcHandler()
+        Jdbc.defaultJdbcHandler = BasicJdbcHandler()
         return this
     }
 
@@ -27,13 +27,13 @@ object KotoPureJdbcApp {
             this.maxIdle = 5
         }
         Jdbc.defaultJdbcWrapper = dataSource.wrapper()
-        Jdbc.defaultJdbcHandler = PureJdbcHandler()
+        Jdbc.defaultJdbcHandler = BasicJdbcHandler()
         return this
     }
 
     fun KotoApp.setDataSource(ds: DataSource): KotoApp {
         Jdbc.defaultJdbcWrapper = ds.wrapper()
-        Jdbc.defaultJdbcHandler = PureJdbcHandler()
+        Jdbc.defaultJdbcHandler = BasicJdbcHandler()
         return this
     }
 }

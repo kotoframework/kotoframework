@@ -9,6 +9,7 @@ import com.kotoframework.core.condition.Criteria
 import com.kotoframework.core.condition.arbitrary
 import com.kotoframework.core.condition.eq
 import com.kotoframework.core.condition.isNull
+import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.utils.Common.currentTime
 import com.kotoframework.utils.Extension.lineToHump
 import com.kotoframework.utils.Extension.rmRedudantBlk
@@ -21,7 +22,8 @@ class UpdateAction<T : KPojo>(
     private val KPojo: T,
     val fields: List<Field>,
     private var sql: String = "",
-    val paramMap: MutableMap<String, Any?> = mutableMapOf()
+    val paramMap: MutableMap<String, Any?> = mutableMapOf(),
+    val jdbcWrapper: KotoJdbcWrapper?
 ) : KPojo {
     fun except(vararg fields: Field): UpdateAction<T> {
         init(fields.map { it.fd }.toList())
@@ -56,12 +58,12 @@ class UpdateAction<T : KPojo>(
      * @return Where<T>
      */
     fun where(addCondition: AddCondition<T>? = null): UpdateWhere<T> {
-        return Where(KPojo) { addCondition?.invoke(KPojo) }.map(*paramMap.toList().toTypedArray())
+        return Where(KPojo, kotoJdbcWrapper = jdbcWrapper) { addCondition?.invoke(KPojo) }.map(*paramMap.toList().toTypedArray())
             .prefixOW("$sql where ").getUpdateWhere()
     }
 
     fun where(vararg condition: Criteria?): UpdateWhere<T> {
-        return Where(KPojo) { condition.toList().arbitrary() }.map(*paramMap.toList().toTypedArray())
+        return Where(KPojo, kotoJdbcWrapper = jdbcWrapper) { condition.toList().arbitrary() }.map(*paramMap.toList().toTypedArray())
             .prefixOW("$sql where ").getUpdateWhere()
     }
 

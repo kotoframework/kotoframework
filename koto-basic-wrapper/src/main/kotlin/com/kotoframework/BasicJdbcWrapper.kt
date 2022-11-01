@@ -9,7 +9,7 @@ import javax.sql.DataSource
 /**
  * Created by ousc on 2022/9/19 23:24
  */
-class PureJdbcWrapper : KotoJdbcWrapper() {
+class BasicJdbcWrapper : KotoJdbcWrapper() {
     var ds: DataSource? = null
     var dynamic: (() -> DataSource)? = null
     fun getDataSource(ds: DataSource? = null): DataSource {
@@ -105,11 +105,11 @@ class PureJdbcWrapper : KotoJdbcWrapper() {
         )[1].split("/")[1]
 
     companion object {
-        fun DataSource?.wrapper(): PureJdbcWrapper? {
+        fun DataSource?.wrapper(): BasicJdbcWrapper? {
             if (this == null) {
                 return null
             }
-            val wrapper = PureJdbcWrapper()
+            val wrapper = BasicJdbcWrapper()
             wrapper.ds = this
             return wrapper
         }

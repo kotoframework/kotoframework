@@ -9,9 +9,9 @@ import com.kotoframework.function.create.create
 import com.kotoframework.interfaces.Patch.execute
 import com.kotoframework.core.annotations.NeedTableIndexes
 import com.kotoframework.utils.Common.deleted
-import com.kotoframework.utils.Common.toKPojo
-import com.kotoframework.utils.Common.toMap
-import com.kotoframework.utils.Common.toMutableMap
+import com.kotoframework.utils.Extension.toKPojo
+import com.kotoframework.utils.Extension.toMap
+import com.kotoframework.utils.Extension.toMutableMap
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 

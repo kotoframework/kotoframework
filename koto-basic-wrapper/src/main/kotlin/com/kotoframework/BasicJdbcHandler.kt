@@ -1,6 +1,6 @@
 package com.kotoframework
 
-import com.kotoframework.PureJdbcWrapper.Companion.convertSql
+import com.kotoframework.BasicJdbcWrapper.Companion.convertSql
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.interfaces.KotoQueryHandler
@@ -16,7 +16,7 @@ import kotlin.reflect.KClass
 /**
  * Created by ousc on 2022/7/20 09:31
  */
-class PureJdbcHandler : KotoQueryHandler() {
+class BasicJdbcHandler : KotoQueryHandler() {
     override fun forList(
         jdbc: KotoJdbcWrapper?,
         sql: String,
@@ -24,7 +24,7 @@ class PureJdbcHandler : KotoQueryHandler() {
         kClass: KClass<*>
     ): List<Any> {
         val wrapper =
-            ((jdbc?: Jdbc.defaultJdbcWrapper) as PureJdbcWrapper)
+            ((jdbc?: Jdbc.defaultJdbcWrapper) as BasicJdbcWrapper)
         val ds = wrapper.getDataSource()
         Log.log(wrapper, sql, listOf(paramMap), "query")
         return if (kClass isAssignableFrom KPojo::class) {
@@ -43,7 +43,7 @@ class PureJdbcHandler : KotoQueryHandler() {
         kClass: KClass<*>
     ): Any {
         val wrapper =
-            ((jdbc?: Jdbc.defaultJdbcWrapper) as PureJdbcWrapper)
+            ((jdbc?: Jdbc.defaultJdbcWrapper) as BasicJdbcWrapper)
         val ds = wrapper.getDataSource()
         Log.log(wrapper, sql, listOf(paramMap), "query")
         try {

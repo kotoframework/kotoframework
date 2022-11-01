@@ -1,6 +1,6 @@
 package com.kotoframework
 
-import com.kotoframework.PureJdbcWrapper.Companion.wrapper
+import com.kotoframework.BasicJdbcWrapper.Companion.wrapper
 import com.kotoframework.utils.Jdbc
 import com.kotoframework.utils.Jdbc.defaultJdbcHandler
 import javax.sql.DataSource

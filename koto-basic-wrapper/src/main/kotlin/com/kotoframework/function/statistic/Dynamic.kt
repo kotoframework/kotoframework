@@ -1,6 +1,6 @@
 package com.kotoframework.function.statistic
 
-import com.kotoframework.PureJdbcWrapper.Companion.wrapper
+import com.kotoframework.BasicJdbcWrapper.Companion.wrapper
 import javax.sql.DataSource
 
 

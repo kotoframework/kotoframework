@@ -4,6 +4,7 @@ import com.kotoframework.DataSource
 import com.kotoframework.KotoApp
 import com.kotoframework.KotoSpringApp.setDynamicDataSource
 import com.kotoframework.Right
+import com.kotoframework.SpringDataWrapper.Companion.wrapper
 import com.kotoframework.tests.beans.TbUser
 import com.kotoframework.function.update.update
 import com.kotoframework.interfaces.KPojo
