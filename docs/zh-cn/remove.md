@@ -57,7 +57,7 @@ remove("movie")
 
 
 
-## `remove(KPojo)`根据给定的Dto对象删除记录：
+## `remove(KPojo)`根据给定的KPojo对象删除记录：
 
 ```kotlin
 remove(movie).execute()
@@ -79,7 +79,7 @@ remove(movie).by(movie::movieName, movie::directorName to "koto").execute() //�
 > 根据where条件删除行的示例
 
 ```kotlin
-remove(movie).where { //it -> UserInfoDto
+remove(movie).where { //it -> UserInfoKPojo
   it::movieName.eq() and 
   	"movieType".eq() and 
   	"directorName".eq() and
@@ -119,10 +119,10 @@ fun batchRemove(movies: List<Movie>) {
 
 ## 不使用默认数据源，动态指定数据源
 
-koto 支持您提供动态源，具体使用您使用的包装如果由扩展的数据功能，例如使用 koto-wrapper：
+koto 支持您提供动态源，具体使用您使用的包装如果由扩展的数据功能，例如使用 koto-spring-wrapper：
 
 ```kotlin
-val namedJdbc = NamedParameterJdbcTemplate(dataSource)
-namedJdbc.remove("table_name").byId(1).execute()
+val db = NamedParameterJdbcTemplate(dataSource).wrapper()
+db.remove("table_name").byId(1).execute()
 ```
 

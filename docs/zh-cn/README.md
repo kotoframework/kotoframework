@@ -87,7 +87,7 @@ fun getUserUseWhere(user: User): List<User> {
 使用Koto快速通过传入的对象创建一条数据：
 
 ```kotlin
-fun createUserInfo(user: UserInfoDto): KotoExecuteResult {
+fun createUserInfo(user: UserInfo): KotoExecuteResult {
     return create(user).execute()
     // 通过create(user).on(*Fields)，你可以指定当某些字段相同时更新记录而不是创建记录
 }
@@ -96,7 +96,7 @@ fun createUserInfo(user: UserInfoDto): KotoExecuteResult {
 使用Koto删除数据：
 
 ```kotlin
-fun deleteUserInfo(user: UserInfoDto): KotoExecuteResult {
+fun deleteUserInfo(user: UserInfo): KotoExecuteResult {
     return remove(user).execute()
 }
 ```

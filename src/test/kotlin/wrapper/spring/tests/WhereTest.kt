@@ -3,7 +3,7 @@ package com.kotoframework.tests
 import com.kotoframework.DataSource
 import com.kotoframework.KotoApp
 import com.kotoframework.KotoSpringApp.setDynamicDataSource
-import com.kotoframework.beans.UserInfoDto
+import com.kotoframework.beans.UserInfo
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.core.condition.*
 import com.kotoframework.core.where.Where
@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class WhereTest : KPojo {
-    private val searchData = UserInfoDto(
+    private val searchData = UserInfo(
         userName = "ousc",
         active = true,
         sex = "male",
@@ -127,7 +127,7 @@ class WhereTest : KPojo {
 
     @Test
     fun testSuger() { // 测试复杂查询情况
-        val searchData = UserInfoDto(
+        val searchData = UserInfo(
             userName = "ousc",
             nickName = "daiyue",
             telephone = "13800138000",
@@ -198,7 +198,7 @@ class WhereTest : KPojo {
 
     @Test
     fun testUsageForOr() {
-        val searchData = UserInfoDto(
+        val searchData = UserInfo(
             userName = "ousc",
             nickName = "daiyue",
             telephone = "13800138000",

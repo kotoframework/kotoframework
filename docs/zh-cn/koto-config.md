@@ -64,7 +64,7 @@ KotoApp.setSoftDelete(true, "deleted")
 实体类后缀，koto在没有注解配置的情况下默认使用KPojo的类名转下划线后的名称作为表名，若配置了全局KPojo后缀，取表名时则会去掉该后缀
 
 ```kotlin
-KotoApp.setKPojoSuffix("Entity/Pojo/Dto/...")
+KotoApp.setKPojoSuffix("Entity/Pojo/KPojo/...")
 ```
 
 

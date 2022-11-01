@@ -70,7 +70,7 @@ val koto = xxx(user).where { // it: User
     "emailAddress".isNull() and
     "habit".notNull() and
     "DATE_FORMAT(`birthday`, '%Y-%m-%d') = :birthday" and
-    "`habit` = ${(searchDto.sex == "male").yes { "golf" } ?: "tennis"}" and
+    "`habit` = ${(searchKPojo.sex == "male").yes { "golf" } ?: "tennis"}" and
     "`sex` is not null" and
     "`age` < 50"
 }

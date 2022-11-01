@@ -12,7 +12,7 @@ import com.kotoframework.core.annotations.Table
 
 @Table(name = "tb_shopping_cart")
 @SoftDelete(enable = true, column = "deleted")
-data class TbShoppingCartDto(
+data class TbShoppingCart(
     val id: Int? = null, // id
     val userId: Int? = null, // user_id
     val goodId: Int? = null, // good_id

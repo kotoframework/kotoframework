@@ -8,9 +8,9 @@ import com.kotoframework.function.associate.associate
 import com.kotoframework.core.condition.and
 import com.kotoframework.core.condition.eq
 import com.kotoframework.core.future.from
-import com.kotoframework.tests.beans.TbGoodCategoryDto
-import com.kotoframework.tests.beans.TbGoodDto
-import com.kotoframework.tests.beans.TbShoppingCartDto
+import com.kotoframework.tests.beans.TbGoodCategory
+import com.kotoframework.tests.beans.TbGood
+import com.kotoframework.tests.beans.TbShoppingCart
 import com.kotoframework.tests.beans.TbUser
 import com.kotoframework.utils.Common.deleted
 import org.junit.jupiter.api.Test
@@ -27,7 +27,7 @@ class AssociateTest {
     @Test
     fun testAssociate() {
         val koto =
-            from<TbUser, TbGoodCategoryDto, TbGoodDto, TbShoppingCartDto> { user, goodCategory, good, shoppingCart ->
+            from<TbUser, TbGoodCategory, TbGood, TbShoppingCart> { user, goodCategory, good, shoppingCart ->
                 associate(user, goodCategory, good, shoppingCart)
                     .on(
                         user::id.eq(shoppingCart::userId) and

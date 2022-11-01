@@ -11,18 +11,18 @@ import com.kotoframework.interfaces.KPojo
  */
 
 inline fun <reified A : KPojo> from(
-    dto: A,
+    KPojo: A,
     statement: Statement<A, SelectWhere<A>>
 ): SelectWhere<A> {
-    return statement(dto)
+    return statement(KPojo)
 }
 
 
 inline fun <reified A : KPojo> table(
-    dto: A,
+    kPojo: A,
     statement: Statement<A, Unit>
 ) {
-    statement(dto)
+    statement(kPojo)
 }
 
 inline fun <reified A : KPojo> from(

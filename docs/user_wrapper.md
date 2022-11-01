@@ -1,100 +1,100 @@
-# 📒如何创建自己的wrapper
+# 📒 How to create your own wrapper
 
-用户可以自定义wrapper和handler类来快速和自己已有的业务框架结合，而不需要引入其他的插件及所需的依赖，如您如果正在使用mybatis/hebernate/sql2o框架，那么可以利用其执行原生sql的能力，实现以下几个接口并为koto添加扩展函数，即可除200kb的koto-core外无需引入更多的依赖。
+Users can customize the wrapper and handler classes to quickly integrate with their existing business frameworks without introducing other plugins and required dependencies. For example, if you are using the mybatis/hebernate/sql2o framework, you can use it to execute native sql ability, implement the following interfaces and add extension functions to koto, you do not need to introduce more dependencies except the 200kb koto-core.
 
-## 需要做什么
+## What do I have to do
 
-实现以下接口或定义扩展函数：
+Implement the following interfaces or define extension functions:
 
-- 实现`KotoQueryWrapper()`抽象类并重载以下函数：
-
-  - ```kotlin
-    abstract fun queryForList(sql: String,  paramMap: Map<String, Any?>): List<Map<String, Any>> //查询列表
-    ```
+- Implement the `KotoQueryWrapper()` abstract class and overload the following functions:
 
   - ```kotlin
-    abstract fun <T> queryForObject(sql: String,  paramMap: Map<String, Any?>,  clazz: Class<T>): T? //查询单个对象（T为基础类型）
-    ```
+    abstract fun queryForList(sql: String, paramMap: Map<String, Any?>): List<Map<String, Any>> //Query list
+    ````
 
   - ```kotlin
-    abstract fun update(sql: String,  paramMap: Map<String, Any?>): Int //执行更新/新增/删除语句
-    ```
+    abstract fun <T> queryForObject(sql: String, paramMap: Map<String, Any?>, clazz: Class<T>): T? //Query a single object (T is the basic type)
+    ````
 
   - ```kotlin
-    abstract fun batchUpdate(sql: String,  paramMaps: Array<Map<String,  Any?>>): IntArray //批量updaet
-    ```
+    abstract fun update(sql: String, paramMap: Map<String, Any?>): Int //Execute update/add/delete statements
+    ````
 
   - ```kotlin
-    abstract val url: String get() //获取当前connection的url
-    ```
+    abstract fun batchUpdate(sql: String, paramMaps: Array<Map<String, Any?>>): IntArray //Batch update
+    ````
 
-- 实现`KotoQueryHandler()`虚拟类并重载以下函数：
+  - ```kotlin
+    abstract val url: String get() //Get the url of the current connection
+    ````
+
+- Implement the `KotoQueryHandler()` virtual class and overload the following functions:
 
   - ```kotlin
     abstract fun forList(
-        jdbc: KotoJdbcWrapper? = null, //此处请as为您自己的wrapper类型
+        jdbc: KotoJdbcWrapper? = null, //please use as your own wrapper type here
         sql: String,
         paramMap: Map<String, Any?>,
         kClass: KClass<*>
-    ): List<Any> //查询List（带类型，可能为KPojo对象，需要判断是否继承KPojo进行toKPojo处理）
-    ```
+    ): List<Any> //Query List (with type, may be KPojo object, you need to judge whether to inherit KPojo for toKPojo processing)
+    ````
 
   - ```kotlin
     abstract fun forObject(
-        jdbc: KotoJdbcWrapper? = null,//此处请as为您自己的wrapper类型
+        jdbc: KotoJdbcWrapper? = null,//Please use as your own wrapper type here
         sql: String,
         paramMap: Map<String, Any?>,
-        withoutErrorPrintln: Boolean = false,//只有在OrNull时为True，若为true，查询结果为null时返回null，否则抛出异常
+        withoutErrorPrintln: Boolean = false,//True only when OrNull, if true, return null when the query result is null, otherwise throw an exception
         kClass: KClass<*>
-    ): Any//查询对象（带类型，可能为KPojo对象，需要判断是否继承KPojo进行toKPojo处理）
-    ```
+    ): Any//Query object (with type, may be KPojo object, you need to judge whether to inherit KPojo for toKPojo processing)
+    ````
 
   - ```kotlin
     abstract fun forObjectOrNull(
-        jdbc: KotoJdbcWrapper? = null,//此处请as为您自己的wrapper类型
+        jdbc: KotoJdbcWrapper? = null,//Please use as your own wrapper type here
         sql: String,
-        paramMap: Map<String,  Any?>,
+        paramMap: Map<String, Any?>,
         kClass: KClass<*>
-    ): Any? //查询对象，调用forObject实现，返回结果可为空
-    ```
+    ): Any? //Query the object, call forObject to implement, the returned result can be empty
+    ````
 
-- 为`KotoApp`提供扩展函数`setDataSource()`和`setDynamicDataSource`
+- Provides extension functions `setDataSource()` and `setDynamicDataSource` for `KotoApp`
 
-- 最后，只要将以下函数中的handler换成您正在使用的其他框架handler类或者DataSource对象即可。
+- Finally, just replace the handlers in the following functions with other framework handler classes or DataSource objects you are using.
 
   - ```kotlin
     fun KotoOperationSet.execute(handler: OtherFrameworkHandler? = null): KotoExecuteResult
-    ```
+    ````
 
   - ```kotlin
     fun <T : KPojo, E : KPojo, ...> OtherFrameworkHandler.associate(...): Associate
-    ```
+    ````
 
   - ```kotlin
     fun CreateWhere<*>.execute(handler: OtherFrameworkHandler? = null): KotoExecuteResult
-    ```
+    ````
 
   - ```kotlin
     fun <T : KPojo> OtherFrameworkHandler.remove(KPojo: T): RemoveAction<T>
-    ```
+    ````
 
   - ```kotlin
     fun OtherFrameworkHandler.remove(tableName: String): RemoveAction<Unknown>
-    ```
+    ````
 
   - ```kotlin
     fun RemoveAction<*>.execute(handler: OtherFrameworkHandler? = null): KotoExecuteResult
-    ```
+    ````
 
   - ```kotlin
     inline fun <reified T : KPojo> OtherFrameworkHandler.select(
         kPojo: T = T::class.javaInstance(),
         vararg fields: Any
     ): SelectAction<T
-    ```
+    ````
 
   - ```kotlin
     fun OtherFrameworkHandler.statistic(tableName: String): Statistic
-    ```
+    ````
 
-##### 若您还不知道从何下手，可以参考官方spring-wrapper/jdbi-wrapper/basic-wrapper项目，或fork其中之一进行修改。
+##### If you don't know where to start, you can refer to the official spring-wrapper/jdbi-wrapper/basic-wrapper project, or fork one of them to modify.

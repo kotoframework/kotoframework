@@ -152,7 +152,7 @@ associate<TbUser, TbGoodCategory, TbGood, TbShoppingCart>()
 `from`函数简化了复杂查询时需要重复写对象名的问题，并且在选择查询的列时，可以不使用.addFields函数，使用方法如下：
 
 ```kotlin
-from<TbUser, TbGoodCategoryDto, TbGoodDto, TbShoppingCartDto> { user, goodCategory, good, shoppingCart ->只需定义一次
+from<TbUser, TbGoodCategoryKPojo, TbGoodKPojo, TbShoppingCartKPojo> { user, goodCategory, good, shoppingCart ->只需定义一次
 	associate(user, goodCategory, good, shoppingCart)
 		.on(
 			user::id.eq(shoppingCart::userId) and

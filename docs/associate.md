@@ -1,6 +1,6 @@
-# ⛓️连表查询
+# ⛓️Continuous table query
 
-在koto中，使用`associate`函数连接多表中查询数据，本章将以以下几个实体类举例如何使用连表功能：
+In koto, use the `associate` function to connect multiple tables to query data. This chapter will use the following entity classes as examples of how to use the join table function:
 
 ```kotlin
 @SoftDelete
@@ -38,140 +38,137 @@ data class TbShoppingCart(
     val goodId: Int? = null, // good_id
     val qty: Int? = null, // qty
 ) : KPojo
-```
+````
 
-> 受kotlin泛型的语法限制，目前koto最多仅支持一次连接10张表
+> Limited by the syntax of kotlin generics, currently koto only supports connecting up to 10 tables at a time
 
-Koto让连表查询变得更加简单：
+Koto makes join table query easier:
 
-## ` .asscociate()`选中多张表
+## ` .associate()` select multiple tables
 
-可以传入KPojo或只指定类型来选中多张表：
+You can select multiple tables by passing in KPojo or just specifying the type:
 
 ```kotlin
-//传入KPojo实体类
+//Pass in the KPojo entity class
 associate(
     TbUser(), TbGoodCategory(), TbGood(), TbShoppingCart()
 )
-// 或使用泛型的写法：
+// or use generic writing:
 associate<TbUser, TbGoodCategory, TbGood, TbShoppingCart>()
-```
+````
 
 
 
-## `.on()`函数连接多张表
+## `.on()` function to connect multiple tables
 
-> 注意：将被连接的表放在后面
+> Note: put the joined table behind
 
 ```kotlin
 associate<TbUser, TbGoodCategory, TbGood, TbShoppingCart>()
-  .on{user, goodCategory, good, shoppingCart -> //可以自己命名
+  .on{user, goodCategory, good, shoppingCart -> //You can name it yourself
     user::id.eq(shoppingCart::userId) and
     good::categoryId.eq(goodCategory::id) and
     good::id.eq(shoppingCart::goodId)
   }
-```
+````
 
 
 
-## `.left()|.right()|.inner()|.cross()`选择连接方向
+## `.left()|.right()|.inner()|.cross()` select the connection direction
 
-共有四种连接方式：LeftJoin、RightJoin、InnerJoin, CrossJoin
+There are four connection methods: LeftJoin, RightJoin, InnerJoin, CrossJoin
 
-Koto默认使用左连接，通过调用`.right()|.inner()|.cross()`切换连接方式
+Koto uses left connection by default, switch the connection method by calling `.right()|.inner()|.cross()`
 
 
 
-## `.select()|.addFields`选择查询
+## `.select()|.addFields` select query
 
-若不掉用select函数，则默认选择所有表的全部字段
+If the select function is not used, all fields of all tables are selected by default
 
-koto会自动给字段起别名，并且会在冲突的列后+“@”来避免重复。
+koto automatically aliases fields and adds "@" after conflicting columns to avoid duplication.
 
 ```kotlin
 associate<TbUser, TbGoodCategory, TbGood, TbShoppingCart>()
-  .on{user, goodCategory, good, shoppingCart -> //可以自己命名
+  .on{user, goodCategory, good, shoppingCart -> //You can name it yourself
     user::id.eq(shoppingCart::userId) and
     good::categoryId.eq(goodCategory::id) and
     good::id.eq(shoppingCart::goodId)
   }
-  .select{user, goodCategory, good, shoppingCart -> //可以自己命名
-  	addFields(
-      user,//选择表的全部字段
+  .select{user, goodCategory, good, shoppingCart -> //You can name it yourself
+  addFields(
+      user,//select all fields of the table
       user::userName,
       good::name,
-      good::updateTime,//字段名为user.update_time，别名为updateTime
-      goodCategory::name,//字段名为good_category.update_time，别名为name@
-      goodCategory::updateTime,//字段名为good_category.update_time，别名为updateTime@
+      good::updateTime,//The field name is user.update_time, and the alias is updateTime
+      goodCategory::name,//The field name is good_category.update_time, and the alias is name@
+      goodCategory::updateTime,//The field name is good_category.update_time, and the alias is updateTime@
       shoppingCart::qty,
-      shoppingCart::updateTime to "ut"//通过传入Pair手动起别名
+      shoppingCart::updateTime to "ut"//Manually alias by passing in Pair
     )
   }
-```
+````
 
 
 
-## `.where()`设置查询条件，完成查询
+## `.where()` Set query conditions and complete the query
 
-```
-**请注意条件应加在where中还是在on中，放在不同的地方可能会影响查询结果。**
-```
+````
+**Please note that the condition should be added in where or on, and placing it in different places may affect the query results. **
+````
 
 ```kotlin
 associate<TbUser, TbGoodCategory, TbGood, TbShoppingCart>()
-  .on{user, goodCategory, good, shoppingCart -> //可以自己命名
+  .on{user, goodCategory, good, shoppingCart -> //You can name it yourself
     user::id.eq(shoppingCart::userId) and
     good::categoryId.eq(goodCategory::id) and
     good::id.eq(shoppingCart::goodId)
   }
-  .select{user, goodCategory, good, shoppingCart -> //可以自己命名
-  	addFields(
-      user,//选择表的全部字段
+  .select{user, goodCategory, good, shoppingCart -> //You can name it yourself
+  addFields(
+      user,//select all fields of the table
       user::userName,
       good::name,
-      good::updateTime,//字段名为user.update_time，别名为updateTime
-      goodCategory::name,//字段名为good_category.update_time，别名为name@
-      goodCategory::updateTime,//字段名为good_category.update_time，别名为updateTime@
+      good::updateTime,//The field name is user.update_time, and the alias is updateTime
+      goodCategory::name,//The field name is good_category.update_time, and the alias is name@
+      goodCategory::updateTime,//The field name is good_category.update_time, and the alias is updateTime@
       shoppingCart::qty,
-      shoppingCart::updateTime to "ut"//通过传入Pair手动起别名
+      shoppingCart::updateTime to "ut"//Manually alias by passing in Pair
     )
   }
-  .where { user, _, _, _ -> //不需要的对象可以写作_
+  .where { user, _, _, _ -> // unwanted objects can be written _
     user::userName.eq("koto")
   }
   .orderBy(TbUser::age.desc())
   .groupBy(TbUser::age)
   .page(1, 10)
-	.query()
-```
+.query()
+````
 
 
 
-##  future特性：from函数
+## future features: from function
 
-`from`函数简化了复杂查询时需要重复写对象名的问题，并且在选择查询的列时，可以不使用.addFields函数，使用方法如下：
+The `from` function simplifies the problem of repeatedly writing object names in complex queries, and the .addFields function can be omitted when selecting the columns of the query. The usage is as follows:
 
 ```kotlin
-from<TbUser, TbGoodCategoryDto, TbGoodDto, TbShoppingCartDto> { user, goodCategory, good, shoppingCart ->只需定义一次
-	associate(user, goodCategory, good, shoppingCart)
-		.on(
-			user::id.eq(shoppingCart::userId) and
-			good::categoryId.eq(goodCategory::id) and
-			good::id.eq(shoppingCart::goodId)
-		)
-		.select( //直接选择列，无需addFields()
-			user,
-			good::name,
-			goodCategory::name,
-			shoppingCart::qty
-		)
-		.where(user::userName.eq("ousc"))
-		.orderBy(user::age.desc())
-		.groupBy(user::age)
-		.page(1, 10)
-	}
+from<TbUser, TbGoodCategoryKPojo, TbGoodKPojo, TbShoppingCartKPojo> { user, goodCategory, good, shoppingCart -> only need to be defined once
+associate(user, goodCategory, good, shoppingCart)
+.on(
+user::id.eq(shoppingCart::userId) and
+good::categoryId.eq(goodCategory::id) and
+good::id.eq(shoppingCart::goodId)
+)
+.select( //Select columns directly without addFields()
+user,
+good::name,
+goodCategory::name,
+shoppingCart::qty
+)
+.where(user::userName.eq("ousc"))
+.orderBy(user::age.desc())
+.groupBy(user::age)
+.page(1, 10)
+}
 .build()
-```
-
-
-
+````

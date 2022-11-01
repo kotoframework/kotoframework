@@ -91,7 +91,7 @@ fun getUserUseWhere(user: User): List<User> {
 Use Koto to quickly create a piece of data from the passed in object:
 
 ```kotlin
-fun createUserInfo(user: UserInfoDto): KotoExecuteResult {
+fun createUserInfo(user: UserInfo): KotoExecuteResult {
     return create(user).execute()
 // With create(user).on(*Fields), 
 // you can specify to update the record instead of creating it when certain fields are the same
@@ -101,7 +101,7 @@ fun createUserInfo(user: UserInfoDto): KotoExecuteResult {
 Delete some data with Koto:
 
 ```kotlin
-fun deleteUserInfo(user: UserInfoDto): KotoExecuteResult {
+fun deleteUserInfo(user: UserInfo): KotoExecuteResult {
     return remove(user).execute()
 }
 ```

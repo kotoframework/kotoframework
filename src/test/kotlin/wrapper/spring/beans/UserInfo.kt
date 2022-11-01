@@ -8,7 +8,7 @@ import com.kotoframework.core.annotations.Table
  * Created by ousc on 2022/4/18 17:54
  */
 @Table("user_info")
-data class UserInfoDto(
+data class UserInfo(
     val id: Int? = null,
     val userName: String? = null,
     val telephone: String? = null,

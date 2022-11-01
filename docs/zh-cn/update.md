@@ -114,7 +114,7 @@ fun batchUpdate(movies: List<Movie>) {
 koto 支持您提供动态源，具体使用您使用的包装如果由扩展的数据功能，例如使用 koto-wrapper：
 
 ```kotlin
-val namedJdbc = NamedParameterJdbcTemplate(dataSource)
-update(movie).byId(1).execute(namedJdbc)
+val db = NamedParameterJdbcTemplate(dataSource).wrapper()
+db.update(movie).byId(1).execute()
 ```
 

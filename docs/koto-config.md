@@ -1,180 +1,179 @@
-# ⚙️1分钟完成Koto配置
+# ⚙️Complete Koto configuration in 1 minute
 
-# 📌全局配置
+# 📌Global configuration
 
-## 全局数据源配置
+## global data source configuration
 
-##### 单数据源配置：
+##### Single data source configuration:
 
 ```kotlin
 KotoApp.setDataSource(url, username, password, driverClassName)
-```
+````
 
-或
+or
 
 ```kotlin
 KotoApp.init(BasicDataSource)
-```
+````
 
-##### 动态/多数据源配置：
+##### Dynamic/multi-source configuration:
 
-动态数据源配置由引入的<code>koto-wrapper</code>决定，如使用<code>koto-spring-wrapper</code>，则配置如下
+The dynamic data source configuration is determined by the imported <code>koto-wrapper</code>. If <code>koto-spring-wrapper</code> is used, the configuration is as follows
 
 ```kotlin
 KotoApp.setDynamicDataSource { namedJdbc }
-// 在项目中手动配置获取数据源的方法，如：
+// Manually configure the method to get the data source in the project, such as:
 // val namedJdbc: NamedParameterJdbcTemplate get() = {
-//  ...
+// ...
 // }
-```
+````
 
-使用<code>koto-basic-wrapper</code>及其他wrapper方法类似，进改变传入的对象类型
+Use <code>koto-basic-wrapper</code> and other wrapper methods similar to change the incoming object type
 
 ```kotlin
 KotoApp.setDynamicDataSource { ds/jdbi/... }
-// 在项目中手动配置获取数据源的方法，如：
+// Manually configure the method to get the data source in the project, such as:
 // val ds: DataSource/Jdbi/... get() = {
-//  ...
+// ...
 // }
-```
+````
 
-## 全局日志生成配置
+## Global log generation configuration
 
-Koto会自动生成操作数据源、操作类型、操作表名、执行语句、执行数据的日志。
+Koto will automatically generate logs of operation data source, operation type, operation table name, execution statement, and execution data.
 
-日志默认打印在控制台，你可以调用configLog(str)修改生成路径，
-console代表打印到控制台，多个地址用「,」分开。
+The log is printed on the console by default, you can call configLog(str) to modify the generation path,
+console represents printing to the console, and multiple addresses are separated by ",".
 
-如果你不想生成日志，可以调用configLog("")设置为空。
+If you don't want to generate a log, you can call configLog("") to set it to empty.
 
 ```kotlin
 KotoApp.setLogPath("console,C:/logs,/Users/user/logs")
-```
+````
 
-## 全局软删除功能配置
+## Global soft delete function configuration
 
-*软删除*又叫逻辑删除,标记删除，在koto中默认关闭，通过以下设置开启和重命名标记列名：
+*Soft delete*, also known as logical delete, mark delete, is turned off by default in koto, and the mark column name is enabled and renamed by the following settings:
 
 ```kotlin
-KotoApp.setSoftDelete(true, "deleted") 
-```
+KotoApp.setSoftDelete(true, "deleted")
+````
 
-## 全局实体类后缀
+## Global entity class suffix
 
-实体类后缀，koto在没有注解配置的情况下默认使用KPojo的类名转下划线后的名称作为表名，若配置了全局KPojo后缀，取表名时则会去掉该后缀
+Entity class suffix, koto uses KPojo's class name after underscore as the table name by default if there is no annotation configuration. If the global KPojo suffix is ​​configured, the suffix will be removed when taking the table name.
 
 ```kotlin
 KotoApp.setKPojoSuffix("Entity/Pojo/Dto/...")
-```
+````
 
 
 
-## 全局驼峰转下划线设置
+## Global camel case to underline settings
 
-在koto中KPojo属性映射到数据表的列名时，默认会进行驼峰转下划线处理，若您少数表中不需要此功能，可以通过在condition中[设置hump2line为false](/#/where?id=condition-类型)关闭此功能，若需要全局关闭，可以进行以下设置：
+When the KPojo attribute in koto is mapped to the column name of the data table, the hump to underline processing will be performed by default. If you do not need this function in a few tables, you can [set hump2line to false](/#/where?id in the condition =condition-type) to turn off this function, if you need to turn it off globally, you can set the following:
 
 ```kotlin
 KotoApp.setHump2line(false)
-```
+````
 
 
 
-**上述配置可以链式调用，如：**
+**The above configuration can be chained, such as:**
 
 ```kotlin
 KotoApp
-	.setDynamicDataSource(Datasource)
-	.setLogPath(pathToLog)
-	.setSoftDelete() //默认为true, "deleted"
-	.setKPojoSuffix("Entity/Pojo/Dto/...")
-```
+.setDynamicDataSource(Datasource)
+.setLogPath(pathToLog)
+.setSoftDelete() //default is true, "deleted"
+.setKPojoSuffix("Entity/Pojo/KPojo/...")
+````
 
 
 
-# 📌注解配置
+# 📌 Annotation configuration
 
 
 
-Koto为较为复杂的业务提供了少量的简单注解配置，用于满足部分全局配置无法解决的问题。
+Koto provides a small number of simple annotation configurations for more complex services to meet some problems that cannot be solved by global configuration.
 
 
 
-## Data Class注解：
+## Data Class annotation:
 
-### 1.`Table`注解
+### 1. `Table` annotation
 
-当KPojo没有<code>Table</code>注解时，Koto会将KClass类名进行驼峰转下划线处理后的结果作为表名。
+When KPojo does not have the <code>Table</code> annotation, Koto will use the camel case to underline KClass class name as the table name.
 
-通过<code>Table</code>注解可以为任意名称的实体类指定绑定的表名。
+Through the <code>Table</code> annotation, you can specify the bound table name for any entity class with any name.
 
 ```kotlin
 @Table(name = "user")
 data class Alphabet(var id: Int? = null, var name: String? = null): KPojo
-```
+````
 
 
 
-### 2.`SoftDelete`注解
+### 2. `SoftDelete` annotation
 
-当KPojo没有<code>SoftDelete</code>注解时，此对象的逻辑删除设置将遵循全局设置。
+When KPojo does not have the <code>SoftDelete</code> annotation, the tombstone settings for this object will follow the global settings.
 
-通过<code>SoftDelete</code>注解为可以为某个KPojo配置单独的逻辑删除开启状态或逻辑删除列名
+Annotated by <code>SoftDelete</code> to configure a single tombstone open state or tombstone column name for a KPojo
 
 ```kotlin
-@SoftDelete(enable = true,  column = "column_for_deleted")
+@SoftDelete(enable = true, column = "column_for_deleted")
 data class User(var id: Int? = null, var name: String? = null): KPojo
-```
+````
 
 
 
-## KProperty注解：
+## KProperty annotations:
 
-### 3.`Column`注解
+### 3. `Column` annotation
 
-当KPojo的属性名没有<code>Column</code>注解配置时，Koto会将Kproperty名称进行驼峰转下划线处理后的结果作为列名。
+When the property name of KPojo does not have the <code>Column</code> annotation configuration, Koto will convert the Kproperty name with camel case to underscore as the column name.
 
-通过<code>Column</code>注解可以为任意名称的KPojo属性指定绑定的列名。
+The <code>Column</code> annotation can specify the bound column name for the KPojo property of any name.
 
 ```kotlin
 data class User(
-  var id: Int? = null, 
+  var id: Int? = null,
   @Column(name = "username") var name: String? = null
 ): KPojo
-```
+````
 
 
 
-### 4.`Default`注解
+### 4. `Default` annotation
 
-设置create对象时一列的默认值
+Set the default value of a column when creating an object
 
 ```kotlin
 data class User(
-  var id: Int? = null, 
+  var id: Int? = null,
   var name: String? = null,
   @Default(value = "No introduce.") var introduce: String? = null
 ): KPojo
-```
+````
 
 
 
-### 5.`DateTimeFormat`注解
+### 5. `DateTimeFormat` annotation
 
-koto为Date字段和DateTime字段查询时默认提供了格式化，若不使用<code>DateTimeFormat</code>注解，默认的格式化为：
+Koto provides formatting for Date field and DateTime field query by default. If you do not use the <code>DateTimeFormat</code> annotation, the default formatting is:
 
 > date: %Y-%m-%d
 >
 > datetime: %Y-%m-%d %H:%i:%s
 
-通过<code>DateTimeFormat</code>注解，可以进行个性化的日期格式化设置。
+Through the <code>DateTimeFormat</code> annotation, personalized date formatting can be set.
 
 
 
 ```kotlin
 data class User(
-  var id: Int? = null, 
+  var id: Int? = null,
   var name: String? = null,
   @DateTimeFormat(pattern = "%Y/%m/%d")var regDate: String? = null
 ): KPojo
-```
-
+````

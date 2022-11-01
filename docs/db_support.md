@@ -1,1 +1,1 @@
-支持数据库
+Supported databases

@@ -8,20 +8,20 @@ koto 已经发布到 maven 中央仓库，因此，如果你使用 maven 的话�
 <dependency>
     <groupId>com.kotoframework</groupId>
     <artifactId>koto-core</artifactId>
-    <version>${koto.version}</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 
 ##### gradle(Groovy)：
 
 ```groovy
-compile "com.kotoframework:koto-core:${koto.version}"
+compile "com.kotoframework:koto-core:1.0.1"
 ```
 
 ##### gradle(Kts):
 
 ```kotlin
-complie("com.kotoframework:koto-core:${koto.version}")
+complie("com.kotoframework:koto-core:1.0.1")
 ```
 
 
@@ -40,20 +40,20 @@ koto-core大小为200KB，其中仅包含DSL和ORM的全部功能，此外需要
 <dependency>
     <groupId>com.kotoframework</groupId>
     <artifactId>koto-spring-wrapper</artifactId>
-    <version>${koto.version}</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 
 ##### gradle(Groovy)：
 
 ```groovy
-compile "com.kotoframework:koto-spring-wrapper:${koto.version}"
+compile "com.kotoframework:koto-spring-wrapper:1.0.1"
 ```
 
 ##### gradle(Kts):
 
 ```kotlin
-complie("com.kotoframework:koto-spring-wrapper:${koto.version}")
+complie("com.kotoframework:koto-spring-wrapper:1.0.1")
 ```
 
 
@@ -68,19 +68,19 @@ complie("com.kotoframework:koto-spring-wrapper:${koto.version}")
 <dependency>
     <groupId>com.kotoframework</groupId>
     <artifactId>koto-basic-wrapper</artifactId>
-    <version>${koto.version}</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 
 ##### gradle(Groovy)：
 
 ```groovy
-compile "com.kotoframework:koto-basic-wrapper:${koto.version}"
+compile "com.kotoframework:koto-basic-wrapper:1.0.1"
 ```
 
 ##### gradle(Kts):
 
 ```kotlin
-complie("com.kotoframework:koto-basic-wrapper:${koto.version}")
+complie("com.kotoframework:koto-basic-wrapper:1.0.1")
 ```
 
