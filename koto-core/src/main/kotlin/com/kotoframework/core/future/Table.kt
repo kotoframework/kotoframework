@@ -11,7 +11,7 @@ import com.kotoframework.interfaces.KPojo
  */
 
 inline fun <reified A : KPojo> from(
-    KPojo: A,
+    KPojo: A = A::class.javaInstance(),
     statement: Statement<A, SelectWhere<A>>
 ): SelectWhere<A> {
     return statement(KPojo)
@@ -19,7 +19,7 @@ inline fun <reified A : KPojo> from(
 
 
 inline fun <reified A : KPojo> table(
-    kPojo: A,
+    kPojo: A = A::class.javaInstance(),
     statement: Statement<A, Unit>
 ) {
     statement(kPojo)
