@@ -11,32 +11,32 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
  * Created by ousc on 2022/9/20 10:28
  */
 object Patch {
-    fun NamedParameterJdbcTemplate.queryByKoto(
+    fun SpringDataWrapper.query(
         sql: String,
         paramMap: Map<String, Any?>
     ): List<Map<String, Any>> {
-        return Jdbc.query(this.wrapper(), sql, paramMap)
+        return Jdbc.query(this, sql, paramMap)
     }
 
     @Suppress("UNCHECKED_CAST")
-    inline fun <reified T> NamedParameterJdbcTemplate.queryForListByKoto(
+    inline fun <reified T> SpringDataWrapper.queryForList(
         sql: String,
         paramMap: Map<String, Any?>
     ): List<T> {
-        return defaultJdbcHandler!!.forList(this.wrapper(), sql, paramMap, T::class) as List<T>
+        return defaultJdbcHandler!!.forList(this, sql, paramMap, T::class) as List<T>
     }
 
-    inline fun <reified T> NamedParameterJdbcTemplate.queryForObjectByKoto(
+    inline fun <reified T> SpringDataWrapper.queryForObject(
         sql: String,
         paramMap: Map<String, Any?>
     ): T {
-        return defaultJdbcHandler!!.forObject(this.wrapper(), sql, paramMap, false, T::class) as T
+        return defaultJdbcHandler!!.forObject(this, sql, paramMap, false, T::class) as T
     }
 
-    inline fun <reified T> NamedParameterJdbcTemplate.queryForObjectOrNull(
+    inline fun <reified T> SpringDataWrapper.queryForObjectOrNull(
         sql: String,
         paramMap: Map<String, Any?>
     ): T? {
-        return defaultJdbcHandler!!.forObjectOrNull(this.wrapper(), sql, paramMap, T::class) as T?
+        return defaultJdbcHandler!!.forObjectOrNull(this, sql, paramMap, T::class) as T?
     }
 }

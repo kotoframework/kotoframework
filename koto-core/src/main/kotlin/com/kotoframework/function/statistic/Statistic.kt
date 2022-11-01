@@ -92,7 +92,7 @@ class Statistic(private val tableName: String, private val kotoJdbcWrapper: Koto
     fun queryForObject(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): Int {
         val wrapper = getJdbcWrapper(jdbcWrapper)
         Log.log(wrapper, sql, listOf(mapOf("type" to this.total)), "statistic")
-        return wrapper.queryForObject(sql, mapOf(), Int::class.java)!!
+        return wrapper.forObject(sql, mapOf(), Int::class.java)!!
     }
 
     data class StatisticResult(
@@ -109,7 +109,7 @@ class Statistic(private val tableName: String, private val kotoJdbcWrapper: Koto
     fun queryForList(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): StatisticResult {
         val wrapper = getJdbcWrapper(jdbcWrapper)
         Log.log(wrapper, sql, listOf(), "statistic")
-        val list = wrapper.queryForList(sql, mapOf())
+        val list = wrapper.forList(sql, mapOf())
         val countList = list.map { (it["num"] as Long).toInt() }.toList()
         val dateList = list.map { it["date"] as String }.toList()
         return StatisticResult(countList = countList, dateList = dateList)

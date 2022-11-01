@@ -75,7 +75,7 @@ object Jdbc {
         if (tableMap[key] != null) {
             return tableMap[key]!!
         }
-        val list = wrapper.queryForList("show full fields from ${meta.tableName}", mapOf())
+        val list = wrapper.forList("show full fields from ${meta.tableName}", mapOf())
         val columns = list.map {
             TableColumn(
                 it["Field"] as String,
@@ -198,7 +198,7 @@ object Jdbc {
         sql: String,
         paramMap: Map<String, Any?>,
     ): List<Map<String, Any>> {
-        return jdbcWrapper.queryForList(sql, paramMap)
+        return jdbcWrapper.forList(sql, paramMap)
     }
 
     fun query(
@@ -237,7 +237,7 @@ object Jdbc {
 
         if (sql.contains("insert")) {
             lastInsertId =
-                wrapper.queryForObject("select last_insert_id()", emptyMap<String, String>(), Int::class.java)!!
+                wrapper.forObject("select last_insert_id()", emptyMap<String, String>(), Int::class.java)!!
             if (lastInsertId == 0) {
                 lastInsertId = null
             }

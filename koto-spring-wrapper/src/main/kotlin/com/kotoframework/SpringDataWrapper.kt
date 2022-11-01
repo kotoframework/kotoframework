@@ -22,11 +22,11 @@ class SpringDataWrapper : KotoJdbcWrapper() {
         get() = (namedJdbc ?: dynamic?.invoke())?.jdbcTemplate?.dataSource as BasicDataSource?
             ?: throw RuntimeException("dataSource is null")
 
-    override fun queryForList(sql: String, paramMap: Map<String, Any?>): List<Map<String, Any>> {
+    override fun forList(sql: String, paramMap: Map<String, Any?>): List<Map<String, Any>> {
         return getNamedJdbc().queryForList(sql, paramMap) ?: emptyList()
     }
 
-    override fun <T> queryForObject(sql: String, paramMap: Map<String, Any?>, clazz: Class<T>): T? {
+    override fun <T> forObject(sql: String, paramMap: Map<String, Any?>, clazz: Class<T>): T? {
         return getNamedJdbc().queryForObject(sql, paramMap, clazz)
     }
 

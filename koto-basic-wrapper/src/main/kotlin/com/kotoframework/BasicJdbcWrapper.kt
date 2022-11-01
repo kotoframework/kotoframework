@@ -22,7 +22,7 @@ class BasicJdbcWrapper : KotoJdbcWrapper() {
     override val url: String
         get() = dataSource.url
 
-    override fun queryForList(sql: String, paramMap: Map<String, Any?>): List<Map<String, Any>> {
+    override fun forList(sql: String, paramMap: Map<String, Any?>): List<Map<String, Any>> {
         val (newSql, newParamList) = convertSql(sql, paramMap)
         val conn = getDataSource().connection
         val ps = conn.prepareStatement(newSql)
@@ -46,7 +46,7 @@ class BasicJdbcWrapper : KotoJdbcWrapper() {
         return list
     }
 
-    override fun <T> queryForObject(sql: String, paramMap: Map<String, Any?>, clazz: Class<T>): T? {
+    override fun <T> forObject(sql: String, paramMap: Map<String, Any?>, clazz: Class<T>): T? {
         val (newSql, newParamList) = convertSql(sql, paramMap)
         val conn = getDataSource().connection
         val ps = conn.prepareStatement(newSql)
