@@ -1,6 +1,5 @@
 package com.kotoframework
 
-import com.kotoframework.BasicJdbcWrapper.Companion.convertSql
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.interfaces.KotoQueryHandler
@@ -81,10 +80,10 @@ class BasicJdbcHandler : KotoQueryHandler() {
     }
 
     private fun DataSource.query(sql: String, paramMap: Map<String, Any?>, clazz: Class<*>): List<Any> {
-        val (newSql, newParamList) = convertSql(sql, paramMap)
+        val (jdbcSql, jdbcParamList) = NamedParameterUtils.parseSqlStatement(sql, paramMap)
         val conn = this.connection
-        val ps = conn.prepareStatement(newSql)
-        newParamList.forEachIndexed { index, any ->
+        val ps = conn.prepareStatement(jdbcSql)
+        jdbcParamList.forEachIndexed { index, any ->
             ps.setObject(index + 1, any)
         }
         val rs = ps.executeQuery()

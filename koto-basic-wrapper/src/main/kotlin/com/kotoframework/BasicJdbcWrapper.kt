@@ -1,5 +1,6 @@
 package com.kotoframework
 
+import com.kotoframework.NamedParameterUtils.parseSqlStatement
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.utils.Extension.toKPojo
 import org.apache.commons.dbcp2.BasicDataSource
@@ -23,10 +24,10 @@ class BasicJdbcWrapper : KotoJdbcWrapper() {
         get() = dataSource.url
 
     override fun forList(sql: String, paramMap: Map<String, Any?>): List<Map<String, Any>> {
-        val (newSql, newParamList) = convertSql(sql, paramMap)
+        val (jdbcSql, jdbcParamList) = parseSqlStatement(sql, paramMap)
         val conn = getDataSource().connection
-        val ps = conn.prepareStatement(newSql)
-        newParamList.forEachIndexed { index, any ->
+        val ps = conn.prepareStatement(jdbcSql)
+        jdbcParamList.forEachIndexed { index, any ->
             ps.setObject(index + 1, any)
         }
         val rs = ps.executeQuery()
@@ -36,7 +37,9 @@ class BasicJdbcWrapper : KotoJdbcWrapper() {
         while (rs.next()) {
             val map = mutableMapOf<String, Any>()
             for (i in 1..columnCount) {
-                map[metaData.getColumnName(i)] = rs.getObject(i)
+                if (rs.getObject(i) != null) {
+                    map[metaData.getColumnName(i)] = rs.getObject(i)
+                }
             }
             list.add(map)
         }
@@ -46,11 +49,11 @@ class BasicJdbcWrapper : KotoJdbcWrapper() {
         return list
     }
 
-    override fun <T> forObject(sql: String, paramMap: Map<String, Any?>, clazz: Class<T>): T? {
-        val (newSql, newParamList) = convertSql(sql, paramMap)
+    override fun forMap(sql: String, paramMap: Map<String, Any?>): Map<String, Any>? {
+        val (jdbcSql, jdbcParamList) = parseSqlStatement(sql, paramMap)
         val conn = getDataSource().connection
-        val ps = conn.prepareStatement(newSql)
-        newParamList.forEachIndexed { index, any ->
+        val ps = conn.prepareStatement(jdbcSql)
+        jdbcParamList.forEachIndexed { index, any ->
             ps.setObject(index + 1, any)
         }
         val rs = ps.executeQuery()
@@ -67,14 +70,19 @@ class BasicJdbcWrapper : KotoJdbcWrapper() {
         rs.close()
         ps.close()
         conn.close()
-        return if (list.isEmpty()) null else list.first().toKPojo<T>(clazz)
+        return list.firstOrNull()
+    }
+
+    override fun <T> forObject(sql: String, paramMap: Map<String, Any?>, clazz: Class<T>): T? {
+        val map = forMap(sql, paramMap)
+        return map?.toKPojo<T>(clazz)
     }
 
     override fun update(sql: String, paramMap: Map<String, Any?>): Int {
-        val (newSql, newParamList) = convertSql(sql, paramMap)
+        val (jdbcSql, jdbcParamList) = parseSqlStatement(sql, paramMap)
         val conn = getDataSource().connection
-        val ps = conn.prepareStatement(newSql)
-        newParamList.forEachIndexed { index, any ->
+        val ps = conn.prepareStatement(jdbcSql)
+        jdbcParamList.forEachIndexed { index, any ->
             ps.setObject(index + 1, any)
         }
         val result = ps.executeUpdate()
@@ -114,34 +122,13 @@ class BasicJdbcWrapper : KotoJdbcWrapper() {
             return wrapper
         }
 
-        internal fun convertSql(sql: String, paramMap: Map<String, Any?>): Pair<String, List<Any?>> {
-            val newSql = StringBuilder()
-            val newParamList = mutableListOf<Any?>()
-            var index = 0
-            while (index < sql.length) {
-                val c = sql[index]
-                if (c == ':') {
-                    val start = index + 1
-                    val end = sql.indexOf(' ', start)
-                    val key = sql.substring(start, end)
-                    newSql.append('?')
-                    newParamList.add(paramMap[key])
-                    index = end
-                } else {
-                    newSql.append(c)
-                    index++
-                }
-            }
-            return Pair(newSql.toString(), newParamList)
-        }
-
         private fun convertSql(sql: String, paramMaps: Array<Map<String, Any?>>): Pair<String, List<List<Any?>>> {
-            val newSql = convertSql(sql, paramMaps.first())
+            val (jdbcSql) = parseSqlStatement(sql, paramMaps.first())
             val newParamList = mutableListOf<List<Any?>>()
             paramMaps.forEach {
-                newParamList.add(convertSql(sql, it).second)
+                newParamList.add(parseSqlStatement(sql, it).jdbcParamList)
             }
-            return Pair(newSql.first, newParamList)
+            return Pair(jdbcSql, newParamList)
         }
     }
 }

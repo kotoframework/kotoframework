@@ -8,7 +8,7 @@ import javax.sql.DataSource
 /**
  * Created by ousc on 2022/9/20 09:44
  */
-object KotoPureJdbcApp {
+object KotoBasicJdbcApp {
     fun KotoApp.setDynamicDataSource(ds: () -> DataSource): KotoApp {
         val pureJdbcWrapper = BasicJdbcWrapper()
         pureJdbcWrapper.dynamic = ds

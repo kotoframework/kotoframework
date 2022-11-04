@@ -26,6 +26,12 @@ class JdbiWrapper : KotoJdbcWrapper() {
         }
     }
 
+    override fun forMap(sql: String, paramMap: Map<String, Any?>): Map<String, Any>? {
+        return getJdbi().withHandle<Map<String, Any>?, RuntimeException> {
+            it.createQuery(sql).bindMap(paramMap).mapToMap().firstOrNull()
+        }
+    }
+
     override fun <T> forObject(sql: String, paramMap: Map<String, Any?>, clazz: Class<T>): T? {
         return getJdbi().withHandle<T?, RuntimeException> {
             it.createQuery(sql).bindMap(paramMap).mapTo(clazz).findOne().orElse(null)

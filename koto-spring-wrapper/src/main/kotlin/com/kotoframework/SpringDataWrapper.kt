@@ -26,6 +26,10 @@ class SpringDataWrapper : KotoJdbcWrapper() {
         return getNamedJdbc().queryForList(sql, paramMap) ?: emptyList()
     }
 
+    override fun forMap(sql: String, paramMap: Map<String, Any?>): Map<String, Any>? {
+        return getNamedJdbc().queryForMap(sql, paramMap)
+    }
+
     override fun <T> forObject(sql: String, paramMap: Map<String, Any?>, clazz: Class<T>): T? {
         return getNamedJdbc().queryForObject(sql, paramMap, clazz)
     }
