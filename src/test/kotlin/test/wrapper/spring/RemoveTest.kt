@@ -1,11 +1,11 @@
-package com.kotoframework.tests
+package test.wrapper.spring
 
-import com.kotoframework.DataSource.namedJdbc
+import test.wrapper.DataSource.namedJdbc
 import com.kotoframework.KotoApp
 import com.kotoframework.KotoSpringApp.setDynamicDataSource
 import com.kotoframework.function.remove.remove
 import com.kotoframework.core.condition.eq
-import com.kotoframework.tests.beans.TbUser
+import test.wrapper.beans.TbUser
 import com.kotoframework.utils.Common.deleted
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals

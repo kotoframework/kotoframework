@@ -1,10 +1,10 @@
-package com.kotoframework.tests
+package test.wrapper.spring
 
-import com.kotoframework.DataSource.namedJdbc
+import test.wrapper.DataSource.namedJdbc
 import com.kotoframework.KotoApp
 import com.kotoframework.KotoSpringApp.setDynamicDataSource
 import com.kotoframework.function.create.Patch.execute
-import com.kotoframework.tests.beans.TbUser
+import test.wrapper.beans.TbUser
 import com.kotoframework.function.create.create
 import com.kotoframework.interfaces.Patch.execute
 import com.kotoframework.core.annotations.NeedTableIndexes

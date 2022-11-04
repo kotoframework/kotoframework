@@ -30,7 +30,6 @@ class BasicJdbcHandler : KotoQueryHandler() {
             Jdbc.queryKotoJdbcData(wrapper, sql, paramMap).map { it.toKPojo(kClass) }
         } else {
             ds.query(sql, paramMap, kClass.java)
-
         }
     }
 

@@ -1,6 +1,7 @@
 package com.kotoframework
 
 import com.kotoframework.NamedParameterUtils.parseSqlStatement
+import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.utils.Extension.toKPojo
 import org.apache.commons.dbcp2.BasicDataSource
@@ -73,9 +74,30 @@ class BasicJdbcWrapper : KotoJdbcWrapper() {
         return list.firstOrNull()
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun <T> forObject(sql: String, paramMap: Map<String, Any?>, clazz: Class<T>): T? {
         val map = forMap(sql, paramMap)
-        return map?.toKPojo<T>(clazz)
+        return if (String::class.java == clazz) {
+            map?.values?.firstOrNull()?.toString() as T
+        } else if (KPojo::class.java.isAssignableFrom(clazz)) {
+            map?.toKPojo<T>(clazz)
+        } else if (clazz.name == "java.lang.Integer") {
+            map?.values?.firstOrNull()?.toString()?.toInt() as T
+        } else if (clazz.name == "java.lang.Long") {
+            map?.values?.firstOrNull()?.toString()?.toLong() as T
+        } else if (clazz.name == "java.lang.Double") {
+            map?.values?.firstOrNull()?.toString()?.toDouble() as T
+        } else if (clazz.name == "java.lang.Float") {
+            map?.values?.firstOrNull()?.toString()?.toFloat() as T
+        } else if (clazz.name == "java.lang.Boolean") {
+            map?.values?.firstOrNull()?.toString()?.toBoolean() as T
+        } else {
+            try {
+                map?.values?.firstOrNull()?.toString()?.let { clazz.cast(it) }
+            } catch (e: Exception) {
+                throw RuntimeException("Unsupported type: ${clazz.name}")
+            }
+        }
     }
 
     override fun update(sql: String, paramMap: Map<String, Any?>): Int {

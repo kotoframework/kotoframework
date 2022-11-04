@@ -1,4 +1,4 @@
-package com.kotoframework
+package test.wrapper
 
 import org.apache.commons.dbcp2.BasicDataSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate

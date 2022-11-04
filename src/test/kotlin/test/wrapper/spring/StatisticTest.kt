@@ -1,4 +1,4 @@
-package com.kotoframework.tests
+package test.wrapper.spring
 
 import com.kotoframework.function.statistic.Statistic.Companion.statistic
 import com.kotoframework.interfaces.KPojo

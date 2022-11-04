@@ -1,11 +1,11 @@
-package com.kotoframework.tests
+package test.wrapper.spring
 
-import com.kotoframework.DataSource
 import com.kotoframework.KotoApp
 import com.kotoframework.KotoSpringApp.setDynamicDataSource
 import com.kotoframework.function.optionList.optionList
 import com.kotoframework.utils.Common.deleted
 import org.junit.jupiter.api.Test
+import test.wrapper.DataSource
 import kotlin.test.assertEquals
 
 /**

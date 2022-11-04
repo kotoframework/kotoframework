@@ -1,6 +1,6 @@
-package com.kotoframework.tests
+package test.wrapper.spring
 
-import com.kotoframework.DataSource.namedJdbc
+import test.wrapper.DataSource.namedJdbc
 import com.kotoframework.KotoApp
 import com.kotoframework.KotoSpringApp.setDynamicDataSource
 import com.kotoframework.definition.asc
@@ -9,7 +9,7 @@ import com.kotoframework.function.select.select
 import com.kotoframework.core.condition.*
 import com.kotoframework.core.future.from
 import com.kotoframework.core.future.table
-import com.kotoframework.tests.beans.TbUser
+import test.wrapper.beans.TbUser
 import com.kotoframework.utils.Common.deleted
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals

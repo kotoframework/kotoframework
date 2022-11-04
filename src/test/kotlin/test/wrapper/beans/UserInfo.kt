@@ -1,4 +1,4 @@
-package com.kotoframework.beans
+package test.wrapper.beans
 
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.core.annotations.Column

@@ -19,6 +19,7 @@ dependencies {
     testImplementation(kotlin("test"))
     testImplementation(project(":koto-core"))
     testImplementation(project(":koto-spring-wrapper"))
+    testImplementation(project(":koto-basic-wrapper"))
     testImplementation("mysql:mysql-connector-java:8.0.30")
     testImplementation("org.apache.commons:commons-dbcp2:2.9.0")
     testImplementation("org.jetbrains.kotlin:kotlin-reflect:1.7.10")

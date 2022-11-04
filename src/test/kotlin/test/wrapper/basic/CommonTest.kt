@@ -1,12 +1,12 @@
-package com.kotoframework.tests
+package test.wrapper.basic
 
-import com.kotoframework.DataSource
 import com.kotoframework.KotoApp
-import com.kotoframework.KotoSpringApp.setDynamicDataSource
-import com.kotoframework.tests.beans.TbUser
+import com.kotoframework.KotoBasicJdbcApp.setDynamicDataSource
 import com.kotoframework.utils.Extension.toKPojo
 import com.kotoframework.utils.Extension.toMap
 import org.junit.jupiter.api.Test
+import test.wrapper.DataSource.dataSource
+import test.wrapper.beans.TbUser
 import kotlin.test.assertEquals
 
 /**
@@ -14,7 +14,7 @@ import kotlin.test.assertEquals
  */
 class CommonTest {
     init {
-        KotoApp.setDynamicDataSource { DataSource.namedJdbc }.setLog("console")
+        KotoApp.setDynamicDataSource { dataSource }.setLog("console", true)
     }
 
     val user = TbUser(

@@ -1,11 +1,9 @@
-package com.kotoframework.tests
+package test.wrapper.spring
 
-import com.kotoframework.DataSource
 import com.kotoframework.KotoApp
 import com.kotoframework.KotoSpringApp.setDynamicDataSource
 import com.kotoframework.Right
-import com.kotoframework.SpringDataWrapper.Companion.wrapper
-import com.kotoframework.tests.beans.TbUser
+import test.wrapper.beans.TbUser
 import com.kotoframework.function.update.update
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.core.condition.and
@@ -13,6 +11,7 @@ import com.kotoframework.core.condition.eq
 import com.kotoframework.core.condition.like
 import com.kotoframework.utils.Common.deleted
 import org.junit.jupiter.api.Test
+import test.wrapper.DataSource
 import kotlin.test.assertEquals
 
 /**

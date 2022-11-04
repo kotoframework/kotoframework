@@ -1,19 +1,19 @@
-package com.kotoframework.tests
+package test.wrapper.basic
 
-import com.kotoframework.DataSource.namedJdbc
 import com.kotoframework.KotoApp
-import com.kotoframework.KotoSpringApp.setDynamicDataSource
+import com.kotoframework.KotoBasicJdbcApp.setDynamicDataSource
 import com.kotoframework.definition.desc
 import com.kotoframework.function.associate.associate
 import com.kotoframework.core.condition.and
 import com.kotoframework.core.condition.eq
 import com.kotoframework.core.future.from
-import com.kotoframework.tests.beans.TbGoodCategory
-import com.kotoframework.tests.beans.TbGood
-import com.kotoframework.tests.beans.TbShoppingCart
-import com.kotoframework.tests.beans.TbUser
+import test.wrapper.beans.TbGoodCategory
+import test.wrapper.beans.TbGood
+import test.wrapper.beans.TbShoppingCart
+import test.wrapper.beans.TbUser
 import com.kotoframework.utils.Common.deleted
 import org.junit.jupiter.api.Test
+import test.wrapper.DataSource.dataSource
 import kotlin.test.assertEquals
 
 /**
@@ -21,7 +21,7 @@ import kotlin.test.assertEquals
  */
 class AssociateTest {
     init {
-        KotoApp.setDynamicDataSource { namedJdbc }.setLog("console", true)
+        KotoApp.setDynamicDataSource { dataSource }.setLog("console", true)
     }
 
     @Test
