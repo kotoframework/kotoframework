@@ -2,11 +2,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URL
 
 plugins {
-    kotlin("jvm") version "1.7.10"
-    id("org.jetbrains.dokka") version("1.7.10")
+    kotlin("jvm") version "1.7.20"
+    id("org.jetbrains.dokka") version("1.7.20")
 }
 
-group = "fun.koto"
+group = "com.kotoframework"
 version = file("../koto.version").readText().trim()
 
 repositories {
@@ -15,8 +15,8 @@ repositories {
 
 dependencies {
     compileOnly("org.apache.commons:commons-dbcp2:2.9.0")
-    compileOnly("org.jetbrains.kotlin:kotlin-reflect:1.7.10")
-    testImplementation("org.jetbrains.dokka:dokka-gradle-plugin:1.7.10")
+    compileOnly("org.jetbrains.kotlin:kotlin-reflect:1.7.20")
+    testImplementation("org.jetbrains.dokka:dokka-gradle-plugin:1.7.20")
     testImplementation("mysql:mysql-connector-java:8.0.30")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.0")
