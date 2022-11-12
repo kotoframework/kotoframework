@@ -10,9 +10,9 @@ import javax.sql.DataSource
  * Created by ousc on 2022/9/20 11:54
  */
 object Patch {
-    fun KotoOperationSet<*, *>.execute(ds: DataSource? = null): KotoExecuteResult {
-        val result = Jdbc.execute(ds.wrapper(), sql, paramMap)
-        then?.execute(ds)
+    fun KotoOperationSet<*, *>.execute(): KotoExecuteResult {
+        val result = Jdbc.execute(jdbcWrapper, sql, paramMap)
+        then?.execute()
         return result
     }
 }

@@ -53,6 +53,7 @@ class RemoveAction<T : KPojo>(
         paramMap["id"] = id
         paramMap["updateTime"] = currentTime
         return KotoOperationSet(
+            jdbcWrapper,
             sql = "$sql where id = :id".rmRedudantBlk(),
             paramMap = paramMap
         )
@@ -62,6 +63,7 @@ class RemoveAction<T : KPojo>(
         paramMap["ids"] = ids
         paramMap["updateTime"] = currentTime
         return KotoOperationSet(
+            jdbcWrapper,
             sql = "$sql where id in (:ids)".rmRedudantBlk(),
             paramMap = paramMap
         )
@@ -82,6 +84,6 @@ class RemoveAction<T : KPojo>(
             .map(*fields, "updateTime" to currentTime)
             .prefixOW("$sql where ")
             .build()
-        return KotoOperationSet(koto.sql, koto.paramMap)
+        return KotoOperationSet(jdbcWrapper, koto.sql, koto.paramMap)
     }
 }

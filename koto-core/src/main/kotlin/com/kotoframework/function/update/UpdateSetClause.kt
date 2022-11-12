@@ -91,6 +91,6 @@ class UpdateSetClause<T : KPojo>(
             sqls.add(it.sql + "@New")
         }
 
-        return KotoOperationSet("$prefix ${sqls.joinToString(", ")} $suffix".rmRedudantBlk(), paramMap.mapKeys { it.key + "@New" })
+        return KotoOperationSet(null, "$prefix ${sqls.joinToString(", ")} $suffix".rmRedudantBlk(), paramMap.mapKeys { it.key + "@New" })
     }
 }

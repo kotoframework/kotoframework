@@ -9,11 +9,11 @@ import javax.sql.DataSource
  * Created by ousc on 2022/9/20 11:31
  */
 object Patch {
-    fun CreateWhere<*>.execute(ds: DataSource? = (kotoJdbcWrapper as BasicJdbcWrapper?)?.getDataSource()): KotoExecuteResult {
+    fun CreateWhere<*>.execute(): KotoExecuteResult {
         val koto = this.build()
         koto.then?.let {
-            koto.execute(ds)
+            koto.execute()
         }
-        return koto.execute(ds)
+        return koto.execute()
     }
 }

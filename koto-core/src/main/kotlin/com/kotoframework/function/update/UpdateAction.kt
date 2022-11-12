@@ -70,6 +70,7 @@ class UpdateAction<T : KPojo>(
     fun byId(id: Number = paramMap["id@New"] as Number): KotoOperationSet<UpdateSetClause<T>, T> {
         paramMap["id"] = id
         return KotoOperationSet(
+            jdbcWrapper,
             "$sql where id = :id".rmRedudantBlk(),
             paramMap
         )
@@ -85,6 +86,7 @@ class UpdateAction<T : KPojo>(
         paramMap["ids"] = ids
         paramMap["updateTime"] = currentTime
         return KotoOperationSet(
+            jdbcWrapper,
             "$sql where ids in (:ids)".rmRedudantBlk(),
             paramMap
         )
@@ -117,6 +119,6 @@ class UpdateAction<T : KPojo>(
             )
             .build()
         paramMap.putAll(koto.paramMap)
-        return KotoOperationSet(koto.sql, paramMap)
+        return KotoOperationSet(jdbcWrapper, koto.sql, paramMap)
     }
 }

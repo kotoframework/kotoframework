@@ -10,9 +10,9 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
  * Created by ousc on 2022/9/20 11:54
  */
 object Patch {
-    fun KotoOperationSet<*, *>.execute(namedParameterJdbcTemplate: NamedParameterJdbcTemplate? = null): KotoExecuteResult {
-        val result = Jdbc.execute(namedParameterJdbcTemplate.wrapper(), sql, paramMap)
-        then?.execute(namedParameterJdbcTemplate)
+    fun KotoOperationSet<*, *>.execute(): KotoExecuteResult {
+        val result = Jdbc.execute(jdbcWrapper, sql, paramMap)
+        then?.execute()
         return result
     }
 }

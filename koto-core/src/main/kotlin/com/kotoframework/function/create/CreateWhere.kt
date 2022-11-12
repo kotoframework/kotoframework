@@ -140,13 +140,13 @@ class CreateWhere<T : KPojo>(KPojo: T, kotoJdbcWrapper: KotoJdbcWrapper?) : Wher
         }
 
         if (replaceInto) {
-            return KotoOperationSet("replace into $tableName (`${paramNames.joinToString("`,`")}`) values (${
+            return KotoOperationSet(kotoJdbcWrapper, "replace into $tableName (`${paramNames.joinToString("`,`")}`) values (${
                 reNames.joinToString(
                     ","
                 ) { ":$it" }
             }) ".rmRedudantBlk(), paramMap)
         } else if (duplicateUpdate) {
-            return KotoOperationSet("insert into $tableName (`${paramNames.joinToString("`,`")}`) values (${
+            return KotoOperationSet(kotoJdbcWrapper, "insert into $tableName (`${paramNames.joinToString("`,`")}`) values (${
                 reNames.joinToString(
                     ","
                 ) { ":$it" }
@@ -157,6 +157,7 @@ class CreateWhere<T : KPojo>(KPojo: T, kotoJdbcWrapper: KotoJdbcWrapper?) : Wher
             } ".rmRedudantBlk(), paramMap)
         } else if (onFields.isNotEmpty()) {
             return KotoOperationSet(
+                kotoJdbcWrapper,
                 "insert into $tableName (`${paramNames.joinToString("`,`")}`) select ${
                     reNames.joinToString(
                         ","
@@ -172,14 +173,16 @@ class CreateWhere<T : KPojo>(KPojo: T, kotoJdbcWrapper: KotoJdbcWrapper?) : Wher
                         " and "
                     ) { "`${it.columnName}` = :${it.propertyName}" }
                 }) ".rmRedudantBlk(), paramMap,
-                updateKoto<KPojo>(KPojo, *updateFields.toTypedArray()).except("id").where(
+                updateKoto<KPojo>(KPojo, *updateFields.toTypedArray(), jdbcWrapper = kotoJdbcWrapper).except("id").where(
                     onFields
                         .map { it.columnName.lineToHump().eq(reName = it.propertyName) }
                         .arbitrary()
                 ).build()
             )
         } else {
-            return KotoOperationSet("insert into $tableName (`${paramNames.joinToString("`,`")}`) values (${
+            return KotoOperationSet(
+                kotoJdbcWrapper,
+                "insert into $tableName (`${paramNames.joinToString("`,`")}`) values (${
                 reNames.joinToString(
                     ","
                 ) { ":$it" }

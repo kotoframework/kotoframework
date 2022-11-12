@@ -25,6 +25,7 @@ class SelectTest {
     @Test
     fun selectAll(){
         val list = select<TbUser>().queryForList()
+        assertEquals(501, list.size)
     }
 
     @Test

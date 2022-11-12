@@ -8,8 +8,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
  * Created by ousc on 2022/9/20 11:36
  */
 object Patch {
-    fun RemoveAction<*>.execute(namedJdbc: NamedParameterJdbcTemplate? = null): KotoExecuteResult {
+    fun RemoveAction<*>.execute(): KotoExecuteResult {
         val koto = where().build()
-        return koto.execute(namedJdbc)
+        return koto.execute()
     }
 }

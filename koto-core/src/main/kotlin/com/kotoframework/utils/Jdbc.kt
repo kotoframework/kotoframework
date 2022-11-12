@@ -237,7 +237,7 @@ object Jdbc {
 
         if (sql.contains("insert")) {
             lastInsertId =
-                wrapper.forObject("select last_insert_id()", emptyMap<String, String>(), Integer::class.java)!!.toInt() ?: 0
+                wrapper.forObject("select last_insert_id()", emptyMap<String, String>(), Integer::class.java)?.toInt() ?: 0
             if (lastInsertId == 0) {
                 lastInsertId = null
             }

@@ -24,7 +24,7 @@ class RemoveWhere<T : KPojo>(
 
     override fun build(): KotoOperationSet<RemoveWhere<T>, T> {
         val result = super.build()
-        return KotoOperationSet(result.sql, result.paramMap)
+        return KotoOperationSet(kotoJdbcWrapper, result.sql, result.paramMap)
     }
 
     fun execute(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): KotoExecuteResult {

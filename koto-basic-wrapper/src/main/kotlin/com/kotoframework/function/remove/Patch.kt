@@ -8,8 +8,8 @@ import javax.sql.DataSource
  * Created by ousc on 2022/9/20 11:36
  */
 object Patch {
-    fun RemoveAction<*>.execute(ds: DataSource? = null): KotoExecuteResult {
+    fun RemoveAction<*>.execute(): KotoExecuteResult {
         val koto = where().build()
-        return koto.execute(ds)
+        return koto.execute()
     }
 }

@@ -9,11 +9,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
  * Created by ousc on 2022/9/20 11:31
  */
 object Patch {
-    fun CreateWhere<*>.execute(namedParameterJdbcTemplate: NamedParameterJdbcTemplate? = (kotoJdbcWrapper as SpringDataWrapper?)?.getNamedJdbc()): KotoExecuteResult {
+    fun CreateWhere<*>.execute(): KotoExecuteResult {
         val koto = this.build()
         koto.then?.let {
-            koto.execute(namedParameterJdbcTemplate)
+            koto.execute()
         }
-        return koto.execute(namedParameterJdbcTemplate)
+        return koto.execute()
     }
 }
