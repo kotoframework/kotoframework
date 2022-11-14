@@ -139,12 +139,9 @@ mapOf(
 
 .eq()和.notEq()用于相等/不相等判断，可以接受以下4个参数：
 
-| 参数名       | 说明                                        | 类型     | 默认值 | 全局配置 |
-| ------------ | ------------------------------------------- | -------- | ------ | -------- |
-| `value`      | 判断的值，若不传入，则默认从KPojo对象中读取 | Any?     | null   |          |
-| `reName`     | 重命名paramMap中的key值，防止重复           | String?  | null   |          |
-| `iif`        | 当`iif`为false时则去掉该条件                | Boolean? | null   |          |
-| `humpToline` | 属性名转为列名时是否由驼峰自动转换为下划线  | Boolean  | true   | ✅        |
+| 参数名       | 说明                                        | 类型     | 默认值 |
+| ------------ | ------------------------------------------- | -------- | ------ |
+| `value`      | 判断的值，若不传入，则默认从KPojo对象中读取 | Any?     | null   |
 
 使用示例：
 
@@ -177,25 +174,28 @@ select(User(1), User::userName).where{ it::id.eq() and User::userName.eq().orNul
 // select user_name from user where id = 1 and user_name is null
 ```
 
-在条件后链式调用`.iif(Boolean)`函数可直接修改条件的iif值
+> iif条件语句已被弃用，请使用takeIf或者takeUnless替代
 
+在条件后链式调用`.takeIf(()->Boolean)|.takeUnless(()->Boolean)`来控制本条件是否应用，若返回false，则本条件不会被应用
 此函数不仅在.eq中适用，同时适用于相似判断、数值比较、日期比较等，在下文中不在重复介绍，可见以下示例：
 
 ```kotlin
-select(User(1, "koto"), User::userName).where{ it::id.eq() and User::userName.eq().iif(false) }.query()
+select(User(1, "koto"), User::userName).where{ it::id.eq() and it::userName.eq.takeIf{ false }?: it::userName.isNull }.query()
 // select user_name from user where id = 1
 ```
 
-在条件后链式调用`.reName(String)`函数可直接修改条件的reName值
+> reName重命名语句已被弃用，请使用.alias替代
+
+在条件后链式调用`.alias(String)`函数可直接修改条件的reName值
 
 此函数不仅在.eq中适用，同时适用于相似判断、数值比较、日期比较等，在下文中不在重复介绍，可见以下示例：
 
 ```kotlin
-select(User(1, "koto"), User::userName).where{ it::id.eq() and User::userName.eq().reName("name") }.query()
+select(User(1, "koto"), User::userName).where{ it::id.eq() and User::userName.eq().alias("name") }.query()
 //paramMap:
 mapOf(
-  "id": 1,
-  "name": "koto"
+  "id" to 1,
+  "name" to "koto"
 )
 ```
 
@@ -205,13 +205,9 @@ mapOf(
 
 .like()和.notLike()用于相似判断
 
-| 参数名       | 说明                                                 | 类型         | 默认值 | 全局配置 |
-| ------------ | ---------------------------------------------------- | ------------ | ------ | -------- |
-| `expression` | 判断的值，若不传入，则默认从KPojo对象中读取，需带“%” | Any?         | null   |          |
-| `pos`        | 模糊匹配的方向，设定后expression不需加百分号         | LikePosition | Never  |          |
-| `reName`     | 重命名paramMap中的key值，防止重复                    | String?      | null   |          |
-| `iif`        | 当`iif`为false时则去掉该条件                         | Boolean?     | null   |          |
-| `humpToline` | 属性名转为列名时是否由驼峰自动转换为下划线           | Boolean      | true   | ✅        |
+| 参数名     | 说明                                                 | 类型         | 默认值 |
+|---------| ---------------------------------------------------- | ------------ | ------ |
+| `value` | 判断的值，若不传入，则默认从KPojo对象中读取，需带“%” | Any?         | null   |
 
 使用示例：
 
@@ -225,7 +221,7 @@ select(User(userName = "%koto"), User::userName).where{ it::userName.notLike()}.
 // select user_name from user where user_name not like "%koto"
 ```
 
-可以使用.matchLeft()/.matchRight()/.matchboth()链式调用代替设置pos = LikePosition.xxxx，例
+可以使用.matchLeft()/.matchRight()/.matchBoth()链式调用代替在匹配值中加入`%`，例
 
 ```kotlin
 select(User(userName = "%koto"), User::userName).where{user::userName.like("koto").matchLeft()}.query()
@@ -244,12 +240,9 @@ select(User(userName = "%koto"), User::userName).where{ it::userName.like}.query
 
 gt、ge、lt、le分别代表大于、大于等于、小于、小于等于判断，用于数值比较可以接受以下4个参数：
 
-| 参数名       | 说明                                        | 类型           | 默认值 | 全局配置 |
-| ------------ | ------------------------------------------- | -------------- | ------ | -------- |
-| `value`      | 判断的值，若不传入，则默认从KPojo对象中读取 | Comparable<*>? | null   |          |
-| `reName`     | 重命名paramMap中的key值，防止重复           | String?        | null   |          |
-| `iif`        | 当`iif`为false时则去掉该条件                | Boolean?       | null   |          |
-| `humpToline` | 属性名转为列名时是否由驼峰自动转换为下划线  | Boolean        | true   | ✅        |
+| 参数名       | 说明                                        | 类型           | 默认值 |
+| ------------ | ------------------------------------------- | -------------- | ------ |
+| `value`      | 判断的值，若不传入，则默认从KPojo对象中读取 | Comparable<*>? | null   |
 
 使用示例：
 
@@ -284,12 +277,9 @@ select(User(1), User::userName).where{ it::id.gt }.query()
 
 before、after、notBefore、notAfter分别代表早于、晚于、不早于、不晚于判断，用于日期比较，可以接受以下4个参数：
 
-| 参数名       | 说明                       | 类型           | 默认值 | 全局配置 |
-| ------------ |--------------------------| -------------- | ------ | -------- |
-| `value`      | 判断的值，若不传入，则默认从KPojo对象中读取 | Comparable<*>? | null   |          |
-| `reName`     | 重命名paramMap中的key值，防止重复   | String?        | null   |          |
-| `iif`        | 当`iif`为false时则去掉该条件      | Boolean?       | null   |          |
-| `humpToline` | 属性名转为列名时是否由驼峰自动转换为下划线    | Boolean        | true   | ✅        |
+| 参数名       | 说明                       | 类型           | 默认值 |
+| ------------ |--------------------------| -------------- | ------ |
+| `value`      | 判断的值，若不传入，则默认从KPojo对象中读取 | Comparable<*>? | null   |
 
 使用示例：
 
@@ -324,12 +314,9 @@ select(User(1), User::userName).where{ it::id.gt }.query()
 
 between、notBetween分别代表介于区间、不介于区间判断，用于日期和数值比较，可以接受以下4个参数：
 
-| 参数名       | 说明                                                         | 类型           | 默认值 | 全局配置 |
-| ------------ | ------------------------------------------------------------ | -------------- | ------ | -------- |
-| `value`      | 区间范围，可以为数值、日期等，<strong><u>必须传入</u></strong> | ClosedRange<*> | /      |          |
-| `reName`     | 重命名paramMap中的key值，防止重复                            | String?        | null   |          |
-| `iif`        | 当`iif`为false时则去掉该条件                                 | Boolean?       | null   |          |
-| `humpToline` | 属性名转为列名时是否由驼峰自动转换为下划线                   | Boolean        | true   | ✅        |
+| 参数名       | 说明                                                         | 类型           | 默认值 |
+| ------------ | ------------------------------------------------------------ | -------------- | ------ |
+| `value`      | 区间范围，可以为数值、日期等，<strong><u>必须传入</u></strong> | ClosedRange<*> | /      |
 
 使用示例：
 
@@ -347,17 +334,14 @@ select(User(1), User::userName).where{ it::id.notBetween(1..100) }.query()
 
 isIn、notIn分别代表是否处于某集合判断，可以接受以下4个参数：
 
-| 参数名       | 说明                                                         | 类型          | 默认值 | 全局配置 |
-| ------------ | ------------------------------------------------------------ | ------------- | ------ | -------- |
-| `value`      | 集合,可传入Array/List/MutatbleList等，<strong><u>必须传入</u></strong> | Collection<*> | /      |          |
-| `reName`     | 重命名paramMap中的key值，防止重复                            | String?       | null   |          |
-| `iif`        | 当`iif`为false时则去掉该条件                                 | Boolean?      | null   |          |
-| `humpToline` | 属性名转为列名时是否由驼峰自动转换为下划线                   | Boolean       | true   | ✅        |
+| 参数名       | 说明                                                         | 类型          | 默认值 |
+| ------------ | ------------------------------------------------------------ | ------------- | ------ |
+| `value`      | 集合,可传入Array/List/MutatbleList等，<strong><u>必须传入</u></strong> | Collection<*> | /      |
 
 使用示例：
 
 ```kotlin
-select(User(1), User::userName).where{ it::id.in(listOf(1, 2, 3)) }.query()
+select(User(1), User::userName).where{ it::id.isIn(listOf(1, 2, 3)) }.query()
 // select user_name from user where id in (1, 2, 3)
 
 select(User(1), User::userName).where{it::id.notIn(listOf(1, 2, 3)) }.query()
@@ -368,13 +352,7 @@ select(User(1), User::userName).where{it::id.notIn(listOf(1, 2, 3)) }.query()
 
 ### 空值判断`.isNull()|.notNull()`
 
-isNull、notNull用于空值判断，可以接受以下4个参数：
-
-| 参数名       | 说明                                       | 类型     | 默认值 | 全局配置 |
-| ------------ | ------------------------------------------ | -------- | ------ | -------- |
-| `reName`     | 重命名paramMap中的key值，防止重复          | String?  | null   |          |
-| `iif`        | 当`iif`为false时则去掉该条件               | Boolean? | null   |          |
-| `humpToline` | 属性名转为列名时是否由驼峰自动转换为下划线 | Boolean  | true   | ✅        |
+isNull、notNull用于空值判断
 
 使用示例：
 
@@ -395,7 +373,7 @@ select(User(1), User::userName).where{ it::userName.isNull }.query()
 
 
 
-### 连接中缀`.and|.or`
+### 连接中缀`and|or`
 
 请移步<a href="/#/zh-cn/where?id=_3-or和and关键词的使用：">or和and关键词的使用</a>
 

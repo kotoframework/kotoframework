@@ -4,6 +4,13 @@
 
 ## global data source configuration
 
+### database type：
+
+click [here](db_supported.md) to view the list of supported databases
+
+```kotlin
+KotoApp.setDBType(DBType)
+```
 ##### Single data source configuration:
 
 ```kotlin

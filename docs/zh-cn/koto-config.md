@@ -4,6 +4,14 @@
 
 ## 全局数据源配置
 
+### 数据库类型：
+
+点击[这里](db_support.md)查看Koto支持的数据库类型
+    
+```kotlin
+KotoApp.setDBType(DBType)
+```
+
 ##### 单数据源配置：
 
 ```kotlin
@@ -66,7 +74,6 @@ KotoApp.setSoftDelete(true, "deleted")
 ```kotlin
 KotoApp.setKPojoSuffix("Entity/Pojo/KPojo/...")
 ```
-
 
 
 ## 全局驼峰转下划线设置

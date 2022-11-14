@@ -9,32 +9,31 @@ select().where(...).query()
 update().where(...).execute()
 associate().where(...).query()
 remove().where(...).execute()
-```
+````
 
 Example KPojo class and query conditions:
 
 ```kotlin
 data class User(
-    val id: Int? = null,
-    val userName: String? = null,
-    val telephone: String? = null,
-    val emailAddress: String? = null,
-    val active: Boolean? = null,
-    val birthday: String? = null,
-    val sex: String? = null,
-    val habit: String? = null,
-    val age: Int? = null,
-    val roles: List<String>? = null
+     val id: Int? = null,
+     val userName: String? = null,
+     val telephone: String? = null,
+     val emailAddress: String? = null,
+     val active: Boolean? = null,
+     val birthday: String? = null,
+     val sex: String? = null,
+     val habit: String? = null,
+     val age: Int? = null,
+     val roles: List<String>? = null
 ) : KPojo
 
 val user = User(
-    userName = "ousc",
-    active = true,
-    sex = "male",
-    age = 99
+     userName = "ousc",
+     active = true,
+     sex = "male",
+     age = 99
 )
-```
-
+````
 ## Instructions:
 
 ### 1. Basic usage
@@ -43,7 +42,7 @@ If no value is passed, the condition will be automatically generated based on th
 
 ```kotlin
 val koto = xxx(user).where().build()
-```
+````
 result:
 ```kotlin
 //koto.sql
@@ -56,7 +55,7 @@ mapOf(
     "sex" to "male",
     "age" to 99
 )
-```
+````
 
 ### 2. Complex query usage:
 
@@ -74,7 +73,7 @@ val koto = xxx(user).where { // it: User
     "`sex` is not null" and
     "`age` < 50"
 }
-```
+````
 result:
 ```kotlin
 //koto.sql
@@ -93,9 +92,9 @@ mapOf(
     "sex" to "male",
     "age" to 99
 )
-```
+````
 
-### 3. The use of `or` and `and` keywords:
+### 3. The use of or and and keywords:
 
 ```kotlin
 val koto = xxx(user).where{
@@ -106,7 +105,7 @@ val koto = xxx(user).where{
     ("birthday".eq() or "age".lt()) and
     "srq is not null"
 }.build()
-```
+````
 
 result:
 
@@ -129,7 +128,8 @@ mapOf(
     "age" to 99,
     "ageMax" to 99
 )
-```
+````
+
 
 ## Condition type
 
@@ -137,12 +137,9 @@ mapOf(
 
 .eq() and .notEq() are used for equality/inequality judgment and can accept the following 4 parameters:
 
-| parameter name | description | type | default value | global configuration |
-| ------------ | ------------------------------------ ------- | -------- | ------ | -------- |
-| `value` | The value to be judged, if not passed in, it will be read from the KPojo object by default | Any? | null | |
-| `reName` | Rename the key value in paramMap to prevent duplication | String? | null | |
-| `iif` | Remove the condition when `iif` is false | Boolean? | null | |
-| `humpToline` | Whether the attribute name is automatically converted from camel to underscore when it is converted to column name | Boolean | true | ✅ |
+| parameter name | description | type | default value |
+| ------------ | ------------------------------------------- | -------- | ------ |
+| `value` | The value to be judged, if not passed in, it will be read from the KPojo object by default | Any? | null |
 
 Example of use:
 
@@ -154,14 +151,14 @@ select(User(1), User::userName).where{ it::id.eq() }.query()
 select(User(1), User::userName).where{ it::id.notEq() }.query()
 // can also be written: select(User(), User::userName).where{ it::id.notEq(1) }.query()
 // select user_name from user where id != 1
-```
+````
 
 If you don't need to accept parameters, you can omit the parentheses:
 
 ```kotlin
 select(User(1), User::userName).where{ it::id.eq }.query()
 //This writing method is equivalent to the first writing method above
-```
+````
 
 When querying (select/associate), if the value of a condition where is null, koto will delete this condition by default. If you need to convert the value to .isNull()/.notNull() when the value is null, you can use .orNull() Function, (in the where condition of remove/update, it will be automatically converted to isNull())
 
@@ -173,29 +170,32 @@ select(User(1), User::userName).where{ it::id.eq() and User::userName.eq() }.que
 
 select(User(1), User::userName).where{ it::id.eq() and User::userName.eq().orNull() }.query()
 // select user_name from user where id = 1 and user_name is null
-```
+````
 
-Chaining the `.iif(Boolean)` function after the condition can directly modify the iif value of the condition
+> `iif` conditional statement is deprecated, please use `takeIf|takeUnless` or takeUnless instead
 
+Chain call `.takeIf(()->Boolean)|.takeUnless(()->Boolean)` after the condition to control whether the condition is applied or not, if it returns false, the condition will not be applied
 This function is not only applicable in .eq, but also applicable to similarity judgment, numerical comparison, date comparison, etc., which will not be repeated in the following, but the following examples can be seen:
 
 ```kotlin
-select(User(1, "koto"), User::userName).where{ it::id.eq() and User::userName.eq().iif(false) }.query()
+select(User(1, "koto"), User::userName).where{ it::id.eq() and it::userName.eq.takeIf{ false }?: it::userName.isNull }.query ()
 // select user_name from user where id = 1
-```
+````
 
-Chaining the `.reName(String)` function after the condition can directly modify the reName value of the condition
+> `reName` statement is deprecated, use `.alias` instead
+
+Chaining the `.alias(String)` function after the condition can directly modify the reName value of the condition
 
 This function is not only applicable in .eq, but also applicable to similarity judgment, numerical comparison, date comparison, etc., which will not be repeated in the following, but the following examples can be seen:
 
 ```kotlin
-select(User(1, "koto"), User::userName).where{ it::id.eq() and User::userName.eq().reName("name") }.query()
+select(User(1, "koto"), User::userName).where{ it::id.eq() and User::userName.eq().alias("name") }.query()
 //paramMap:
 mapOf(
   "id" to 1,
   "name" to "koto"
 )
-```
+````
 
 
 
@@ -203,13 +203,9 @@ mapOf(
 
 .like() and .notLike() are used for similarity judgment
 
-| parameter name | description | type | default value | global configuration |
-| ------------ | ------------------------------------ ---------------- | ------------ | ------ | -------- |
-| `expression` | The value to be judged, if not passed in, it will be read from the KPojo object by default, with "%" | Any? | null | |
-| `pos` | The direction of fuzzy matching, the expression does not need to add a percent sign after setting | LikePosition | Never | |
-| `reName` | Rename the key value in paramMap to prevent duplication | String? | null | |
-| `iif` | Remove the condition when `iif` is false | Boolean? | null | |
-| `humpToline` | Whether the attribute name is automatically converted from camel to underscore when it is converted to column name | Boolean | true | ✅ |
+| parameter name | description | type | default value |
+|---------| ---------------------------------------------------- | ------------ | ------ |
+| `value` | The value to be judged, if not passed in, it will be read from the KPojo object by default, with "%" | Any? | null |
 
 Example of use:
 
@@ -221,33 +217,30 @@ select(User(userName = "%koto"), User::userName).where{ it::userName.like()}.que
 select(User(userName = "%koto"), User::userName).where{ it::userName.notLike()}.query()
 // can also be written: select(User(), User::userName).where{ it::userName.notLike("%koto")}.query()
 // select user_name from user where user_name not like "%koto"
-```
+````
 
-You can use .matchLeft()/.matchRight()/.matchboth() chained calls instead of setting pos = LikePosition.xxxx, e.g.
+Instead of adding `%` to the match value, you can use .matchLeft()/.matchRight()/.matchBoth() chaining, e.g.
 
 ```kotlin
 select(User(userName = "%koto"), User::userName).where{user::userName.like("koto").matchLeft()}.query()
 //equivalent to user::userName.like(pos = Left)
 // select user_name from user where user_name not like "%koto"
-```
+````
 
 If you don't need to accept parameters, you can omit the parentheses:
 
 ```kotlin
 select(User(userName = "%koto"), User::userName).where{ it::userName.like}.query()
 //This writing method is equivalent to the first writing method above
-```
+````
 
 ### Numerical comparison `.gt()|.ge()|.lt()|.le()`
 
 gt, ge, lt, and le represent greater than, greater than or equal to, less than, and less than or equal to judgment, respectively, and can accept the following four parameters for numerical comparison:
 
-| parameter name | description | type | default value | global configuration |
-| ------------ | ------------------------------------ ------- | -------------- | ------ | -------- |
-| `value` | The value to be judged, if not passed in, it will be read from the KPojo object by default | Comparable<*>? | null | |
-| `reName` | Rename the key value in paramMap to prevent duplication | String? | null | |
-| `iif` | Remove the condition when `iif` is false | Boolean? | null | |
-| `humpToline` | Whether the attribute name is automatically converted from camel to underscore when it is converted to column name | Boolean | true | ✅ |
+| parameter name | description | type | default value |
+| ------------ | ------------------------------------ ------- | -------------- | ------ |
+| `value` | The value to be judged, if not passed in, it will be read from the KPojo object by default | Comparable<*>? | null |
 
 Example of use:
 
@@ -267,27 +260,22 @@ select(User(1), User::userName).where{ it::id.lt() }.query()
 select(User(1), User::userName).where{ it::id.le() }.query()
 // can also be written: select(User(), User::userName).where{ it::id.ge(1) }.query()
 // select user_name from user where id <= 1
-```
+````
 
 If you don't need to accept parameters, you can omit the parentheses:
 
 ```kotlin
 select(User(1), User::userName).where{ it::id.gt }.query()
 //This writing method is equivalent to the first writing method above
-```
-
-
+````
 
 ### Date comparison `.before()|.after()|.notBefore()|.notAfter()`
 
 before, after, notBefore, notAfter respectively represent earlier than, later than, not earlier than, not later than judgment, used for date comparison, can accept the following 4 parameters:
 
-| parameter name | description | type | default value | global configuration |
-| ------------ |--------------------------| --------- ----- | ------ | -------- |
-| `value` | The value to be judged, if not passed in, it will be read from the KPojo object by default | Comparable<*>? | null | |
-| `reName` | Rename the key value in paramMap to prevent duplication | String? | null | |
-| `iif` | Remove the condition when `iif` is false | Boolean? | null | |
-| `humpToline` | Whether the attribute name is automatically converted from camel to underscore when it is converted to column name | Boolean | true | ✅ |
+| parameter name | description | type | default value |
+| ------------ |--------------------------| -------------- | ------ |
+| `value` | The value to be judged, if not passed in, it will be read from the KPojo object by default | Comparable<*>? | null |
 
 Example of use:
 
@@ -307,14 +295,14 @@ select(User(1), User::userName).where{ it::id.lt() }.query()
 select(User(1), User::userName).where{ it::id.le() }.query()
 // can also be written: select(User(), User::userName).where{ it::id.le(1) }.query()
 // select user_name from user where id <= 1
-```
+````
 
 If you don't need to accept parameters, you can omit the parentheses:
 
 ```kotlin
 select(User(1), User::userName).where{ it::id.gt }.query()
 //This writing method is equivalent to the first writing method above
-```
+````
 
 
 
@@ -322,12 +310,9 @@ select(User(1), User::userName).where{ it::id.gt }.query()
 
 between and notBetween respectively represent between interval and not between interval judgment, which are used for date and numerical comparison, and can accept the following 4 parameters:
 
-| parameter name | description | type | default value | global configuration |
-| ------------ | ------------------------------------ ------------------------ | -------------- | ------ | --- ----- |
-| `value` | Interval range, can be numeric value, date, etc. <strong><u>must be passed in</u></strong> | ClosedRange<*> | / | |
-| `reName` | Rename the key value in paramMap to prevent duplication | String? | null | |
-| `iif` | Remove the condition when `iif` is false | Boolean? | null | |
-| `humpToline` | Whether the attribute name is automatically converted from camel to underscore when it is converted to column name | Boolean | true | ✅ |
+| parameter name | description | type | default value |
+| ------------ | ------------------------------------------------------------ | -------------- | ------ |
+| `value` | interval range, can be numeric value, date, etc. <strong><u>must be passed in</u></strong> | ClosedRange<*> | / |
 
 Example of use:
 
@@ -337,39 +322,33 @@ select(User(1), User::userName).where{ it::id.between(1..100) }.query()
 
 select(User(1), User::userName).where{ it::id.notBetween(1..100) }.query()
 // select user_name from user where id not between 1 and 100
-```
+````
+
+
+
 ### Range judgment `.isIn()|.notIn()`
 
 isIn and notIn respectively represent whether they are in a certain set and can accept the following 4 parameters:
 
-| parameter name | description | type | default value | global configuration |
-| ------------ | ------------------------------------ ------------------------ | ------------- | ------ | ---- ---- |
-| `value` | Collection, can be passed in Array/List/MutatbleList, etc. <strong><u>must be passed in</u></strong> | Collection<*> | / | |
-| `reName` | Rename the key value in paramMap to prevent duplication | String? | null | |
-| `iif` | Remove the condition when `iif` is false | Boolean? | null | |
-| `humpToline` | Whether the attribute name is automatically converted from camel to underscore when it is converted to column name | Boolean | true | ✅ |
+| parameter name | description | type | default value |
+| ------------ | ------------------------------------------------------------ | ------------- | ------ |
+| `value` | Collection, can be passed in Array/List/MutatbleList, etc. <strong><u>must be passed in</u></strong> | Collection<*> | / |
 
 Example of use:
 
 ```kotlin
-select(User(1), User::userName).where{ it::id.in(listOf(1, 2, 3)) }.query()
+select(User(1), User::userName).where{ it::id.isIn(listOf(1, 2, 3)) }.query()
 // select user_name from user where id in (1, 2, 3)
 
 select(User(1), User::userName).where{it::id.notIn(listOf(1, 2, 3)) }.query()
 // select user_name from user where id not in (1, 2, 3)
-```
+````
 
 
 
 ### Null value judgment `.isNull()|.notNull()`
 
-isNull and notNull are used for null value judgment and can accept the following 4 parameters:
-
-| parameter name | description | type | default value | global configuration |
-| ------------ | ------------------------------------ ------ | -------- | ------ | -------- |
-| `reName` | Rename the key value in paramMap to prevent duplication | String? | null | |
-| `iif` | Remove the condition when `iif` is false | Boolean? | null | |
-| `humpToline` | Whether the attribute name is automatically converted from camel to underscore when it is converted to column name | Boolean | true | ✅ |
+isNull and notNull are used for null value judgment
 
 Example of use:
 
@@ -379,27 +358,27 @@ select(User(1), User::userName).where{ it::userName.isNull() }.query()
 
 select(User(1), User::userName).where{it::id.notNull() }.query()
 // select user_name from user where user_name is not null
-```
+````
 
 If you don't need to accept parameters, you can omit the parentheses:
 
 ```kotlin
 select(User(1), User::userName).where{ it::userName.isNull }.query()
 //This writing method is equivalent to the first writing method above
-```
+````
 
 
 
-### Connection infix `.and|.or`
+### Connection infix `and|or`
 
-Please move to <a href="/#/where?id=_3-Use of or and keywords:">Use of or and and keywords</a>
+Please move to <a href="/#/zh-cn/where?id=_3-Use of or and and keywords:">Use of or and and keywords</a>
 
 
 
 ## Where APIs
 
 | function name | description | remarks |
-| ----------------------------------------- | ------- ----------------------------- | ----------------- |
+| ----------------------------------------- | ------------------------------------ | ----------------- |
 | `.map(vararg Pair<String,Any?>)` | Add/override parameter Map value | |
 | `.suffix(String)` | set suffix | |
 | `.first()` | limit one | only used in queries |

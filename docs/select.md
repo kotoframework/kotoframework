@@ -91,7 +91,7 @@ val movie = select(Movie(id = 1)).where().queryForObjectOrNull()
 
 ## `.where(...conditions)` complete query conditions
 
-You can use where query conditions by calling .where, [specific usage of where query conditions](where.md)｜<a href="/#/where?id=where-api">All Apis that can be used after where</ a>
+You can use where query conditions by calling .where, [specific usage of where query conditions](where.md)｜<a href="/#/where?id=where-api">All Apis that can be used after where</a>
 
 > Query all field instances of different records with paging and sorting according to where query conditions
 
