@@ -1,5 +1,7 @@
 package com.kotoframework.core.where
 
+import com.kotoframework.*
+import com.kotoframework.KotoApp.dbType
 import com.kotoframework.beans.KotoResultSet
 import com.kotoframework.beans.Unknown
 import com.kotoframework.core.condition.eq
@@ -156,10 +158,39 @@ open class Where<T : KPojo>(
         if (distinct && prefix.isNotBlank()) prefix = prefix.replaceFirst("select", "select distinct")
 
         if (paramMap["pageSize"] != null && paramMap["pageIndex"] != null) {
-            paramMap["pageIndex"] = (paramMap["pageIndex"] as Int - 1) * paramMap["pageSize"] as Int
-            suffix = "$suffix limit :pageIndex,:pageSize"
-            if (prefix.isNotBlank()) {
-                prefix = prefix.replaceFirst("select", "select SQL_CALC_FOUND_ROWS")
+            when (dbType) {
+                MySql -> {
+                    paramMap["pageIndex"] = (paramMap["pageIndex"] as Int - 1) * paramMap["pageSize"] as Int
+                    suffix = "$suffix limit :pageIndex,:pageSize"
+                    prefix = prefix.replaceFirst("select", "select SQL_CALC_FOUND_ROWS")
+                }
+
+                Oracle -> {
+                    paramMap["rowNumMin"] = (paramMap["pageIndex"] as Int - 1) * paramMap["pageSize"] as Int + 1
+                    paramMap["rowNumMax"] = paramMap["pageIndex"] as Int * paramMap["pageSize"] as Int
+                    suffix = "$suffix ) t ) where :rowNumMin < RN <= :rowNumMax"
+                    prefix = prefix.replaceFirst("select", "select * from (select rownum rn, t.* from (select")
+                }
+
+                MSSql -> {
+                    paramMap["offset"] = (paramMap["pageIndex"] as Int - 1) * paramMap["pageSize"] as Int
+                    paramMap["next"] = paramMap["pageIndex"] as Int * paramMap["pageSize"] as Int
+                    suffix = "$suffix offset :offset rows fetch next :next rows only"
+                }
+
+                PostgreSQL -> {
+                    paramMap["limit"] = paramMap["pageSize"] as Int
+                    paramMap["offset"] = (paramMap["pageIndex"] as Int - 1) * paramMap["pageSize"] as Int
+                    suffix = "$suffix limit :limit offset :offset"
+                }
+
+                SQLite -> {
+                    paramMap["limit"] = paramMap["pageSize"] as Int
+                    paramMap["offset"] = (paramMap["pageIndex"] as Int - 1) * paramMap["pageSize"] as Int
+                    suffix = "$suffix limit :limit offset :offset"
+                }
+
+                else -> throw Exception("Unsupported database type")
             }
         }
 

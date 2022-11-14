@@ -30,6 +30,15 @@ enum class LikePosition {
     Both,
     Never
 }
+
+enum class DBType{
+    MySql,
+    Oracle,
+    MSSql,
+    PostgreSQL,
+    SQLite
+}
+
 val Left = LikePosition.Left
 val Right = LikePosition.Right
 val Both = LikePosition.Both
@@ -50,3 +59,10 @@ val OR = ConditionType.OR
 
 val ASC = SortType.ASC
 val DESC = SortType.DESC
+
+val MySql = DBType.MySql
+val Oracle = DBType.Oracle
+val MSSql = DBType.MSSql
+val PostgreSQL = DBType.PostgreSQL
+val SQLite = DBType.SQLite
+

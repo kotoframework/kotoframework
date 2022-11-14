@@ -11,6 +11,8 @@ object KotoApp {
     internal var hump2line: Boolean = true
     internal var softDeleteColumn: String = "deleted"
     internal var kPojoSuffix: String = ""
+    internal var dbType: DBType = MySql
+
     /*
     * 'console' or path to logFile, split with ","
      */
@@ -33,6 +35,11 @@ object KotoApp {
 
     fun setHump2line(enabled: Boolean): KotoApp {
         hump2line = enabled
+        return this
+    }
+
+    fun setDBType(dbType: DBType): KotoApp {
+        this.dbType = dbType
         return this
     }
 
