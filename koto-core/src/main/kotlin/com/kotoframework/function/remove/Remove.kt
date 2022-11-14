@@ -1,6 +1,8 @@
 package com.kotoframework.function.remove
 
 import com.kotoframework.KotoApp.softDeleteColumn
+import com.kotoframework.beans.TableMeta
+import com.kotoframework.beans.TableSoftDelete
 import com.kotoframework.beans.Unknown
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoJdbcWrapper
@@ -25,9 +27,9 @@ fun <T : KPojo> remove(KPojo: T, jdbcWrapper: KotoJdbcWrapper? = null): RemoveAc
  */
 fun remove(tableName: String, jdbcWrapper: KotoJdbcWrapper? = null): RemoveAction<Unknown> {
     Jdbc.initMetaData(
-        Jdbc.TableMeta(
+        TableMeta(
             tableName,
-            Jdbc.TableSoftDelete(
+            TableSoftDelete(
                 softDeleteColumn.isBlank().not(),
                 softDeleteColumn
             )

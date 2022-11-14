@@ -4,6 +4,7 @@ import com.kotoframework.core.condition.eq
 import com.kotoframework.beans.KotoOperationSet
 import com.kotoframework.core.where.BaseWhere
 import com.kotoframework.*
+import com.kotoframework.core.condition.alias
 import com.kotoframework.definition.*
 import com.kotoframework.definition.columnName
 import com.kotoframework.definition.propertyName
@@ -63,7 +64,7 @@ class UpdateSetClause<T : KPojo>(
 
         if (conditions.isEmpty()) {
             kPojo::class.declaredMemberProperties.forEach {
-                conditions.add(it.columnName.lineToHump().eq(reName = it.propertyName))
+                conditions.add(it.columnName.lineToHump().eq().alias(it.propertyName))
             }
         }
 

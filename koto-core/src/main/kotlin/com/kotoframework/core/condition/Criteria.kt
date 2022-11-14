@@ -2,21 +2,22 @@ package com.kotoframework.core.condition
 
 import com.kotoframework.*
 import com.kotoframework.utils.SqlGenerator
+import kotlin.reflect.KCallable
 
 /**
  * Created by ousc on 2022/4/18 10:55
  **/
 open class Criteria(
-    val parameterName: String? = null, // original parameter name
+    val parameterName: String = "", // original parameter name
     var not: Boolean = false, // whether the condition is not
     var type: ConditionType? = null, // condition type
     var pos: LikePosition? = Never, // like position
     var reName: String? = null, // rename the parameter name in the sql and the paramMap
     var sql: String = "", // sql
     var allowNull: Boolean = false, // when the value is null, whether to generate sql
-    val humpToLine: Boolean? = KotoApp.hump2line, // whether to convert the parameter name from hump to line
     val value: Any? = null, // value
     val tableName: String? = "", // table name
+    val kCallable: KCallable<*>? = null, // the property of the kCallable
     val collections: List<Criteria?> = mutableListOf() // collection of conditions
 ) {
     init {
@@ -42,17 +43,17 @@ open class Criteria(
  * @param collections
  * @author ousc
  */
-class LikeCondition(
-    parameterName: String? = null,
+class LikeCriteria(
+    parameterName: String,
     not: Boolean = false,
     type: ConditionType? = LIKE,
-    pos: LikePosition? = Both,
+    pos: LikePosition? = Never,
     reName: String? = null,
     sql: String = "",
     allowNull: Boolean = false,
-    humpToLine: Boolean? = true,
     value: Any? = null,
     tableName: String? = "",
+    kCallable: KCallable<*>? = null,
     collections: List<Criteria?> = mutableListOf()
 ) : Criteria(
     parameterName,
@@ -62,8 +63,8 @@ class LikeCondition(
     reName,
     sql,
     allowNull,
-    humpToLine,
     value,
     tableName,
+    kCallable,
     collections
 )

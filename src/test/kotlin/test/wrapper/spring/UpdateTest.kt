@@ -9,6 +9,7 @@ import com.kotoframework.interfaces.KPojo
 import com.kotoframework.core.condition.and
 import com.kotoframework.core.condition.eq
 import com.kotoframework.core.condition.like
+import com.kotoframework.core.condition.matchRight
 import com.kotoframework.utils.Common.deleted
 import org.junit.jupiter.api.Test
 import test.wrapper.DataSource
@@ -169,7 +170,7 @@ class UpdateTest : KPojo {
     @Test
     fun updateByConditions() { // 测试根据Where条件更新
         val koto = update(user).where {
-            it::userName.eq() and it::birthday.like(pos = Right)
+            it::userName.eq() and it::birthday.like().matchRight()
         }.build()
 
         val expectedParamMap = mapOf(

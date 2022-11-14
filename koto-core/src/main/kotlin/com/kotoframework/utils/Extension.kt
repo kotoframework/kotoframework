@@ -1,6 +1,8 @@
 package com.kotoframework.utils
 
 import com.kotoframework.KotoApp
+import com.kotoframework.beans.TableMeta
+import com.kotoframework.beans.TableSoftDelete
 import com.kotoframework.core.annotations.SoftDelete
 import com.kotoframework.core.annotations.Table
 import com.kotoframework.definition.columnName
@@ -24,6 +26,7 @@ object Extension {
 
     /* It converts a string with camel case to a string with underscores. */
     internal fun String.humpToLine(): String {
+        if(!KotoApp.hump2line) return this
         val matcher: Matcher = Pattern.compile("[A-Z]").matcher(this)
         var sb = StringBuffer()
         var temp: String
@@ -40,6 +43,7 @@ object Extension {
 
     /* It converts a string with underscores to a string with camel case. */
     fun String.lineToHump(): String {
+        if(!KotoApp.hump2line) return this
         var temp = this
         val linePattern = Pattern.compile("_(\\w)")
         temp = temp.lowercase(Locale.getDefault())
@@ -76,7 +80,7 @@ object Extension {
         return this::class.annotations.firstOrNull { it is T } as T?
     }
 
-    val KPojo.tableMeta: Jdbc.TableMeta
+    val KPojo.tableMeta: TableMeta
         get() {
             val tableAnnotation = getAnnotation<Table>()
             val softDeleteAnnotation = getAnnotation<SoftDelete>()
@@ -84,18 +88,18 @@ object Extension {
             val softDelete = if (softDeleteAnnotation != null) {
                 val enabled = softDeleteAnnotation.enable || KotoApp.softDeleteEnabled
                 val columnName = softDeleteAnnotation.column.columnName.ifEmpty { KotoApp.softDeleteColumn }
-                Jdbc.TableSoftDelete(
+                TableSoftDelete(
                     enabled,
                     columnName
                 )
             } else {
-                Jdbc.TableSoftDelete(
+                TableSoftDelete(
                     KotoApp.softDeleteEnabled,
                     KotoApp.softDeleteColumn
                 )
             }
 
-            return Jdbc.TableMeta(tableName, softDelete)
+            return TableMeta(tableName, softDelete)
         }
 
     val KClass<*>.tableName: String
@@ -188,18 +192,6 @@ object Extension {
     infix fun Any.isAssignableFrom(kClass: KClass<*>): Boolean {
         if (this is KClass<*>) return kClass.java.isAssignableFrom(this.java)
         return kClass.java.isAssignableFrom(this::class.java)
-    }
-
-    /* It's an extension function of Boolean. It will return the value of the function if the boolean is true. Otherwise,
-    it will return null. */
-    inline fun <reified T> Boolean.yes(value: () -> T?): T? {
-        return if (this) value() else null
-    }
-
-    /* It's an extension function of Boolean. It will return the value of the function if the boolean is true. Otherwise,
-    it will return null. */
-    inline fun <reified T> Boolean.no(value: () -> T?): T? {
-        return if (this) null else value()
     }
 
     fun <T, K> List<Map<T, K>>.asMutable(): MutableList<MutableMap<T, K>> {

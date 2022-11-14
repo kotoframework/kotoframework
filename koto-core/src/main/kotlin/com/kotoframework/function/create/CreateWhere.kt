@@ -9,11 +9,12 @@ import com.kotoframework.definition.*
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.core.annotations.Default
 import com.kotoframework.core.annotations.NeedTableIndexes
+import com.kotoframework.core.condition.alias
 import com.kotoframework.core.condition.arbitrary
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.utils.Common.deleted
 import com.kotoframework.utils.Common.currentTime
-import com.kotoframework.utils.Common.getParameter
+import com.kotoframework.utils.Common.getColumnName
 import com.kotoframework.utils.Extension.isNullOrBlank
 import com.kotoframework.utils.Extension.lineToHump
 import com.kotoframework.utils.Extension.rmRedudantBlk
@@ -98,7 +99,7 @@ class CreateWhere<T : KPojo>(KPojo: T, kotoJdbcWrapper: KotoJdbcWrapper?) : Wher
      */
     override fun build(): KotoOperationSet<CreateWhere<T>, T> {
         KPojo::class.declaredMemberProperties.forEach {
-            conditions.add(it.columnName.lineToHump().eq(reName = it.name))
+            conditions.add(it.columnName.lineToHump().eq().alias(it.name))
         }
 
         conditions.add("updateTime".eq())
@@ -126,7 +127,7 @@ class CreateWhere<T : KPojo>(KPojo: T, kotoJdbcWrapper: KotoJdbcWrapper?) : Wher
         }
 
         val (paramNames, reNames) = conditions.filter { it!!.type == EQUAL }
-            .map { getParameter(it!!) to it.reName }.unzip()
+            .map { getColumnName(it!!) to it.reName }.unzip()
 
         KPojo::class.declaredMemberProperties.forEach {
             val default = it.findAnnotation<Default>()?.value
@@ -175,7 +176,7 @@ class CreateWhere<T : KPojo>(KPojo: T, kotoJdbcWrapper: KotoJdbcWrapper?) : Wher
                 }) ".rmRedudantBlk(), paramMap,
                 updateKoto<KPojo>(KPojo, *updateFields.toTypedArray(), jdbcWrapper = kotoJdbcWrapper).except("id").where(
                     onFields
-                        .map { it.columnName.lineToHump().eq(reName = it.propertyName) }
+                        .map { it.columnName.lineToHump().eq().alias(it.propertyName) }
                         .arbitrary()
                 ).build()
             )

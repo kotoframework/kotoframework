@@ -2,8 +2,7 @@ package com.kotoframework.utils
 
 import com.kotoframework.core.condition.Criteria
 import com.kotoframework.*
-import com.kotoframework.utils.Common.getParameter
-import com.kotoframework.utils.Extension.yes
+import com.kotoframework.utils.Common.getColumnName
 
 
 /**
@@ -19,16 +18,16 @@ object SqlGenerator {
     fun generate(condition: Criteria): String {
         val realName = when {
             !condition.reName.isNullOrBlank() -> condition.reName
-            !condition.parameterName.isNullOrBlank() -> condition.parameterName
+            condition.parameterName.isNotBlank() -> condition.parameterName
             else -> ""
         }
-        val parameter = if (condition.parameterName != null) getParameter(condition) else null
+        val parameter = getColumnName(condition)
 
         return when (condition.type) {
             LIKE, EQUAL, GT, GE, LT, LE -> "`$parameter` ${
                 when (condition.type) {
-                    LIKE -> condition.not.yes { "not like" } ?: "like"
-                    EQUAL -> condition.not.yes { "!=" } ?: "="
+                    LIKE -> "like".takeUnless { condition.not } ?: "not like"
+                    EQUAL -> "=".takeUnless { condition.not } ?: "!="
                     GT -> ">"
                     GE -> ">="
                     LT -> "<"
@@ -37,10 +36,10 @@ object SqlGenerator {
                 }
             } :${realName}"
 
-            BETWEEN -> "`$parameter` ${condition.not.yes { "not between" } ?: "between"} :${realName + "Min"} and :${realName + "Max"}"
-            IN -> "`$parameter` ${condition.not.yes { "not in" } ?: "in"} (:$realName)"
+            BETWEEN -> "`$parameter` ${"between".takeUnless { condition.not } ?: "not between"} :${realName + "Min"} and :${realName + "Max"}"
+            IN -> "`$parameter` ${"in".takeUnless { condition.not } ?: "not in"} (:$realName)"
 
-            ISNULL -> "`$parameter` ${condition.not.yes { "is not" } ?: "is"} null"
+            ISNULL -> "`$parameter` ${"is".takeUnless { condition.not } ?:"is not" } null"
 
             else -> condition.sql
         }

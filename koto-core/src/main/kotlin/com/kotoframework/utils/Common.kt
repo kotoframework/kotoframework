@@ -1,32 +1,18 @@
 package com.kotoframework.utils
 
 import com.kotoframework.KotoApp
-import com.kotoframework.KotoApp.kPojoSuffix
-import com.kotoframework.KotoApp.softDeleteColumn
-import com.kotoframework.KotoApp.softDeleteEnabled
 import com.kotoframework.definition.Field
 import com.kotoframework.definition.columnName
-import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoJdbcWrapper
-import com.kotoframework.core.annotations.SoftDelete
-import com.kotoframework.core.annotations.Table
 import com.kotoframework.core.condition.Criteria
 import com.kotoframework.utils.Extension.humpToLine
 import com.kotoframework.utils.Jdbc.dbName
-import java.beans.BeanInfo
 import java.beans.IntrospectionException
 import java.beans.Introspector
-import java.beans.PropertyDescriptor
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Modifier
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.regex.Matcher
-import java.util.regex.Pattern
-import kotlin.reflect.KClass
-import kotlin.reflect.KFunction
-import kotlin.reflect.full.findAnnotation
-import kotlin.reflect.javaType
 
 
 /**
@@ -56,13 +42,11 @@ object Common {
     /**
      * It converts the parameter name to a line.
      *
-     * @param bc Criteria
+     * @param criteria Criteria
      * @return The parameter name is being returned.
      */
-    fun getParameter(bc: Criteria): String {
-        return if (bc.humpToLine == true) {
-            bc.parameterName!!.humpToLine()
-        } else bc.parameterName!!
+    fun getColumnName(criteria: Criteria): String {
+        return criteria.kCallable?.columnName ?: criteria.parameterName.humpToLine()
     }
 
     /** 实现将源类属性拷贝到目标类中
@@ -122,7 +106,7 @@ object Common {
             Jdbc.tableMap["${it.dbName}_$tableName"]?.meta
         }
         val softDeleteColumn = meta?.softDelete?.column ?: KotoApp.softDeleteColumn
-        return if (softDeleteColumn.isNullOrBlank()) "true" else "$tableAlias`$softDeleteColumn` = $value"
+        return if (softDeleteColumn.isBlank()) "true" else "$tableAlias`$softDeleteColumn` = $value"
     }
 
     fun toSqlDate(str: String?): String? {

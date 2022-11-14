@@ -1,6 +1,8 @@
 package com.kotoframework.definition
 
+import com.kotoframework.KotoApp
 import com.kotoframework.SortType
+import com.kotoframework.beans.TableColumn
 import com.kotoframework.core.annotations.Column
 import com.kotoframework.core.condition.Criteria
 import com.kotoframework.core.condition.eq
@@ -31,7 +33,7 @@ internal val Field.columnName: String
     get() = when (this) {
         is Pair<*, *> -> (first!!.columnName)
         is KCallable<*> -> column ?: name.humpToLine()
-        is Jdbc.TableColumn -> name
+        is TableColumn -> name
         is KotoField -> columnName
         is String -> if (lowercase().contains(" as ") || this.contains("(")) {
             this
@@ -47,7 +49,7 @@ internal val Field.propertyName: String
         is Pair<*, *> -> first!!.propertyName
         is KCallable<*> -> name
         is String -> this
-        is Jdbc.TableColumn -> name.lineToHump()
+        is TableColumn -> name.lineToHump()
         is KotoField -> propertyName
         else -> throw IllegalArgumentException("Field $this is not a valid field")
     }
@@ -57,7 +59,7 @@ internal val Field.aliasName: String
         is Pair<*, *> -> second!!.aliasName
         is KCallable<*> -> name
         is String -> this
-        is Jdbc.TableColumn -> name.lineToHump()
+        is TableColumn -> name.lineToHump()
         is KotoField -> aliasName
         else -> this.toString()
     }

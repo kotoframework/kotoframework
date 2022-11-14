@@ -5,7 +5,6 @@ import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.interfaces.KotoQueryHandler
 import com.kotoframework.utils.Printer
 import com.kotoframework.utils.Extension.isAssignableFrom
-import com.kotoframework.utils.Extension.no
 import com.kotoframework.utils.Extension.toKPojo
 import com.kotoframework.utils.Log
 import com.kotoframework.utils.Jdbc
@@ -23,7 +22,7 @@ class BasicJdbcHandler : KotoQueryHandler() {
         kClass: KClass<*>
     ): List<Any> {
         val wrapper =
-            ((jdbc?: Jdbc.defaultJdbcWrapper) as BasicJdbcWrapper)
+            ((jdbc ?: Jdbc.defaultJdbcWrapper) as BasicJdbcWrapper)
         val ds = wrapper.getDataSource()
         Log.log(wrapper, sql, listOf(paramMap), "query")
         return if (kClass isAssignableFrom KPojo::class) {
@@ -41,7 +40,7 @@ class BasicJdbcHandler : KotoQueryHandler() {
         kClass: KClass<*>
     ): Any {
         val wrapper =
-            ((jdbc?: Jdbc.defaultJdbcWrapper) as BasicJdbcWrapper)
+            ((jdbc ?: Jdbc.defaultJdbcWrapper) as BasicJdbcWrapper)
         val ds = wrapper.getDataSource()
         Log.log(wrapper, sql, listOf(paramMap), "query")
         try {
@@ -55,7 +54,9 @@ class BasicJdbcHandler : KotoQueryHandler() {
         } catch (e: Exception) {
             when (e) {
                 is NullPointerException, is IndexOutOfBoundsException, is NoSuchElementException -> {
-                    withoutErrorPrintln.no { Printer.errorPrintln("You are using 【queryForObject】 to get a single column, but the result set is empty.If you want to query for a nullable column, use 【queryForObjectOrNull】 instead.") }
+                    if (!withoutErrorPrintln){
+                        Printer.errorPrintln("You are using 【queryForObject】 to get a single column, but the result set is empty.If you want to query for a nullable column, use 【queryForObjectOrNull】 instead")
+                    }
                 }
             }
             throw e

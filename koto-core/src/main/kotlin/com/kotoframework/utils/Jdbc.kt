@@ -3,11 +3,13 @@ package com.kotoframework.utils
 import com.kotoframework.beans.KotoExecuteResult
 import com.kotoframework.core.condition.Criteria
 import com.kotoframework.*
+import com.kotoframework.beans.TableColumn
+import com.kotoframework.beans.TableMeta
+import com.kotoframework.beans.TableObject
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.interfaces.KotoQueryHandler
 import com.kotoframework.utils.Extension.isNullOrBlank
 import com.kotoframework.utils.Extension.lineToHump
-import com.kotoframework.utils.Extension.yes
 import com.kotoframework.utils.Log.log
 import java.util.*
 
@@ -16,25 +18,6 @@ import java.util.*
  */
 
 object Jdbc {
-    data class TableSoftDelete(
-        var enabled: Boolean = false,
-        var column: String = "deleted",
-    )
-
-    data class TableMeta(
-        var tableName: String,
-        var softDelete: TableSoftDelete = TableSoftDelete(),
-    )
-
-    data class TableColumn(
-        var name: String,
-        var type: String
-    )
-
-    data class TableObject(
-        val fields: List<TableColumn>,
-        val meta: TableMeta
-    )
 
     var tableMap = mutableMapOf<String, TableObject>() // 存储表名和字段名的映射关系
 
@@ -53,10 +36,10 @@ object Jdbc {
         return jdbcWrapper ?: defaultJdbcWrapper ?: throw RuntimeException("jdbcWrapper is null")
     }
 
-    val KotoJdbcWrapper.dbName get() = url.split("?").first().split(
-        "//"
-    )[1].split("/")[1]
-
+    val KotoJdbcWrapper.dbName
+        get() = url.split("?").first().split(
+            "//"
+        )[1].split("/")[1]
 
 
     /**
@@ -162,10 +145,12 @@ object Jdbc {
                 BETWEEN -> {
                     if (it.value.isNullOrBlank() && !nullAllowed && !it.allowNull) return@forEach
 
-                    (it.value is ClosedRange<*>).yes {
-                        paramMap[realName + "Min"] = (it.value as ClosedRange<*>).start
+                    if (it.value is ClosedRange<*>) {
+                        paramMap[realName + "Min"] = it.value.start
                         paramMap[realName + "Max"] = it.value.endInclusive
-                    } ?: throw IllegalArgumentException("The type of the value of BETWEEN is not supported")
+                    } else {
+                        throw IllegalArgumentException("The type of the value of BETWEEN is not supported")
+                    }
 
                     sqls.add(alias + it.sql)
                 }
@@ -237,7 +222,8 @@ object Jdbc {
 
         if (sql.contains("insert")) {
             lastInsertId =
-                wrapper.forObject("select last_insert_id()", emptyMap<String, String>(), Integer::class.java)?.toInt() ?: 0
+                wrapper.forObject("select last_insert_id()", emptyMap<String, String>(), Integer::class.java)?.toInt()
+                    ?: 0
             if (lastInsertId == 0) {
                 lastInsertId = null
             }

@@ -4,11 +4,8 @@ import com.kotoframework.beans.KotoOperationSet
 import com.kotoframework.core.where.Where
 import com.kotoframework.definition.*
 import com.kotoframework.*
+import com.kotoframework.core.condition.*
 import com.kotoframework.interfaces.KPojo
-import com.kotoframework.core.condition.Criteria
-import com.kotoframework.core.condition.arbitrary
-import com.kotoframework.core.condition.eq
-import com.kotoframework.core.condition.isNull
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.utils.Common.currentTime
 import com.kotoframework.utils.Extension.lineToHump
@@ -41,7 +38,7 @@ class UpdateAction<T : KPojo>(
             UpdateSetClause(KPojo, excepted = expects) {
                 Criteria(
                     type = ConditionType.AND,
-                    collections = fields.map { it.columnName.lineToHump().eq(reName = it.propertyName) })
+                    collections = fields.map { it.columnName.lineToHump().eq().alias(it.propertyName) })
             }.build()
         }
         sql = "update ${KPojo.tableName} set ${build.sql}"

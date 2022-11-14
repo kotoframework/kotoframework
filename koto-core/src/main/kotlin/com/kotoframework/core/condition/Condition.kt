@@ -2,178 +2,139 @@ package com.kotoframework.core.condition
 
 import com.kotoframework.*
 import com.kotoframework.LikePosition
+import kotlin.reflect.KCallable
 
 /**
- * Created by ousc on 2022/3/25 09:30
+ * Created by sundaiyue on 2022/3/25 09:30
  */
-class Condition(var parameterName: String = "Unknown") {
+class Condition(private var parameterName: String = "Unknown", private val kCallable: KCallable<*>? = null) {
 
-    private fun getReName(reName: String?, suffix: String = ""): String {
-        return if (reName.isNullOrEmpty()) parameterName + suffix else reName
+    private fun getReName(suffix: String = ""): String {
+        return parameterName + suffix
     }
 
     fun like(
         expression: String?,
-        reName: String?,
-        pos: LikePosition,
-        iif: Boolean?,
-        humpToLine: Boolean,
         not: Boolean = false,
         tableName: String? = null
-    ): LikeCondition? {
-        if (iif != null && !iif) return null
-        return LikeCondition(
+    ): LikeCriteria {
+        return LikeCriteria(
             parameterName = parameterName,
-            pos = if (expression.isNullOrEmpty()) pos else LikePosition.Never,
             value = expression,
-            reName = getReName(reName),
-            humpToLine = humpToLine,
+            reName = getReName(),
             not = not,
-            tableName = tableName
+            tableName = tableName,
+            kCallable = kCallable
         )
     }
 
     fun notLike(
         expression: String?,
-        reName: String?,
-        pos: LikePosition,
-        iif: Boolean?,
-        humpToLine: Boolean,
         tableName: String? = null
-    ): LikeCondition? {
-        return like(expression, reName, pos, iif, humpToLine, true, tableName)
+    ): LikeCriteria {
+        return like(expression, true, tableName)
     }
 
     fun eq(
         value: Any?,
-        reName: String?,
-        iif: Boolean?,
-        humpToLine: Boolean,
         not: Boolean = false,
         tableName: String? = null
-    ): Criteria? {
-        if (iif != null && !iif) return null
+    ): Criteria {
         return Criteria(
             parameterName = parameterName,
             type = EQUAL,
-            reName = getReName(reName),
-            humpToLine = humpToLine,
+            reName = getReName(),
             value = value,
             not = not,
-            tableName = tableName
+            tableName = tableName,
+            kCallable = kCallable
         )
     }
 
     fun notEq(
         value: Any?,
-        reName: String?,
-        iif: Boolean?,
-        humpToLine: Boolean,
         tableName: String? = null
-    ): Criteria? {
-        return eq(value, reName, iif, humpToLine, true, tableName)
+    ): Criteria {
+        return eq(value, true, tableName)
     }
 
     fun gt(
         value: Any?,
-        reName: String?,
-        iif: Boolean?,
-        humpToLine: Boolean,
         tableName: String? = null
-    ): Criteria? {
-        if (iif != null && !iif) return null
+    ): Criteria {
         return Criteria(
             parameterName = parameterName,
             type = GT,
-            reName = getReName(reName, "Min"),
-            humpToLine = humpToLine,
+            reName = getReName("Min"),
             value = value,
-            tableName = tableName
+            tableName = tableName,
+            kCallable = kCallable
         )
     }
 
     fun ge(
         value: Any?,
-        reName: String?,
-        iif: Boolean?,
-        humpToLine: Boolean,
         tableName: String? = null
-    ): Criteria? {
-        if (iif != null && !iif) return null
+    ): Criteria {
         return Criteria(
             parameterName = parameterName,
             type = GE,
-            reName = getReName(reName, "Min"),
-            humpToLine = humpToLine,
+            reName = getReName("Min"),
             value = value,
-            tableName = tableName
+            tableName = tableName,
+            kCallable = kCallable
         )
     }
 
     fun lt(
         value: Any?,
-        reName: String?,
-        iif: Boolean?,
-        humpToLine: Boolean,
         tableName: String? = null
-    ): Criteria? {
-        if (iif != null && !iif) return null
+    ): Criteria {
         return Criteria(
             parameterName = parameterName,
             type = LT,
-            reName = getReName(reName, "Max"),
-            humpToLine = humpToLine,
+            reName = getReName("Max"),
             value = value,
-            tableName = tableName
+            tableName = tableName,
+            kCallable = kCallable
         )
     }
 
     fun le(
         value: Any?,
-        reName: String?,
-        iif: Boolean?,
-        humpToLine: Boolean,
         tableName: String? = null
-    ): Criteria? {
-        if (iif != null && !iif) return null
+    ): Criteria {
         return Criteria(
             parameterName = parameterName,
             type = LE,
-            reName = getReName(reName, "Max"),
-            humpToLine = humpToLine,
+            reName = getReName("Max"),
             value = value,
-            tableName = tableName
+            tableName = tableName,
+            kCallable = kCallable
         )
     }
 
     fun between(
         range: ClosedRange<*>?,
-        reName: String?,
-        iif: Boolean?,
-        humpToLine: Boolean,
         not: Boolean = false,
         tableName: String? = null
-    ): Criteria? {
-        if (iif != null && !iif) return null
+    ): Criteria {
         return Criteria(
             parameterName = parameterName,
             type = BETWEEN,
-            reName = getReName(reName),
-            humpToLine = humpToLine,
+            reName = getReName(),
             value = range,
             not = not,
-            tableName = tableName
+            tableName = tableName,
+            kCallable = kCallable
         )
     }
 
     inline fun <reified T : Comparable<T>> notBetween(
         range: ClosedRange<T>?,
-        reName: String?,
-        iif: Boolean?,
-        humpToLine: Boolean,
         tableName: String? = null
-    ): Criteria? {
-        return between(range, reName, iif, humpToLine, true, tableName)
+    ): Criteria {
+        return between(range, true, tableName)
     }
 
 
@@ -181,27 +142,22 @@ class Condition(var parameterName: String = "Unknown") {
      * If the condition is true, then return the condition
      *
      * @param reName The name of the parameter in the SQL statement.
-     * @param iif If true, the condition will be ignored.
      * @param humpToLine If true, the humpToLine function will be called.
      * @return Nothing.
      */
     fun isIn(
         list: Collection<*>?,
-        reName: String?,
-        iif: Boolean?,
-        humpToLine: Boolean,
         not: Boolean = false,
         tableName: String? = null
-    ): Criteria? {
-        if (iif != null && !iif) return null
+    ): Criteria {
         return Criteria(
             parameterName = parameterName,
             type = IN,
-            reName = getReName(reName),
-            humpToLine = humpToLine,
+            reName = getReName(),
             value = list,
             not = not,
-            tableName = tableName
+            tableName = tableName,
+            kCallable = kCallable
         )
     }
 
@@ -209,41 +165,33 @@ class Condition(var parameterName: String = "Unknown") {
      * If the condition is true, then return the condition
      *
      * @param reName The name of the parameter in the SQL statement.
-     * @param iif If true, the condition will be ignored.
      * @param humpToLine If true, the humpToLine function will be called.
      * @return Nothing.
      */
     fun notIn(
         list: Collection<*>?,
-        reName: String?,
-        iif: Boolean?,
-        humpToLine: Boolean,
         tableName: String? = null
-    ): Criteria? {
-        return isIn(list, reName, iif, humpToLine, true, tableName)
+    ): Criteria {
+        return isIn(list, true, tableName)
     }
 
     /**
      * If the condition is null, return null
      *
-     * @param iif If true, the condition will be ignored.
      * @param humpToLine If true, the parameter name will be converted to hump style.
      * @return Nothing.
      */
     fun isNull(
-        iif: Boolean?,
-        humpToLine: Boolean,
         not: Boolean = false,
         tableName: String? = null
-    ): Criteria? {
-        if (iif != null && !iif) return null
+    ): Criteria {
         return Criteria(
             parameterName = parameterName,
             type = ISNULL,
             reName = parameterName,
-            humpToLine = humpToLine,
             not = not,
-            tableName = tableName
+            tableName = tableName,
+            kCallable = kCallable
         )
     }
 
@@ -251,15 +199,12 @@ class Condition(var parameterName: String = "Unknown") {
      * If the `iif` parameter is not null, then return a `Criteria` object with the `type` property set to
      * `ConditionType.NOTNULL`
      *
-     * @param iif If you want to ignore the condition, you can set it to false.
      * @param humpToLine If true, the parameter name will be converted to hump style.
      * @return Nothing.
      */
     fun notNull(
-        iif: Boolean?,
-        humpToLine: Boolean,
         tableName: String? = null
-    ): Criteria? {
-        return isNull(iif, humpToLine, true, tableName)
+    ): Criteria {
+        return isNull(true, tableName)
     }
 }

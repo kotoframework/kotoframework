@@ -1,5 +1,6 @@
 package com.kotoframework.utils
 
+import com.kotoframework.beans.LogLine
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.utils.Printer.BLACK
 import com.kotoframework.utils.Printer.BLUE
@@ -27,17 +28,6 @@ import java.util.regex.Pattern
 object Log {
     internal var out: String? = "console"
     internal var simpleLog: Boolean = false
-
-    data class LogLine(
-        val text: String,
-        val codes: Array<PrintCode> = arrayOf(),
-        var endLine: Boolean = false,
-    )
-
-    private fun LogLine.endl(): LogLine {
-        this.endLine = true
-        return this
-    }
 
     var tasks = mutableListOf<List<LogLine>>() // 任务队列
 
@@ -97,35 +87,18 @@ object Log {
                     for (logLine in logLines) {
                         when (it) {
                             "console" -> {
-                                if (logLine.endLine) {
-                                    outPrintln(logLine.text, *logLine.codes)
-                                } else {
-                                    outPrint(logLine.text, *logLine.codes)
-                                }
+                                logLine.print()
                             }
-
                             else -> {
-                                val file = File(it, "koto-${currentDate}.log")
-                                if (!file.exists()) {
-                                    file.createNewFile()
-                                }
-                                val writer = FileWriter(file, true)
-                                if (logLine.endLine) {
-                                    writer.write(logLine.text + "\r")
-                                } else {
-                                    writer.write(logLine.text)
-                                }
-                                writer.flush()
-                                writer.close()
+                                logLine.write(it)
                             }
                         }
                     }
                 }
-                sleep(100)
-                try{
+                try {
                     tasks.removeAt(0)
                 } catch (e: IndexOutOfBoundsException) {
-                    // ignore
+                    throw e
                 }
             }
         }.run()

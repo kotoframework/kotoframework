@@ -2,12 +2,10 @@ package com.kotoframework.core.condition
 
 import com.kotoframework.*
 import com.kotoframework.definition.Field
-import com.kotoframework.definition.column
 import com.kotoframework.definition.columnName
-import com.kotoframework.utils.Extension.lineToHump
 import com.kotoframework.utils.Extension.tableAlias
 import com.kotoframework.utils.Extension.tableName
-import com.kotoframework.utils.Extension.yes
+import com.kotoframework.utils.SqlGenerator
 import kotlin.reflect.*
 import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.javaMethod
@@ -19,113 +17,96 @@ import kotlin.reflect.jvm.javaMethod
  * */
 
 fun String.eq(
-    value: Any? = null, reName: String? = null, iif: Boolean? = null, humpToLine: Boolean = true
-): Criteria? {
-    return Condition(this).eq(value, reName, iif, humpToLine)
+    value: Any? = null
+): Criteria {
+    return Condition(this).eq(value)
 }
 
-val String.eq: Criteria? get() = eq()
+val String.eq: Criteria get() = eq()
 
 fun String.notEq(
-    value: Any? = null, reName: String? = null, iif: Boolean? = null, humpToLine: Boolean = true
-): Criteria? {
-    return Condition(this).notEq(value, reName, iif, humpToLine)
+    value: Any? = null
+): Criteria {
+    return Condition(this).notEq(value)
 }
 
-val String.notEq: Criteria? get() = notEq()
+val String.notEq: Criteria get() = notEq()
 
 fun String.like(
-    expression: String? = null,
-    reName: String? = null,
-    pos: LikePosition = Both,
-    iif: Boolean? = null,
-    humpToLine: Boolean = true
-): LikeCondition? {
-    return Condition(this).like(expression, reName, pos, iif, humpToLine)
+    value: String? = null
+): LikeCriteria {
+    return Condition(this).like(value)
 }
 
-val String.like: LikeCondition? get() = like()
+val String.like: LikeCriteria get() = like()
 
 fun String.notLike(
-    expression: String? = null,
-    reName: String? = null,
-    pos: LikePosition = Both,
-    iif: Boolean? = null,
-    humpToLine: Boolean = true
-): LikeCondition? {
-    return Condition(this).notLike(expression, reName, pos, iif, humpToLine)
+    value: String? = null
+): LikeCriteria {
+    return Condition(this).notLike(value)
 }
 
-val String.notLike: Criteria? get() = notLike()
+val String.notLike: Criteria get() = notLike()
 
 fun String.gt(
-    value: Any? = null, reName: String? = null, iif: Boolean? = null, humpToLine: Boolean = true
-): Criteria? {
-    return Condition(this).gt(value, reName, iif, humpToLine)
+    value: Any? = null
+): Criteria {
+    return Condition(this).gt(value)
 }
 
 fun String.ge(
-    value: Any? = null, reName: String? = null, iif: Boolean? = null, humpToLine: Boolean = true
-): Criteria? {
-    return Condition(this).ge(value, reName, iif, humpToLine)
+    value: Any? = null
+): Criteria {
+    return Condition(this).ge(value)
 }
 
 fun String.lt(
-    value: Any? = null, reName: String? = null, iif: Boolean? = null, humpToLine: Boolean = true
-): Criteria? {
-    return Condition(this).lt(value, reName, iif, humpToLine)
+    value: Any? = null
+): Criteria {
+    return Condition(this).lt(value)
 }
 
 fun String.le(
-    value: Any? = null, reName: String? = null, iif: Boolean? = null, humpToLine: Boolean = true
-): Criteria? {
-    return Condition(this).le(value, reName, iif, humpToLine)
+    value: Any? = null
+): Criteria {
+    return Condition(this).le(value)
 }
 
 fun String.between(
-    value: ClosedRange<*>,
-    reName: String? = null,
-    iif: Boolean? = null,
-    humpToLine: Boolean = true
-): Criteria? {
-    return Condition(this).between(value, reName, iif, humpToLine)
+    value: ClosedRange<*>
+): Criteria {
+    return Condition(this).between(value)
 }
 
 fun String.notBetween(
-    value: ClosedRange<*>?,
-    reName: String? = null,
-    iif: Boolean? = null,
-    humpToLine: Boolean = true
-): Criteria? {
-    return Condition(this).notBetween(value, reName, iif, humpToLine)
+    value: ClosedRange<*>?
+): Criteria {
+    return Condition(this).notBetween(value)
 }
 
 fun String.isIn(
-    value: Collection<*>?, reName: String? = null, iif: Boolean? = null, humpToLine: Boolean = true
-): Criteria? {
-    return Condition(this).isIn(value, reName, iif, humpToLine)
+    value: Collection<*>?
+): Criteria {
+    return Condition(this).isIn(value)
 }
 
 fun String.notIn(
-    value: Collection<*>, reName: String? = null, iif: Boolean? = null, humpToLine: Boolean = true
-): Criteria? {
-    return Condition(this).notIn(value, reName, iif, humpToLine)
+    value: Collection<*>?
+): Criteria {
+    return Condition(this).notIn(value)
 }
 
-fun String.isNull(
-    iif: Boolean? = null, humpToLine: Boolean = true
-): Criteria? {
-    return Condition(this).isNull(iif, humpToLine)
+@JvmName("getIsNull")
+fun String.isNull(): Criteria {
+    return Condition(this).isNull()
 }
 
-val String.isNull: Criteria? get() = isNull()
-fun String.notNull(
-    iif: Boolean? = null, humpToLine: Boolean = true
-): Criteria? {
-    return Condition(this).notNull(iif, humpToLine)
+val String.isNull: Criteria get() = isNull()
+fun String.notNull(): Criteria {
+    return Condition(this).notNull()
 }
 
-val String.notNull: Criteria? get() = notNull()
+val String.notNull: Criteria get() = notNull()
 
 fun String.declareSql(): Criteria {
     return Criteria(
@@ -214,8 +195,8 @@ val KCallable<*>.receiver: KClass<*>
 
 
 fun KCallable<*>.eq(
-    value: Any? = null, reName: String? = null, iif: Boolean? = null, humpToLine: Boolean = true
-): Criteria? {
+    value: Any? = null
+): Criteria {
     if (value is KCallable<*>) {
         return Criteria(
             type = SQL,
@@ -223,32 +204,24 @@ fun KCallable<*>.eq(
             tableName = value.receiver.tableName
         )
     }
-    return Condition(column?.lineToHump() ?: name).eq(value, reName, iif, humpToLine, false, receiver.tableName)
+    return Condition(name, this).eq(value, false, receiver.tableName)
 }
 
 val KCallable<*>.eq get() = eq()
 
 fun KCallable<*>.notEq(
-    value: Any? = null, reName: String? = null, iif: Boolean? = null, humpToLine: Boolean = true
-): Criteria? {
-    return Condition(column?.lineToHump() ?: name).notEq(value, reName, iif, humpToLine, receiver.tableName)
+    value: Any? = null
+): Criteria {
+    return Condition(name, this).notEq(value, receiver.tableName)
 }
 
 val KCallable<*>.notEq get() = notEq()
 
 fun KCallable<*>.like(
     expression: String? = null,
-    reName: String? = null,
-    pos: LikePosition = Both,
-    iif: Boolean? = null,
-    humpToLine: Boolean = true
-): LikeCondition? {
-    return Condition(column?.lineToHump() ?: name).like(
+): LikeCriteria {
+    return Condition(name, this).like(
         expression,
-        reName,
-        pos,
-        iif,
-        humpToLine,
         false,
         receiver.tableName
     )
@@ -258,44 +231,40 @@ val KCallable<*>.like get() = like()
 
 fun KCallable<*>.notLike(
     expression: String? = null,
-    reName: String? = null,
-    pos: LikePosition = Both,
-    iif: Boolean? = null,
-    humpToLine: Boolean = true
-): LikeCondition? {
-    return Condition(column?.lineToHump() ?: name).notLike(expression, reName, pos, iif, humpToLine, receiver.tableName)
+): LikeCriteria {
+    return Condition(name, this).notLike(expression, receiver.tableName)
 }
 
 val KCallable<*>.notLike get() = notLike()
 
 fun KCallable<*>.gt(
-    value: Any? = null, reName: String? = null, iif: Boolean? = null, humpToLine: Boolean = true
-): Criteria? {
-    return Condition(column?.lineToHump() ?: name).gt(value, reName, iif, humpToLine, receiver.tableName)
+    value: Any? = null
+): Criteria {
+    return Condition(name, this).gt(value, receiver.tableName)
 }
 
 val KCallable<*>.gt get() = gt()
 
 fun KCallable<*>.ge(
-    value: Any? = null, reName: String? = null, iif: Boolean? = null, humpToLine: Boolean = true
-): Criteria? {
-    return Condition(column?.lineToHump() ?: name).ge(value, reName, iif, humpToLine, receiver.tableName)
+    value: Any? = null
+): Criteria {
+    return Condition(name, this).ge(value, receiver.tableName)
 }
 
 val KCallable<*>.ge get() = ge()
 
 fun KCallable<*>.lt(
-    value: Any? = null, reName: String? = null, iif: Boolean? = null, humpToLine: Boolean = true
-): Criteria? {
-    return Condition(column?.lineToHump() ?: name).lt(value, reName, iif, humpToLine, receiver.tableName)
+    value: Any? = null
+): Criteria {
+    return Condition(name, this).lt(value, receiver.tableName)
 }
 
 val KCallable<*>.lt get() = lt()
 
 fun KCallable<*>.le(
-    value: Any? = null, reName: String? = null, iif: Boolean? = null, humpToLine: Boolean = true
-): Criteria? {
-    return Condition(column?.lineToHump() ?: name).le(value, reName, iif, humpToLine, receiver.tableName)
+    value: Any? = null
+): Criteria {
+    return Condition(name, this).le(value, receiver.tableName)
 }
 
 val KCallable<*>.le get() = le()
@@ -303,78 +272,74 @@ val KCallable<*>.le get() = le()
 fun KCallable<*>.between(
     value: ClosedRange<*>?,
     reName: String? = null,
-    iif: Boolean? = null,
     humpToLine: Boolean = true
-): Criteria? {
-    return Condition(column?.lineToHump() ?: name).between(value, reName, iif, humpToLine, false, receiver.tableName)
+): Criteria {
+    return Condition(name, this).between(value, false, receiver.tableName)
 }
 
 fun KCallable<*>.notBetween(
     value: ClosedRange<*>?,
     reName: String? = null,
-    iif: Boolean? = null,
     humpToLine: Boolean = true
-): Criteria? {
-    return Condition(column?.lineToHump() ?: name).notBetween(value, reName, iif, humpToLine, receiver.tableName)
+): Criteria {
+    return Condition(name, this).notBetween(value, receiver.tableName)
 }
 
 fun KCallable<*>.before(
-    value: Any? = null, reName: String? = null, iif: Boolean? = null, humpToLine: Boolean = true
-): Criteria? {
-    return Condition(column?.lineToHump() ?: name).lt(value, reName, iif, humpToLine, receiver.tableName)
+    value: Any? = null
+): Criteria {
+    return Condition(name, this).lt(value, receiver.tableName)
 }
 
 val KCallable<*>.before get() = before()
 
 fun KCallable<*>.after(
-    value: Any? = null, reName: String? = null, iif: Boolean? = null, humpToLine: Boolean = true
-): Criteria? {
-    return Condition(column?.lineToHump() ?: name).gt(value, reName, iif, humpToLine, receiver.tableName)
+    value: Any? = null
+): Criteria {
+    return Condition(name, this).gt(value, receiver.tableName)
 }
 
 val KCallable<*>.after get() = after()
 
 
 fun KCallable<*>.notBefore(
-    value: Any? = null, reName: String? = null, iif: Boolean? = null, humpToLine: Boolean = true
-): Criteria? {
-    return Condition(column?.lineToHump() ?: name).ge(value, reName, iif, humpToLine, receiver.tableName)
+    value: Any? = null
+): Criteria {
+    return Condition(name, this).ge(value, receiver.tableName)
 }
 
 val KCallable<*>.notBefore get() = notBefore()
 
 fun KCallable<*>.notAfter(
-    value: Any? = null, reName: String? = null, iif: Boolean? = null, humpToLine: Boolean = true
-): Criteria? {
-    return Condition(column?.lineToHump() ?: name).le(value, reName, iif, humpToLine, receiver.tableName)
+    value: Any? = null
+): Criteria {
+    return Condition(name, this).le(value, receiver.tableName)
 }
 
 val KCallable<*>.notAfter get() = notAfter()
 
 fun KCallable<*>.isIn(
-    value: Collection<*>?, reName: String? = null, iif: Boolean? = null, humpToLine: Boolean = true
-): Criteria? {
-    return Condition(column?.lineToHump() ?: name).isIn(value, reName, iif, humpToLine, false, receiver.tableName)
+    value: Collection<*>?
+): Criteria {
+    return Condition(name, this).isIn(value, false, receiver.tableName)
 }
 
 fun KCallable<*>.notIn(
-    value: Collection<*>?, reName: String? = null, iif: Boolean? = null, humpToLine: Boolean = true
-): Criteria? {
-    return Condition(column?.lineToHump() ?: name).notIn(value, reName, iif, humpToLine, receiver.tableName)
+    value: Collection<*>?
+): Criteria {
+    return Condition(name, this).notIn(value, receiver.tableName)
 }
 
 fun KCallable<*>.isNull(
-    iif: Boolean? = null, humpToLine: Boolean = true
-): Criteria? {
-    return Condition(column?.lineToHump() ?: name).isNull(iif, humpToLine, false, receiver.tableName)
+    iif: Boolean? = null
+): Criteria {
+    return Condition(name, this).isNull(false, receiver.tableName)
 }
 
 val KCallable<*>.isNull get() = isNull()
 
-fun KCallable<*>.notNull(
-    iif: Boolean? = null, humpToLine: Boolean = true
-): Criteria? {
-    return Condition(column?.lineToHump() ?: name).notNull(iif, humpToLine, this.receiver.tableName)
+fun KCallable<*>.notNull(): Criteria {
+    return Condition(name, this).notNull(this.receiver.tableName)
 }
 
 val KCallable<*>.notNull get() = notNull()
@@ -396,28 +361,44 @@ fun Criteria?.orNull(): Criteria? {
     }
 }
 
-fun LikeCondition?.matchLeft(): Criteria? {
+fun LikeCriteria?.matchLeft(): Criteria? {
     return this?.apply {
         pos = Left
     }
 }
 
-fun LikeCondition?.matchRight(): Criteria? {
+fun LikeCriteria?.matchRight(): Criteria? {
     return this?.apply {
         pos = Right
     }
 }
 
-fun LikeCondition?.matchBoth(): Criteria? {
+fun LikeCriteria?.matchBoth(): Criteria? {
     return this?.apply {
         pos = Both
     }
 }
 
-fun Criteria?.iif(expression: Boolean): Criteria? {
-    return expression.yes { this }
+fun Criteria.alias(newName: String): Criteria {
+    return this.apply {
+        reName = newName.takeIf { it.isNotBlank() } ?: reName
+        sql = SqlGenerator.generate(this)
+    }
 }
 
+
+@Deprecated(
+    "The 'iif(expression)' is deprecated, please use takeIf(expression) instead",
+    ReplaceWith("this?.takeIf { expression }")
+)
+fun Criteria?.iif(expression: Boolean): Criteria? {
+    return this?.takeIf { expression }
+}
+
+@Deprecated(
+    "The 'reName(newName)' is deprecated, please use alias(newName) instead",
+    ReplaceWith("this?.alias { newName }")
+)
 fun Criteria?.reName(newName: String): Criteria? {
     return this?.apply {
         reName = newName

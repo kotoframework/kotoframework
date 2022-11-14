@@ -1,5 +1,6 @@
 package com.kotoframework.function.select
 
+import com.kotoframework.beans.TableColumn
 import com.kotoframework.definition.*
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoJdbcWrapper
@@ -7,7 +8,6 @@ import com.kotoframework.core.annotations.DateTimeFormat
 import com.kotoframework.utils.Common.toSqlDate
 import com.kotoframework.utils.Extension.lineToHump
 import com.kotoframework.utils.Extension.tableMeta
-import com.kotoframework.utils.Extension.yes
 import com.kotoframework.utils.Jdbc
 import com.kotoframework.utils.Jdbc.dbName
 import com.kotoframework.utils.Jdbc.initMetaData
@@ -32,12 +32,12 @@ inline fun <reified T : KPojo> select(
     initMetaData(meta, jdbcWrapper)
     var selectFields = (if (fields.isEmpty()) listOf(ALL_FIELDS) else fields.toList()).toMutableList()
 
-    selectFields = selectFields.contains(ALL_FIELDS).yes {
-        selectFields.apply {
+    if(selectFields.contains(ALL_FIELDS)){
+        selectFields = selectFields.apply {
             remove(ALL_FIELDS)
             addAll(tableMap[Jdbc.getJdbcWrapper(jdbcWrapper).dbName + "_" + meta.tableName]!!.fields.map { it.name.lineToHump() })
         }.distinct().toMutableList()
-    } ?: selectFields
+    }
 
     return generateSelectSqlByFields(meta.tableName, selectFields, table, jdbcWrapper)
 }
@@ -79,7 +79,7 @@ inline fun <reified T : KPojo> generateSelectSqlByFields(
 fun generateSqlByFieldAndType(
     tableName: String,
     filterFields: List<Field>,
-    fields: List<Jdbc.TableColumn>,
+    fields: List<TableColumn>,
     dateTimeFormat: Map<String, String>
 ): String {
     var sql = "select "
