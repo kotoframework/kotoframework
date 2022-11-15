@@ -33,6 +33,35 @@ Koto优势：
 6. 支持多数据源、动态数据源，支持多数据源的事务，支持多数据源的分布式事务。
 7. 提供配套的代码生成器和ide插件
 
+### ❓如何使用？
+
+#### 1. 引入依赖
+
+##### maven
+
+```xml
+
+<dependency>
+    <groupId>com.kotoframework</groupId>
+    <artifactId>koto-core</artifactId>
+    <version>1.0.1</version>
+</dependency>
+```
+
+##### gradle
+
+```groovy
+compile "com.kotoframework:koto-core:${koto.version}"
+```
+
+```kotlin
+complie("com.kotoframework:koto-core:${koto.version}")
+```
+
+#### 2. Configuration
+
+[koto-config.md](koto-config.md)
+
 ### ⌨️ 使用Koto写出第一个查询函数！
 
 🎉恭喜你完成了Koto的配置，现在可以开始轻松简单地进行数据操作了！
@@ -100,3 +129,27 @@ fun deleteUserInfo(user: UserInfo): KotoExecuteResult {
     return remove(user).execute()
 }
 ```
+
+### 📚Koto Api Documentation
+
+[https://api.kotoframework.com](https://api.kotoframework.com)
+
+### 📚Koto Code Generator
+
+[https://kotoframework.com/#/code-generator](https://kotoframework.com/#/code-generator)
+
+### 📚Koto Ide Plugin
+
+[https://kotoframework.com/#/ide-plugin](https://kotoframework.com/#/ide-plugin)
+
+### 📚Koto Official Website
+
+[https://kotoframework.com](https://kotoframework.com)
+
+### 📚Koto Official Blog
+
+[https://blog.kotoframework.com](https://blog.kotoframework.com)
+
+### 📚Koto Official Document
+
+[https://koto.fun](https://koto.fun)

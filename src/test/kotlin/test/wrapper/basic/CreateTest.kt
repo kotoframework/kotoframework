@@ -1,5 +1,6 @@
 package test.wrapper.basic
 
+import com.kotoframework.BasicJdbcWrapper.Companion.transact
 import test.wrapper.DataSource.namedJdbc
 import com.kotoframework.KotoApp
 import com.kotoframework.KotoBasicJdbcApp.setDynamicDataSource
@@ -155,8 +156,10 @@ class CreateTest {
         )
 
         val updated = user.toKPojo<TbUser>("userName" to "updated")
-        val kotoUpdated = create(updated).on("id")
-        kotoUpdated.execute()
+        transact(dataSource) {
+            val kotoUpdated = it.create(updated).on("id")
+            kotoUpdated.execute()
+        }
 
         val mapUpdated =
             namedJdbc.query("select * from tb_user where id = :id", mapOf("id" to 300)) { resultSet, _ ->

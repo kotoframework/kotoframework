@@ -94,7 +94,7 @@ mapOf(
 )
 ````
 
-### 3. The use of or and and keywords:
+### 3. The use of `or` and `and` keywords:
 
 ```kotlin
 val koto = xxx(user).where{
@@ -137,9 +137,9 @@ mapOf(
 
 .eq() and .notEq() are used for equality/inequality judgment and can accept the following 4 parameters:
 
-| parameter name | description | type | default value |
-| ------------ | ------------------------------------------- | -------- | ------ |
-| `value` | The value to be judged, if not passed in, it will be read from the KPojo object by default | Any? | null |
+| parameter name | description                                                                                | type | default value |
+|----------------|--------------------------------------------------------------------------------------------|------|---------------|
+| `value`        | The value to be judged, if not passed in, it will be read from the KPojo object by default | Any? | null          |
 
 Example of use:
 
@@ -172,7 +172,7 @@ select(User(1), User::userName).where{ it::id.eq() and User::userName.eq().orNul
 // select user_name from user where id = 1 and user_name is null
 ````
 
-> `iif` conditional statement is deprecated, please use `takeIf|takeUnless` or takeUnless instead
+> `iif` conditional statement is deprecated, please use `takeIf` or `takeUnless` instead
 
 Chain call `.takeIf(()->Boolean)|.takeUnless(()->Boolean)` after the condition to control whether the condition is applied or not, if it returns false, the condition will not be applied
 This function is not only applicable in .eq, but also applicable to similarity judgment, numerical comparison, date comparison, etc., which will not be repeated in the following, but the following examples can be seen:
@@ -203,9 +203,9 @@ mapOf(
 
 .like() and .notLike() are used for similarity judgment
 
-| parameter name | description | type | default value |
-|---------| ---------------------------------------------------- | ------------ | ------ |
-| `value` | The value to be judged, if not passed in, it will be read from the KPojo object by default, with "%" | Any? | null |
+| parameter name | description                                                                                          | type | default value |
+|----------------|------------------------------------------------------------------------------------------------------|------|---------------|
+| `value`        | The value to be judged, if not passed in, it will be read from the KPojo object by default, with "%" | Any? | null          |
 
 Example of use:
 
@@ -238,9 +238,9 @@ select(User(userName = "%koto"), User::userName).where{ it::userName.like}.query
 
 gt, ge, lt, and le represent greater than, greater than or equal to, less than, and less than or equal to judgment, respectively, and can accept the following four parameters for numerical comparison:
 
-| parameter name | description | type | default value |
-| ------------ | ------------------------------------ ------- | -------------- | ------ |
-| `value` | The value to be judged, if not passed in, it will be read from the KPojo object by default | Comparable<*>? | null |
+| parameter name | description                                                                                | type           | default value |
+|----------------|--------------------------------------------------------------------------------------------|----------------|---------------|
+| `value`        | The value to be judged, if not passed in, it will be read from the KPojo object by default | Comparable<*>? | null          |
 
 Example of use:
 
@@ -273,28 +273,28 @@ select(User(1), User::userName).where{ it::id.gt }.query()
 
 before, after, notBefore, notAfter respectively represent earlier than, later than, not earlier than, not later than judgment, used for date comparison, can accept the following 4 parameters:
 
-| parameter name | description | type | default value |
-| ------------ |--------------------------| -------------- | ------ |
-| `value` | The value to be judged, if not passed in, it will be read from the KPojo object by default | Comparable<*>? | null |
+| parameter name | description                                                                                | type           | default value |
+|----------------|--------------------------------------------------------------------------------------------|----------------|---------------|
+| `value`        | The value to be judged, if not passed in, it will be read from the KPojo object by default | Comparable<*>? | null          |
 
 Example of use:
 
 ```kotlin
-select(User(1), User::userName).where{ it::id.gt() }.query()
-// can also be written: select(User(), User::userName).where{ it::id.gt(1) }.query()
-// select user_name from user where id > 1
+select(User(birthday = '2022-11-11'), User::userName).where{ it::birthday.after() }.query()
+// can also be written: select(User(), User::userName).where{ it::birthday.after('2022-11-11') }.query()
+// select user_name from user where birthday > 1
 
-select(User(1), User::userName).where{ it::id.ge() }.query()
-// can also be written: select(User(), User::userName).where{ it::id.ge(1) }.query()
-// select user_name from user where id >= 1
+select(User(birthday = '2022-11-11'), User::userName).where{ it::birthday.notBefore() }.query()
+// can also be written: select(User(), User::userName).where{ it::birthday.notBefore('2022-11-11') }.query()
+// select user_name from user where birthday >= 1
 
-select(User(1), User::userName).where{ it::id.lt() }.query()
-// can also be written: select(User(), User::userName).where{ it::id.lt(1) }.query()
-// select user_name from user where id < 1
+select(User(birthday = '2022-11-11'), User::userName).where{ it::birthday.before() }.query()
+// can also be written: select(User(), User::userName).where{ it::birthday.before('2022-11-11') }.query()
+// select user_name from user where birthday < 1
 
-select(User(1), User::userName).where{ it::id.le() }.query()
-// can also be written: select(User(), User::userName).where{ it::id.le(1) }.query()
-// select user_name from user where id <= 1
+select(User(birthday = '2022-11-11'), User::userName).where{ it::birthday.notAfter() }.query()
+// can also be written: select(User(), User::userName).where{ it::birthday.notAfter('2022-11-11') }.query()
+// select user_name from user where birthday <= '2022-11-11'
 ````
 
 If you don't need to accept parameters, you can omit the parentheses:
@@ -310,9 +310,9 @@ select(User(1), User::userName).where{ it::id.gt }.query()
 
 between and notBetween respectively represent between interval and not between interval judgment, which are used for date and numerical comparison, and can accept the following 4 parameters:
 
-| parameter name | description | type | default value |
-| ------------ | ------------------------------------------------------------ | -------------- | ------ |
-| `value` | interval range, can be numeric value, date, etc. <strong><u>must be passed in</u></strong> | ClosedRange<*> | / |
+| parameter name | description                                                                                | type           | default value |
+|----------------|--------------------------------------------------------------------------------------------|----------------|---------------|
+| `value`        | interval range, can be numeric value, date, etc. <strong><u>must be passed in</u></strong> | ClosedRange<*> | /             |
 
 Example of use:
 
@@ -330,9 +330,9 @@ select(User(1), User::userName).where{ it::id.notBetween(1..100) }.query()
 
 isIn and notIn respectively represent whether they are in a certain set and can accept the following 4 parameters:
 
-| parameter name | description | type | default value |
-| ------------ | ------------------------------------------------------------ | ------------- | ------ |
-| `value` | Collection, can be passed in Array/List/MutatbleList, etc. <strong><u>must be passed in</u></strong> | Collection<*> | / |
+| parameter name | description                                                                                          | type          | default value |
+|----------------|------------------------------------------------------------------------------------------------------|---------------|---------------|
+| `value`        | Collection, can be passed in Array/List/MutatbleList, etc. <strong><u>must be passed in</u></strong> | Collection<*> | /             |
 
 Example of use:
 
@@ -371,21 +371,21 @@ select(User(1), User::userName).where{ it::userName.isNull }.query()
 
 ### Connection infix `and|or`
 
-Please move to <a href="/#/zh-cn/where?id=_3-Use of or and and keywords:">Use of or and and keywords</a>
+Please move to <a href="/#/zh-cn/where?id=_3-Use of `or` and `and` keywords:">Use of or and and keywords</a>
 
 
 
 ## Where APIs
 
-| function name | description | remarks |
-| ----------------------------------------- | ------------------------------------ | ----------------- |
-| `.map(vararg Pair<String,Any?>)` | Add/override parameter Map value | |
-| `.suffix(String)` | set suffix | |
-| `.first()` | limit one | only used in queries |
-| `.page(pageIndex: Int, pageSize: Int)` | query pagination | only used in queries |
-| `.deleted()` | query tombstone data | only used in queries |
-| `.distinct()` | query is different | only used in query |
-| `.build()` | Generate KotoDataSet with sql and paramMap | |
-| `.orderBy(vararg Field)` | Collation | Only used in queries |
-| `.groupBy(vararg Field)` | grouping rules | only used in queries |
+| function name                             | description                                                                                 | remarks                                  |
+|-------------------------------------------|---------------------------------------------------------------------------------------------|------------------------------------------|
+| `.map(vararg Pair<String,Any?>)`          | Add/override parameter Map value                                                            |                                          |
+| `.suffix(String)`                         | set suffix                                                                                  |                                          |
+| `.first()`                                | limit one                                                                                   | only used in queries                     |
+| `.page(pageIndex: Int, pageSize: Int)`    | query pagination                                                                            | only used in queries                     |
+| `.deleted()`                              | query tombstone data                                                                        | only used in queries                     |
+| `.distinct()`                             | query is different                                                                          | only used in query                       |
+| `.build()`                                | Generate KotoDataSet with sql and paramMap                                                  |                                          |
+| `.orderBy(vararg Field)`                  | Collation                                                                                   | Only used in queries                     |
+| `.groupBy(vararg Field)`                  | grouping rules                                                                              | only used in queries                     |
 | `.allowNull(nullAllowed: Boolean = true)` | When the judgment value of the condition is null, it is automatically converted to isNull() | The default value is false when querying |

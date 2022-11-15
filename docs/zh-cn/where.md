@@ -139,9 +139,9 @@ mapOf(
 
 .eq()和.notEq()用于相等/不相等判断，可以接受以下4个参数：
 
-| 参数名       | 说明                                        | 类型     | 默认值 |
-| ------------ | ------------------------------------------- | -------- | ------ |
-| `value`      | 判断的值，若不传入，则默认从KPojo对象中读取 | Any?     | null   |
+| 参数名     | 说明                       | 类型   | 默认值  |
+|---------|--------------------------|------|------|
+| `value` | 判断的值，若不传入，则默认从KPojo对象中读取 | Any? | null |
 
 使用示例：
 
@@ -205,9 +205,9 @@ mapOf(
 
 .like()和.notLike()用于相似判断
 
-| 参数名     | 说明                                                 | 类型         | 默认值 |
-|---------| ---------------------------------------------------- | ------------ | ------ |
-| `value` | 判断的值，若不传入，则默认从KPojo对象中读取，需带“%” | Any?         | null   |
+| 参数名     | 说明                             | 类型   | 默认值  |
+|---------|--------------------------------|------|------|
+| `value` | 判断的值，若不传入，则默认从KPojo对象中读取，需带“%” | Any? | null |
 
 使用示例：
 
@@ -277,28 +277,28 @@ select(User(1), User::userName).where{ it::id.gt }.query()
 
 before、after、notBefore、notAfter分别代表早于、晚于、不早于、不晚于判断，用于日期比较，可以接受以下4个参数：
 
-| 参数名       | 说明                       | 类型           | 默认值 |
-| ------------ |--------------------------| -------------- | ------ |
-| `value`      | 判断的值，若不传入，则默认从KPojo对象中读取 | Comparable<*>? | null   |
+| 参数名     | 说明                       | 类型             | 默认值  |
+|---------|--------------------------|----------------|------|
+| `value` | 判断的值，若不传入，则默认从KPojo对象中读取 | Comparable<*>? | null |
 
 使用示例：
 
 ```kotlin
-select(User(1), User::userName).where{ it::id.gt() }.query()
-//也可写作：select(User(), User::userName).where{ it::id.gt(1) }.query()
-// select user_name from user where id > 1
+select(User(birthday = '2022-11-11'), User::userName).where{ it::birthday.before() }.query()
+//也可写作：select(User(), User::userName).where{ it::birthday.before('2022-11-11') }.query()
+// select user_name from user where birthday > '2022-11-11'
 
-select(User(1), User::userName).where{ it::id.ge() }.query()
-//也可写作：select(User(), User::userName).where{ it::id.ge(1) }.query()
-// select user_name from user where id >= 1
+select(User(birthday = '2022-11-11'), User::userName).where{ it::birthday.ge() }.query()
+//也可写作：select(User(), User::userName).where{ it::birthday.ge('2022-11-11') }.query()
+// select user_name from user where birthday >= '2022-11-11'
 
-select(User(1), User::userName).where{ it::id.lt() }.query()
-//也可写作：select(User(), User::userName).where{ it::id.lt(1) }.query()
-// select user_name from user where id < 1
+select(User(birthday = '2022-11-11'), User::userName).where{ it::birthday.lt() }.query()
+//也可写作：select(User(), User::userName).where{ it::birthday.lt('2022-11-11') }.query()
+// select user_name from user where birthday < '2022-11-11'
 
-select(User(1), User::userName).where{ it::id.le() }.query()
-//也可写作：select(User(), User::userName).where{ it::id.le(1) }.query()
-// select user_name from user where id <= 1
+select(User(birthday = '2022-11-11'), User::userName).where{ it::birthday.le() }.query()
+//也可写作：select(User(), User::userName).where{ it::birthday.le('2022-11-11') }.query()
+// select user_name from user where birthday <= '2022-11-11'
 ```
 
 若不需要接受参数时，可省略括号：
@@ -314,9 +314,9 @@ select(User(1), User::userName).where{ it::id.gt }.query()
 
 between、notBetween分别代表介于区间、不介于区间判断，用于日期和数值比较，可以接受以下4个参数：
 
-| 参数名       | 说明                                                         | 类型           | 默认值 |
-| ------------ | ------------------------------------------------------------ | -------------- | ------ |
-| `value`      | 区间范围，可以为数值、日期等，<strong><u>必须传入</u></strong> | ClosedRange<*> | /      |
+| 参数名     | 说明                                          | 类型             | 默认值 |
+|---------|---------------------------------------------|----------------|-----|
+| `value` | 区间范围，可以为数值、日期等，<strong><u>必须传入</u></strong> | ClosedRange<*> | /   |
 
 使用示例：
 
@@ -334,9 +334,9 @@ select(User(1), User::userName).where{ it::id.notBetween(1..100) }.query()
 
 isIn、notIn分别代表是否处于某集合判断，可以接受以下4个参数：
 
-| 参数名       | 说明                                                         | 类型          | 默认值 |
-| ------------ | ------------------------------------------------------------ | ------------- | ------ |
-| `value`      | 集合,可传入Array/List/MutatbleList等，<strong><u>必须传入</u></strong> | Collection<*> | /      |
+| 参数名     | 说明                                                          | 类型            | 默认值 |
+|---------|-------------------------------------------------------------|---------------|-----|
+| `value` | 集合,可传入Array/List/MutatbleList等，<strong><u>必须传入</u></strong> | Collection<*> | /   |
 
 使用示例：
 
@@ -381,16 +381,16 @@ select(User(1), User::userName).where{ it::userName.isNull }.query()
 
 ## Where Api
 
-| 函数名                                    | 说明                                 | 备注              |
-| ----------------------------------------- | ------------------------------------ | ----------------- |
-| `.map(vararg Pair<String,Any?>)`          | 加入/覆盖参数Map值                   |                   |
-| `.suffix(String)`                         | 设置后缀                             |                   |
-| `.first()`                                | limit one                            | 仅查询中使用      |
-| `.page(pageIndex: Int, pageSize: Int)`    | 查询分页                             | 仅查询中使用      |
+| 函数名                                       | 说明                           | 备注          |
+|-------------------------------------------|------------------------------|-------------|
+| `.map(vararg Pair<String,Any?>)`          | 加入/覆盖参数Map值                  |             |
+| `.suffix(String)`                         | 设置后缀                         |             |
+| `.first()`                                | limit one                    | 仅查询中使用      |
+| `.page(pageIndex: Int, pageSize: Int)`    | 查询分页                         | 仅查询中使用      |
 | `.deleted()`                              | 查询逻辑删除数据                     | 仅查询中使用      |
-| `.distinct()`                             | 查询不同                             | 仅查询中使用      |
-| `.build()`                                | 生成带有sql和paramMap的KotoDataSet   |                   |
-| `.orderBy(vararg Field)`                  | 排序规则                             | 仅查询中使用      |
-| `.groupBy(vararg Field)`                  | 分组规则                             | 仅查询中使用      |
-| `.allowNull(nullAllowed: Boolean = true)` | 条件的判断值为null时自动转为isNull() | 查询时默认为false |
+| `.distinct()`                             | 查询不同                         | 仅查询中使用      |
+| `.build()`                                | 生成带有sql和paramMap的KotoDataSet |             |
+| `.orderBy(vararg Field)`                  | 排序规则                         | 仅查询中使用      |
+| `.groupBy(vararg Field)`                  | 分组规则                         | 仅查询中使用      |
+| `.allowNull(nullAllowed: Boolean = true)` | 条件的判断值为null时自动转为isNull()     | 查询时默认为false |
 

@@ -7,12 +7,14 @@ Koto SQL Framework for Kotlin
 <img src="https://cdn.leinbo.com/assets/images/koto-logo.png" alt="koto" style="zoom: 33%;" />
 
 official website: [https://kotoframework.com](https://kotoframework.com)
+
 ### ❓What is "koto"？
 
 > An easy-to-use, flexible, lightweight data persistence layer ORM framework designed for kotlin.
 >
 
-Koto has designed concise operation entities and APIs. In most cases, only one line is needed to complete complex logical functions on database tables:
+Koto has designed concise operation entities and APIs. In most cases, only one line is needed to complete complex
+logical functions on database tables:
 
 ```kotlin
 val list = select<User>().queryForList() // list: List<User>
@@ -21,18 +23,75 @@ val list = select<User>().queryForList() // list: List<User>
 The actual SQL statement executed:
 
 ```sql
-select `user_name` as `userName`, `nickname`, `id`, `active`, DATE_FORMAT(`create_time`, '%Y-%m-%d %H:%i:%s') as `createTime`, DATE_FORMAT(`update_time`, '%Y-%m-%d %H:%i:%s') as `updateTime` from user
+select `user_name`                                     as `userName`,
+       `nickname`,
+       `id`,
+       `active`,
+       DATE_FORMAT(`create_time`, '%Y-%m-%d %H:%i:%s') as `createTime`,
+       DATE_FORMAT(`update_time`, '%Y-%m-%d %H:%i:%s') as `updateTime`
+from user
 ```
 
-Koto Advantages:
+You can also use the `query` function to return a `List<Map<String, Any>>`:
+
+```kotlin
+val list = select<User>().query() // list: List<Map<String, Any>>
+```
+
+The actual SQL statement executed:
+
+```sql
+select `user_name`                                     as `userName`,
+       `nickname`,
+       `id`,
+       `active`,
+       DATE_FORMAT(`create_time`, '%Y-%m-%d %H:%i:%s') as `createTime`,
+       DATE_FORMAT(`update_time`, '%Y-%m-%d %H:%i:%s') as `updateTime`
+from user
+```
+
+### ❓Why use "koto"？
 
 1. Lightweight, only 200KB in size, hardly need any additional dependencies
 2. Simple configuration, almost no configuration required
-3. Supports object-relational mapping, which can be easily used to map between relational databases and business entity objects.
-4. The writing method is simple and flexible, using chain calls, default parameters, extension functions and other writing methods, which are perfectly combined with Kotlin syntax.
+3. Supports object-relational mapping, which can be easily used to map between relational databases and business entity
+   objects.
+4. The writing method is simple and flexible, using chain calls, default parameters, extension functions and other
+   writing methods, which are perfectly combined with Kotlin syntax.
 5. It is easy to debug and has powerful and perfect log function.
-6. Support multiple data sources, dynamic data sources, transactions with multiple data sources, and distributed transactions with multiple data sources.
+6. Support multiple data sources, dynamic data sources, transactions with multiple data sources, and distributed
+   transactions with multiple data sources.
 7. Provide supporting code generator and ide plugin
+
+### ❓How to use "koto"？
+
+#### 1. Add dependency
+
+##### maven
+
+```xml
+
+<dependency>
+    <groupId>com.kotoframework</groupId>
+    <artifactId>koto-core</artifactId>
+    <version>1.0.1</version>
+</dependency>
+```
+
+##### gradle
+
+```groovy
+compile "com.kotoframework:koto-core:${koto.version}"
+```
+
+```kotlin
+complie("com.kotoframework:koto-core:${koto.version}")
+```
+
+#### 2. Configuration
+
+[koto-config.md](koto-config.md)
+
 
 ### ⌨️ Write your first query function using Koto!
 
@@ -45,7 +104,7 @@ Below we will write our first function using Koto:
 ```kotlin
 fun getUserInfoById(id): User {
     return select(User(1)).where().queryForObject()
-    
+
     // another way of writing
     //select(User(1)).by("id").queryForObject()
 }
@@ -62,21 +121,21 @@ You can also use Where to create more complex query conditions, such as:
 
 ```kotlin
 fun getUserBySomeCondition(user: User): UserInfo? { // query a single entity
-    return select(user).where{
+    return select(user).where {
         it::id.eq and
-        it::userName.notNull and
-        it::active.eq(true) and
-        it::age.lt() // < user.age
-   }.queryForObjectOrNull()
+                it::userName.notNull and
+                it::active.eq(true) and
+                it::age.lt() // < user.age
+    }.queryForObjectOrNull()
 }
 
-fun getUser(user: User): List<User>{ // Query the list of entities that meet the condition
-  return select(user).where{
-    it::id.eq and
-    it::userName.eq and
-    it::active.eq and
-    it::age.eq
-  }.queryForList()
+fun getUser(user: User): List<User> { // Query the list of entities that meet the condition
+    return select(user).where {
+        it::id.eq and
+                it::userName.eq and
+                it::active.eq and
+                it::age.eq
+    }.queryForList()
 }
 
 //In fact, the second query can be abbreviated as the following,
@@ -105,3 +164,27 @@ fun deleteUserInfo(user: UserInfo): KotoExecuteResult {
     return remove(user).execute()
 }
 ```
+
+### 📚Koto Api Documentation
+
+[https://api.kotoframework.com](https://api.kotoframework.com)
+
+### 📚Koto Code Generator
+
+[https://kotoframework.com/#/code-generator](https://kotoframework.com/#/code-generator)
+
+### 📚Koto Ide Plugin
+
+[https://kotoframework.com/#/ide-plugin](https://kotoframework.com/#/ide-plugin)
+
+### 📚Koto Official Website
+
+[https://kotoframework.com](https://kotoframework.com)
+
+### 📚Koto Official Blog
+
+[https://blog.kotoframework.com](https://blog.kotoframework.com)
+
+### 📚Koto Official Document
+
+[https://koto.fun](https://koto.fun)

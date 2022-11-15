@@ -91,6 +91,14 @@ class BasicJdbcWrapper : KotoJdbcWrapper() {
             map?.values?.firstOrNull()?.toString()?.toFloat() as T
         } else if (clazz.name == "java.lang.Boolean") {
             map?.values?.firstOrNull()?.toString()?.toBoolean() as T
+        } else if (clazz.name == "java.lang.Short") {
+            map?.values?.firstOrNull()?.toString()?.toShort() as T
+        } else if (clazz.name == "java.lang.Byte") {
+            map?.values?.firstOrNull()?.toString()?.toByte() as T
+        } else if (clazz.name == "java.lang.String") {
+            map?.values?.firstOrNull()?.toString() as T
+        } else if (clazz.name == "java.util.Date") {
+            map?.values?.firstOrNull()?.toString()?.toLong()?.let { java.util.Date(it) } as T
         } else {
             try {
                 map?.values?.firstOrNull()?.toString()?.let { clazz.cast(it) }
@@ -151,6 +159,22 @@ class BasicJdbcWrapper : KotoJdbcWrapper() {
                 newParamList.add(parseSqlStatement(sql, it).jdbcParamList)
             }
             return Pair(jdbcSql, newParamList)
+        }
+
+        inline fun <reified T> transact(dataSource: DataSource, block: (BasicJdbcWrapper) -> T): T {
+            var res: T? = null
+            val conn = dataSource.connection
+            conn.autoCommit = false
+            try {
+                res = block(BasicJdbcWrapper().apply { ds = dataSource })
+                conn.commit()
+            } catch (e: Exception) {
+                conn.rollback()
+                throw e
+            } finally {
+                conn.close()
+            }
+            return res!!
         }
     }
 }
