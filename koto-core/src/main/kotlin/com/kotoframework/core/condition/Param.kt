@@ -271,16 +271,12 @@ val KCallable<*>.le get() = le()
 
 fun KCallable<*>.between(
     value: ClosedRange<*>?,
-    reName: String? = null,
-    humpToLine: Boolean = true
 ): Criteria {
     return Condition(name, this).between(value, false, receiver.tableName)
 }
 
 fun KCallable<*>.notBetween(
-    value: ClosedRange<*>?,
-    reName: String? = null,
-    humpToLine: Boolean = true
+    value: ClosedRange<*>?
 ): Criteria {
     return Condition(name, this).notBetween(value, receiver.tableName)
 }
@@ -330,9 +326,8 @@ fun KCallable<*>.notIn(
     return Condition(name, this).notIn(value, receiver.tableName)
 }
 
-fun KCallable<*>.isNull(
-    iif: Boolean? = null
-): Criteria {
+@JvmName("getIsNull")
+fun KCallable<*>.isNull(): Criteria {
     return Condition(name, this).isNull(false, receiver.tableName)
 }
 
@@ -389,7 +384,7 @@ fun Criteria.alias(newName: String): Criteria {
 
 @Deprecated(
     "The 'iif(expression)' is deprecated, please use takeIf(expression) instead",
-    ReplaceWith("this?.takeIf { expression }")
+    ReplaceWith("this.takeIf { expression }")
 )
 fun Criteria?.iif(expression: Boolean): Criteria? {
     return this?.takeIf { expression }
@@ -397,7 +392,7 @@ fun Criteria?.iif(expression: Boolean): Criteria? {
 
 @Deprecated(
     "The 'reName(newName)' is deprecated, please use alias(newName) instead",
-    ReplaceWith("this?.alias { newName }")
+    ReplaceWith("this.alias(newName)")
 )
 fun Criteria?.reName(newName: String): Criteria? {
     return this?.apply {

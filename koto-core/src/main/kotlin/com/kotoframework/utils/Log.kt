@@ -89,16 +89,15 @@ object Log {
                             "console" -> {
                                 logLine.print()
                             }
+
                             else -> {
                                 logLine.write(it)
                             }
                         }
                     }
                 }
-                try {
+                if (tasks.isNotEmpty()) {
                     tasks.removeAt(0)
-                } catch (e: IndexOutOfBoundsException) {
-                    throw e
                 }
             }
         }.run()
