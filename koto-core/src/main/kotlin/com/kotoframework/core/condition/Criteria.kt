@@ -14,7 +14,7 @@ open class Criteria(
     internal var pos: LikePosition? = Never, // like position
     var reName: String? = null, // rename the parameter name in the sql and the paramMap
     var sql: String = "", // sql
-    internal var ifNoValueStrategy: NoValueStrategy = Ignore, // when the value is null, whether to generate sql
+    internal var ifNoValueStrategy: NoValueStrategy = KotoApp.defaultNoValueStrategy, // when the value is null, whether to generate sql
     val value: Any? = null, // value
     val tableName: String? = "", // table name
     internal val kCallable: KCallable<*>? = null, // the property of the kCallable
@@ -52,7 +52,7 @@ class LikeCriteria(
     pos: LikePosition? = Never,
     reName: String? = null,
     sql: String = "",
-    ifNoValueStrategy: NoValueStrategy = Ignore,
+    ifNoValueStrategy: NoValueStrategy = KotoApp.defaultNoValueStrategy,
     value: Any? = null,
     tableName: String? = "",
     kCallable: KCallable<*>? = null,

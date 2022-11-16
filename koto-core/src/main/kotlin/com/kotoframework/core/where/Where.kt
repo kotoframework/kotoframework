@@ -128,8 +128,8 @@ open class Where<T : KPojo>(
         return this
     }
 
-    private var ifNoValueStrategy: (Criteria) -> NoValueStrategy = { Ignore }
-    open fun ifNoValue(strategy: (Criteria) -> NoValueStrategy = { Ignore }): Where<T> {
+    private var ifNoValueStrategy: (Criteria) -> NoValueStrategy = { KotoApp.defaultNoValueStrategy }
+    open fun ifNoValue(strategy: (Criteria) -> NoValueStrategy = { KotoApp.defaultNoValueStrategy }): Where<T> {
         this.ifNoValueStrategy = strategy
         return this
     }

@@ -87,7 +87,7 @@ object Jdbc {
     fun joinSqlStatement(
         conditions: List<Criteria?>,
         paramMap: MutableMap<String, Any?>,
-        ifNoValueStrategy: (Criteria) -> NoValueStrategy = { Ignore },
+        ifNoValueStrategy: (Criteria) -> NoValueStrategy = { KotoApp.defaultNoValueStrategy },
         join: String = "and",
         brackets: Boolean = false,
         showAlias: Boolean = false

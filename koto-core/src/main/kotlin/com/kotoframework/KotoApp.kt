@@ -12,6 +12,7 @@ object KotoApp {
     internal var softDeleteColumn: String = "deleted"
     internal var kPojoSuffix: String = ""
     internal var dbType: DBType = MySql
+    internal var defaultNoValueStrategy = Ignore
 
     /*
     * 'console' or path to logFile, split with ","
@@ -40,6 +41,11 @@ object KotoApp {
 
     fun setDBType(dbType: DBType): KotoApp {
         this.dbType = dbType
+        return this
+    }
+
+    fun setNoValueStrategy(noValueStrategy: NoValueStrategy): KotoApp {
+        defaultNoValueStrategy = noValueStrategy
         return this
     }
 
