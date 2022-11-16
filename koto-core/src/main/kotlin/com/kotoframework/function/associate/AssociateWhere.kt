@@ -8,7 +8,9 @@ import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.core.condition.*
 import com.kotoframework.core.where.Where
+import com.kotoframework.utils.Common
 import com.kotoframework.utils.Common.deleted
+import com.kotoframework.utils.Common.smartPagination
 import com.kotoframework.utils.Extension.isAssignableFrom
 import com.kotoframework.utils.Extension.isNullOrEmpty
 import com.kotoframework.utils.Extension.lineToHump
@@ -954,18 +956,13 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
                 whereParamMap[it.key] = it.value
             }
         }
-        if (finalMap["pageSize"] != null && finalMap["pageIndex"] != null) {
-            finalMap["pageIndex"] = (finalMap["pageIndex"] as Int - 1) * finalMap["pageSize"] as Int
-            suffix = "$suffix limit :pageIndex,:pageSize"
-            if (sql.isNotBlank()) {
-                sql = sql.replaceFirst("select", "select SQL_CALC_FOUND_ROWS")
-            }
-        }
+
+        val (paginatedSql, paginatedSuffix) = smartPagination(sql, suffix, finalMap)
 
         return if (whereConditions == null) {
             whereParamMap.putAll(onParamMap)
             whereParamMap.putAll(finalMap)
-            KotoResultSet("$sql $orderBy $suffix", whereParamMap, kotoJdbcWrapper, Unknown::class)
+            KotoResultSet("$paginatedSql $orderBy $paginatedSuffix", whereParamMap, kotoJdbcWrapper, Unknown::class)
         } else {
             val whereSql = joinSqlStatement(
                 listOf(
@@ -976,7 +973,7 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
             whereParamMap.putAll(onParamMap)
             whereParamMap.putAll(finalMap)
             KotoResultSet(
-                "$sql where $whereSql $groupBy $orderBy $suffix".rmRedundantBlk(),
+                "$paginatedSql where $whereSql $groupBy $orderBy $paginatedSuffix".rmRedundantBlk(),
                 whereParamMap,
                 kotoJdbcWrapper,
                 Unknown::class

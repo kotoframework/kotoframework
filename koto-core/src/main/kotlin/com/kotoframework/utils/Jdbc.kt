@@ -95,16 +95,20 @@ object Jdbc {
         val sqls = mutableListOf<String>()
         conditions.filterNotNull().forEach {
             val alias = if (showAlias) "${it.tableName!!.lineToHump()}." else ""
+
             if (paramMap[it.parameterName] is List<*> && it.type != IN) {
                 it.type = IN
             }
+
             if (paramMap[it.parameterName] is ClosedRange<*> && it.type != BETWEEN) {
                 it.type = BETWEEN
             }
+
             val realName = when {
                 !it.reName.isNullOrBlank() -> it.reName
                 else -> it.parameterName
             }!!
+
             if (it.valueAcceptable) {
                 if (!paramMap[it.parameterName].isNullOrEmpty() && paramMap[realName].isNullOrEmpty()) {
                     paramMap[realName] = paramMap[it.parameterName]
@@ -112,6 +116,7 @@ object Jdbc {
                 if (!it.value.isNullOrEmpty())
                     paramMap[realName] = it.value ?: paramMap[realName]
             }
+
             if (paramMap[realName].isNullOrEmpty() && ifNoValueStrategy(it).ignore() && it.noValueStrategy.ignore() && it.valueAcceptable) return@forEach
 
             val defaultIfNoValue: String? = if (paramMap[realName].isNullOrEmpty() && it.valueAcceptable) {

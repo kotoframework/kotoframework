@@ -1,8 +1,6 @@
 package com.kotoframework.utils
 
-import com.kotoframework.EQUAL
-import com.kotoframework.KotoApp
-import com.kotoframework.NoValueStrategy
+import com.kotoframework.*
 import com.kotoframework.definition.Field
 import com.kotoframework.definition.columnName
 import com.kotoframework.interfaces.KotoJdbcWrapper
@@ -120,4 +118,41 @@ object Common {
     val currentDate: String get() = SimpleDateFormat("yyyy-MM-dd").format(Date())
     val currentTime: String get() = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
     val currentTimeM: String get() = SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS").format(Date())
+
+    fun smartPagination(prefix: String, suffix: String, paramMap: MutableMap<String, Any?>): Pair<String, String> {
+        if (paramMap["pageSize"] != null && paramMap["pageIndex"] != null) {
+            when (KotoApp.dbType) {
+                MySql -> {
+                    paramMap["pageIndex"] = (paramMap["pageIndex"] as Int - 1) * paramMap["pageSize"] as Int
+                    return Pair(
+                        prefix.replaceFirst("select", "select SQL_CALC_FOUND_ROWS"),
+                        "$suffix limit :pageIndex,:pageSize"
+                    )
+                }
+
+                Oracle -> {
+                    paramMap["rowNumMin"] = (paramMap["pageIndex"] as Int - 1) * paramMap["pageSize"] as Int + 1
+                    paramMap["rowNumMax"] = paramMap["pageIndex"] as Int * paramMap["pageSize"] as Int
+                    return Pair(
+                        prefix.replaceFirst("select", "select * from (select rownum rn, t.* from (select"),
+                        "$suffix ) t ) where :rowNumMin < RN <= :rowNumMax"
+                    )
+                }
+
+                MSSql -> {
+                    paramMap["offset"] = (paramMap["pageIndex"] as Int - 1) * paramMap["pageSize"] as Int
+                    paramMap["next"] = paramMap["pageIndex"] as Int * paramMap["pageSize"] as Int
+                    return Pair(prefix, "$suffix offset :offset rows fetch next :next rows only")
+                }
+
+                PostgreSQL, SQLite -> {
+                    paramMap["limit"] = paramMap["pageSize"] as Int
+                    paramMap["offset"] = (paramMap["pageIndex"] as Int - 1) * paramMap["pageSize"] as Int
+                    return Pair(prefix, "$suffix limit :limit offset :offset")
+                }
+
+                else -> throw Exception("Unsupported database type")
+            }
+        } else return Pair(prefix, suffix)
+    }
 }
