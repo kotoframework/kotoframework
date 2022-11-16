@@ -381,16 +381,16 @@ select(User(1), User::userName).where{ it::userName.isNull }.query()
 
 ## Where Api
 
-| 函数名                                       | 说明                           | 备注          |
-|-------------------------------------------|------------------------------|-------------|
-| `.map(vararg Pair<String,Any?>)`          | 加入/覆盖参数Map值                  |             |
-| `.suffix(String)`                         | 设置后缀                         |             |
-| `.first()`                                | limit one                    | 仅查询中使用      |
-| `.page(pageIndex: Int, pageSize: Int)`    | 查询分页                         | 仅查询中使用      |
-| `.deleted()`                              | 查询逻辑删除数据                     | 仅查询中使用      |
-| `.distinct()`                             | 查询不同                         | 仅查询中使用      |
-| `.build()`                                | 生成带有sql和paramMap的KotoDataSet |             |
-| `.orderBy(vararg Field)`                  | 排序规则                         | 仅查询中使用      |
-| `.groupBy(vararg Field)`                  | 分组规则                         | 仅查询中使用      |
-| `.allowNull(nullAllowed: Boolean = true)` | 条件的判断值为null时自动转为isNull()     | 查询时默认为false |
+| 函数名                                                 | 说明                           | 备注          |
+|-----------------------------------------------------|------------------------------|-------------|
+| `.map(vararg Pair<String,Any?>)`                    | 加入/覆盖参数Map值                  |             |
+| `.suffix(String)`                                   | 设置后缀                         |             |
+| `.first()`                                          | limit one                    | 仅查询中使用      |
+| `.page(pageIndex: Int, pageSize: Int)`              | 查询分页                         | 仅查询中使用      |
+| `.deleted()`                                        | 查询逻辑删除数据                     | 仅查询中使用      |
+| `.distinct()`                                       | 查询不同                         | 仅查询中使用      |
+| `.build()`                                          | 生成带有sql和paramMap的KotoDataSet |             |
+| `.orderBy(vararg Field)`                            | 排序规则                         | 仅查询中使用      |
+| `.groupBy(vararg Field)`                            | 分组规则                         | 仅查询中使用      |
+| `ifNoValue(strategy: NoValueStrategy = Ignore)` | 条件的判断值为null时自动转为isNull()或其他  | 查询时默认为false |
 

@@ -2,7 +2,7 @@ package com.kotoframework.beans
 
 import com.kotoframework.interfaces.KotoDataSet
 import com.kotoframework.interfaces.KotoJdbcWrapper
-import com.kotoframework.utils.Extension.rmRedudantBlk
+import com.kotoframework.utils.Extension.rmRedundantBlk
 import com.kotoframework.utils.Jdbc
 import com.kotoframework.utils.Jdbc.defaultJdbcHandler
 import java.io.File
@@ -24,7 +24,7 @@ class KotoResultSet<T>(
         if (sql.startsWith("koto_", true)) {
             val classResoucePath = this.javaClass.classLoader.getResource("")?.path
             sql = File("${classResoucePath}koto/sql/${sql.replace("koto_", "")}.sql").readLines().joinToString(" ")
-                .rmRedudantBlk()
+                .rmRedundantBlk()
         }
     }
 

@@ -1,5 +1,6 @@
 package com.kotoframework.core.where
 
+import com.kotoframework.IsNull
 import com.kotoframework.beans.Unknown
 import com.kotoframework.definition.AddCondition
 import com.kotoframework.function.remove.RemoveWhere
@@ -17,7 +18,7 @@ open class OperateWhere<T : KPojo>(
 ) : Where<T>(KPojo, kotoJdbcWrapper, Unknown::class, addCondition) {
 
     init {
-        super.allowNull(true)
+        super.ifNoValue { IsNull }
     }
 
     override fun where(where: Where<T>): OperateWhere<T> {

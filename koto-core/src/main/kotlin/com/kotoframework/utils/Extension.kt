@@ -57,16 +57,16 @@ object Extension {
     }
 
     /* It's an extension function of String. It will return a string with redundant spaces removed. */
-    internal fun String.rmRedudantBlk(): String {
+    internal fun String.rmRedundantBlk(): String {
         return this.replace("\\s+".toRegex(), " ").trim()
     }
 
     /* It's an extension function of Any?. It will return true if the object is null or blank. */
-    internal fun Any?.isNullOrBlank(): Boolean {
+    internal fun Any?.isNullOrEmpty(): Boolean {
         return when (this) {
             null -> true
-            is String -> this.isBlank()
             is Collection<*> -> this.isEmpty()
+            is ClosedRange<*> -> this.isEmpty()
             else -> false
         }
     }

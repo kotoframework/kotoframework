@@ -1,11 +1,13 @@
 package com.kotoframework.function.select
 
+import com.kotoframework.NoValueStrategy
 import com.kotoframework.beans.KotoResultSet
+import com.kotoframework.core.condition.Criteria
 import com.kotoframework.definition.*
 import com.kotoframework.core.where.Where
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoJdbcWrapper
-import com.kotoframework.utils.Extension.isNullOrBlank
+import com.kotoframework.utils.Extension.isNullOrEmpty
 import com.kotoframework.utils.Jdbc.defaultJdbcHandler
 import kotlin.reflect.KClass
 
@@ -56,12 +58,12 @@ class SelectWhere<T : KPojo>(
     }
 
     private fun groupOrOrderBy(type: String, vararg field: Field?): String {
-        if (field.none { !it.isNullOrBlank() }) {
+        if (field.none { !it.isNullOrEmpty() }) {
             return ""
         }
         var str = " $type by "
         field.forEach {
-            if(it.isNullOrBlank()) return@forEach
+            if (it.isNullOrEmpty()) return@forEach
             val fieldName = if (it!!.columnName.contains(
                     " as ",
                     true
@@ -90,8 +92,8 @@ class SelectWhere<T : KPojo>(
         return this
     }
 
-    override fun allowNull(nullAllowed: Boolean): SelectWhere<T> {
-        super.allowNull(nullAllowed)
+    override fun ifNoValue(strategy: (Criteria) -> NoValueStrategy): SelectWhere<T> {
+        super.ifNoValue(strategy)
         return this
     }
 

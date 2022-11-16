@@ -31,12 +31,12 @@ val koto = select(user).where().query()
 // select id, name from user where id = 1
 ```
 
-##### 若想要让属性为null时自动转换为is null，则可以使用allowNull/orNull：
+##### 若想要让属性为null时自动转换为is null，则可以使用ifNoValue：
 
 ```kotlin
-select(user).where().allowNull().query()
+select(user).where().ifNoValue{ Smart }.query()
 //或
-select(user).where(user::id.eq.orNull() and user::name.eq.orNull()).query()
+select(user).where(user::id.eq.ifNoValue{ IsNull } and user::name.eq.ifNoValue{ IsNull }).query()
 // select id, name from user where id = 1 and name is null
 ```
 

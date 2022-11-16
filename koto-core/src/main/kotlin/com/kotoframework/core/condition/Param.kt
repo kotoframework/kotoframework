@@ -346,13 +346,9 @@ fun List<Criteria?>.arbitrary(): Criteria {
     )
 }
 
-fun Criteria?.orNull(): Criteria? {
-    if (this == null) {
-        return null
-    } else {
-        return this.apply {
-            this.allowNull = true
-        }
+fun Criteria?.ifNoValue(strategy: (Criteria) -> NoValueStrategy): Criteria? {
+    return this?.apply {
+        this.ifNoValueStrategy = strategy(this)
     }
 }
 

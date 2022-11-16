@@ -15,9 +15,9 @@ import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.utils.Common.deleted
 import com.kotoframework.utils.Common.currentTime
 import com.kotoframework.utils.Common.getColumnName
-import com.kotoframework.utils.Extension.isNullOrBlank
+import com.kotoframework.utils.Extension.isNullOrEmpty
 import com.kotoframework.utils.Extension.lineToHump
-import com.kotoframework.utils.Extension.rmRedudantBlk
+import com.kotoframework.utils.Extension.rmRedundantBlk
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
 
@@ -112,12 +112,11 @@ class CreateWhere<T : KPojo>(KPojo: T, kotoJdbcWrapper: KotoJdbcWrapper?) : Wher
         conditions.forEach {
             val realName = when {
                 !it!!.reName.isNullOrBlank() -> it.reName
-                !it.parameterName.isNullOrBlank() -> it.parameterName
-                else -> ""
+                else -> it.parameterName
             }!!
             when (it.type) {
                 EQUAL -> {
-                    if (!it.value.isNullOrBlank()) {
+                    if (!it.value.isNullOrEmpty()) {
                         paramMap[realName] = it.value
                     }
                 }
@@ -141,21 +140,25 @@ class CreateWhere<T : KPojo>(KPojo: T, kotoJdbcWrapper: KotoJdbcWrapper?) : Wher
         }
 
         if (replaceInto) {
-            return KotoOperationSet(kotoJdbcWrapper, "replace into $tableName (`${paramNames.joinToString("`,`")}`) values (${
-                reNames.joinToString(
-                    ","
-                ) { ":$it" }
-            }) ".rmRedudantBlk(), paramMap)
+            return KotoOperationSet(kotoJdbcWrapper,
+                "replace into $tableName (`${paramNames.joinToString("`,`")}`) values (${
+                    reNames.joinToString(
+                        ","
+                    ) { ":$it" }
+                }) ".rmRedundantBlk(),
+                paramMap)
         } else if (duplicateUpdate) {
-            return KotoOperationSet(kotoJdbcWrapper, "insert into $tableName (`${paramNames.joinToString("`,`")}`) values (${
-                reNames.joinToString(
-                    ","
-                ) { ":$it" }
-            }) on duplicate key update ${
-                updateFields.joinToString(",") {
-                    "`${it.columnName}` = :${it.propertyName}"
-                }
-            } ".rmRedudantBlk(), paramMap)
+            return KotoOperationSet(kotoJdbcWrapper,
+                "insert into $tableName (`${paramNames.joinToString("`,`")}`) values (${
+                    reNames.joinToString(
+                        ","
+                    ) { ":$it" }
+                }) on duplicate key update ${
+                    updateFields.joinToString(",") {
+                        "`${it.columnName}` = :${it.propertyName}"
+                    }
+                } ".rmRedundantBlk(),
+                paramMap)
         } else if (onFields.isNotEmpty()) {
             return KotoOperationSet(
                 kotoJdbcWrapper,
@@ -173,21 +176,22 @@ class CreateWhere<T : KPojo>(KPojo: T, kotoJdbcWrapper: KotoJdbcWrapper?) : Wher
                     onFields.joinToString(
                         " and "
                     ) { "`${it.columnName}` = :${it.propertyName}" }
-                }) ".rmRedudantBlk(), paramMap,
-                updateKoto<KPojo>(KPojo, *updateFields.toTypedArray(), jdbcWrapper = kotoJdbcWrapper).except("id").where(
-                    onFields
-                        .map { it.columnName.lineToHump().eq().alias(it.propertyName) }
-                        .arbitrary()
-                ).build()
+                }) ".rmRedundantBlk(), paramMap,
+                updateKoto<KPojo>(KPojo, *updateFields.toTypedArray(), jdbcWrapper = kotoJdbcWrapper).except("id")
+                    .where(
+                        onFields
+                            .map { it.columnName.lineToHump().eq().alias(it.propertyName) }
+                            .arbitrary()
+                    ).build()
             )
         } else {
             return KotoOperationSet(
                 kotoJdbcWrapper,
                 "insert into $tableName (`${paramNames.joinToString("`,`")}`) values (${
-                reNames.joinToString(
-                    ","
-                ) { ":$it" }
-            }) ".rmRedudantBlk(), paramMap)
+                    reNames.joinToString(
+                        ","
+                    ) { ":$it" }
+                }) ".rmRedundantBlk(), paramMap)
         }
     }
 }

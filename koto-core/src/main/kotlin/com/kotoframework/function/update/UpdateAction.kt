@@ -9,7 +9,7 @@ import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.utils.Common.currentTime
 import com.kotoframework.utils.Extension.lineToHump
-import com.kotoframework.utils.Extension.rmRedudantBlk
+import com.kotoframework.utils.Extension.rmRedundantBlk
 import com.kotoframework.utils.Extension.tableName
 
 /**
@@ -68,7 +68,7 @@ class UpdateAction<T : KPojo>(
         paramMap["id"] = id
         return KotoOperationSet(
             jdbcWrapper,
-            "$sql where id = :id".rmRedudantBlk(),
+            "$sql where id = :id".rmRedundantBlk(),
             paramMap
         )
     }
@@ -84,7 +84,7 @@ class UpdateAction<T : KPojo>(
         paramMap["updateTime"] = currentTime
         return KotoOperationSet(
             jdbcWrapper,
-            "$sql where ids in (:ids)".rmRedudantBlk(),
+            "$sql where ids in (:ids)".rmRedundantBlk(),
             paramMap
         )
     }

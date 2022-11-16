@@ -7,11 +7,12 @@ import com.kotoframework.beans.Unknown
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.core.condition.*
+import com.kotoframework.core.where.Where
 import com.kotoframework.utils.Common.deleted
 import com.kotoframework.utils.Extension.isAssignableFrom
-import com.kotoframework.utils.Extension.isNullOrBlank
+import com.kotoframework.utils.Extension.isNullOrEmpty
 import com.kotoframework.utils.Extension.lineToHump
-import com.kotoframework.utils.Extension.rmRedudantBlk
+import com.kotoframework.utils.Extension.rmRedundantBlk
 import com.kotoframework.utils.Extension.tableAlias
 import com.kotoframework.utils.Extension.tableName
 import com.kotoframework.utils.Extension.toMutableMap
@@ -57,7 +58,22 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
 
     init {
         kPojos = listOfNotNull(
-            kPojo1, kPojo2, kPojo3, kPojo4, kPojo5, kPojo6, kPojo7, kPojo8, kPojo9, kPojo10, kPojo11, kPojo12, kPojo13, kPojo14, kPojo15, kPojo16
+            kPojo1,
+            kPojo2,
+            kPojo3,
+            kPojo4,
+            kPojo5,
+            kPojo6,
+            kPojo7,
+            kPojo8,
+            kPojo9,
+            kPojo10,
+            kPojo11,
+            kPojo12,
+            kPojo13,
+            kPojo14,
+            kPojo15,
+            kPojo16
         )
         kPojos.map {
             it.tableName to it.toMutableMap()
@@ -122,15 +138,18 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
      * @param pageIndex The page number to retrieve.
      * @return Nothing.
      */
-    fun page(pageIndex: Int, pageSize: Int): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> {
+    fun page(
+        pageIndex: Int,
+        pageSize: Int
+    ): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> {
         finalMap["pageIndex"] = pageIndex
         finalMap["pageSize"] = pageSize
         return this
     }
 
-    private var nullAllowed = false
-    fun allowNull(nullAllowed: Boolean = true): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> {
-        this.nullAllowed = nullAllowed
+    private var ifNoValueStrategy: (Criteria)-> NoValueStrategy= { Ignore }
+    fun ifNoValue(strategy: (Criteria)-> NoValueStrategy = { Ignore }): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> {
+        this.ifNoValueStrategy = strategy
         return this
     }
 
@@ -144,12 +163,12 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
     }
 
     private fun groupOrOrderBy(type: String, vararg field: Field?): String {
-        if (field.none { !it.isNullOrBlank() }) {
+        if (field.none { !it.isNullOrEmpty() }) {
             return ""
         }
         var str = " $type by "
         field.forEach {
-            if(it.isNullOrBlank()) return@forEach
+            if (it.isNullOrEmpty()) return@forEach
             val fieldName = getFieldName(it!!)
             val direction = if (type === "order") it.direction else ""
             str += "$fieldName $direction,"
@@ -199,13 +218,16 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
         val joinedTables = tableNames.slice(1 until tableNames.size)
         this.sql =
             "select ${
-                fields.map { it.columnName }.joinToString(" , ")
+                fields.joinToString(" , ") { it.columnName }
             } from $mainTable as ${mainTable.lineToHump()}" + joinedTables.joinToString(
                 " "
             ) {
                 " $joinType join $it as ${it.lineToHump()} on ${
                     joinSqlStatement(
-                        findOnByTableName(it), getParamMapByTableName(mainTable, it), nullAllowed, showAlias = true
+                        findOnByTableName(it),
+                        getParamMapByTableName(mainTable, it),
+                        ifNoValueStrategy,
+                        showAlias = true
                     )
                 }"
             }
@@ -382,7 +404,18 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
     }
 
     fun select(addSelect: AddSelectFields8<T1, T2, T3, T4, T5, T6, T7, T8>): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> {
-        return this.select(*addSelect(kPojo1!!, kPojo2!!, kPojo3!!, kPojo4!!, kPojo5!!, kPojo6!!, kPojo7!!, kPojo8!!).toTypedArray())
+        return this.select(
+            *addSelect(
+                kPojo1!!,
+                kPojo2!!,
+                kPojo3!!,
+                kPojo4!!,
+                kPojo5!!,
+                kPojo6!!,
+                kPojo7!!,
+                kPojo8!!
+            ).toTypedArray()
+        )
     }
 
     /**
@@ -430,7 +463,17 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
     fun select(addSelect: AddSelectFields11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> {
         return this.select(
             *addSelect(
-                kPojo1!!, kPojo2!!, kPojo3!!, kPojo4!!, kPojo5!!, kPojo6!!, kPojo7!!, kPojo8!!, kPojo9!!, kPojo10!!, kPojo11!!
+                kPojo1!!,
+                kPojo2!!,
+                kPojo3!!,
+                kPojo4!!,
+                kPojo5!!,
+                kPojo6!!,
+                kPojo7!!,
+                kPojo8!!,
+                kPojo9!!,
+                kPojo10!!,
+                kPojo11!!
             ).toTypedArray()
         )
     }
@@ -444,7 +487,18 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
     fun select(addSelect: AddSelectFields12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> {
         return this.select(
             *addSelect(
-                kPojo1!!, kPojo2!!, kPojo3!!, kPojo4!!, kPojo5!!, kPojo6!!, kPojo7!!, kPojo8!!, kPojo9!!, kPojo10!!, kPojo11!!, kPojo12!!
+                kPojo1!!,
+                kPojo2!!,
+                kPojo3!!,
+                kPojo4!!,
+                kPojo5!!,
+                kPojo6!!,
+                kPojo7!!,
+                kPojo8!!,
+                kPojo9!!,
+                kPojo10!!,
+                kPojo11!!,
+                kPojo12!!
             ).toTypedArray()
         )
     }
@@ -458,7 +512,19 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
     fun select(addSelect: AddSelectFields13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> {
         return this.select(
             *addSelect(
-                kPojo1!!, kPojo2!!, kPojo3!!, kPojo4!!, kPojo5!!, kPojo6!!, kPojo7!!, kPojo8!!, kPojo9!!, kPojo10!!, kPojo11!!, kPojo12!!, kPojo13!!
+                kPojo1!!,
+                kPojo2!!,
+                kPojo3!!,
+                kPojo4!!,
+                kPojo5!!,
+                kPojo6!!,
+                kPojo7!!,
+                kPojo8!!,
+                kPojo9!!,
+                kPojo10!!,
+                kPojo11!!,
+                kPojo12!!,
+                kPojo13!!
             ).toTypedArray()
         )
     }
@@ -472,7 +538,20 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
     fun select(addSelect: AddSelectFields14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> {
         return this.select(
             *addSelect(
-                kPojo1!!, kPojo2!!, kPojo3!!, kPojo4!!, kPojo5!!, kPojo6!!, kPojo7!!, kPojo8!!, kPojo9!!, kPojo10!!, kPojo11!!, kPojo12!!, kPojo13!!, kPojo14!!
+                kPojo1!!,
+                kPojo2!!,
+                kPojo3!!,
+                kPojo4!!,
+                kPojo5!!,
+                kPojo6!!,
+                kPojo7!!,
+                kPojo8!!,
+                kPojo9!!,
+                kPojo10!!,
+                kPojo11!!,
+                kPojo12!!,
+                kPojo13!!,
+                kPojo14!!
             ).toTypedArray()
         )
     }
@@ -486,7 +565,21 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
     fun select(addSelect: AddSelectFields15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> {
         return this.select(
             *addSelect(
-                kPojo1!!, kPojo2!!, kPojo3!!, kPojo4!!, kPojo5!!, kPojo6!!, kPojo7!!, kPojo8!!, kPojo9!!, kPojo10!!, kPojo11!!, kPojo12!!, kPojo13!!, kPojo14!!, kPojo15!!
+                kPojo1!!,
+                kPojo2!!,
+                kPojo3!!,
+                kPojo4!!,
+                kPojo5!!,
+                kPojo6!!,
+                kPojo7!!,
+                kPojo8!!,
+                kPojo9!!,
+                kPojo10!!,
+                kPojo11!!,
+                kPojo12!!,
+                kPojo13!!,
+                kPojo14!!,
+                kPojo15!!
             ).toTypedArray()
         )
     }
@@ -500,7 +593,22 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
     fun select(addSelect: AddSelectFields16<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> {
         return this.select(
             *addSelect(
-                kPojo1!!, kPojo2!!, kPojo3!!, kPojo4!!, kPojo5!!, kPojo6!!, kPojo7!!, kPojo8!!, kPojo9!!, kPojo10!!, kPojo11!!, kPojo12!!, kPojo13!!, kPojo14!!, kPojo15!!, kPojo16!!
+                kPojo1!!,
+                kPojo2!!,
+                kPojo3!!,
+                kPojo4!!,
+                kPojo5!!,
+                kPojo6!!,
+                kPojo7!!,
+                kPojo8!!,
+                kPojo9!!,
+                kPojo10!!,
+                kPojo11!!,
+                kPojo12!!,
+                kPojo13!!,
+                kPojo14!!,
+                kPojo15!!,
+                kPojo16!!
             ).toTypedArray()
         )
     }
@@ -630,7 +738,8 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
      */
     fun where(addOnCondition: AddOnCondition9<T1, T2, T3, T4, T5, T6, T7, T8, T9>): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> {
         ifBlankSelectAll()
-        whereConditions = addOnCondition(kPojo1!!, kPojo2!!, kPojo3!!, kPojo4!!, kPojo5!!, kPojo6!!, kPojo7!!, kPojo8!!, kPojo9!!)
+        whereConditions =
+            addOnCondition(kPojo1!!, kPojo2!!, kPojo3!!, kPojo4!!, kPojo5!!, kPojo6!!, kPojo7!!, kPojo8!!, kPojo9!!)
         return this
     }
 
@@ -644,7 +753,18 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
     fun where(addOnCondition: AddOnCondition10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> {
         ifBlankSelectAll()
         whereConditions =
-            addOnCondition(kPojo1!!, kPojo2!!, kPojo3!!, kPojo4!!, kPojo5!!, kPojo6!!, kPojo7!!, kPojo8!!, kPojo9!!, kPojo10!!)
+            addOnCondition(
+                kPojo1!!,
+                kPojo2!!,
+                kPojo3!!,
+                kPojo4!!,
+                kPojo5!!,
+                kPojo6!!,
+                kPojo7!!,
+                kPojo8!!,
+                kPojo9!!,
+                kPojo10!!
+            )
         return this
     }
 
@@ -657,7 +777,19 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
     fun where(addOnCondition: AddOnCondition11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> {
         ifBlankSelectAll()
         whereConditions =
-            addOnCondition(kPojo1!!, kPojo2!!, kPojo3!!, kPojo4!!, kPojo5!!, kPojo6!!, kPojo7!!, kPojo8!!, kPojo9!!, kPojo10!!, kPojo11!!)
+            addOnCondition(
+                kPojo1!!,
+                kPojo2!!,
+                kPojo3!!,
+                kPojo4!!,
+                kPojo5!!,
+                kPojo6!!,
+                kPojo7!!,
+                kPojo8!!,
+                kPojo9!!,
+                kPojo10!!,
+                kPojo11!!
+            )
         return this
     }
 
@@ -670,7 +802,20 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
     fun where(addOnCondition: AddOnCondition12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> {
         ifBlankSelectAll()
         whereConditions =
-            addOnCondition(kPojo1!!, kPojo2!!, kPojo3!!, kPojo4!!, kPojo5!!, kPojo6!!, kPojo7!!, kPojo8!!, kPojo9!!, kPojo10!!, kPojo11!!, kPojo12!!)
+            addOnCondition(
+                kPojo1!!,
+                kPojo2!!,
+                kPojo3!!,
+                kPojo4!!,
+                kPojo5!!,
+                kPojo6!!,
+                kPojo7!!,
+                kPojo8!!,
+                kPojo9!!,
+                kPojo10!!,
+                kPojo11!!,
+                kPojo12!!
+            )
         return this
     }
 
@@ -683,7 +828,21 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
     fun where(addOnCondition: AddOnCondition13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> {
         ifBlankSelectAll()
         whereConditions =
-            addOnCondition(kPojo1!!, kPojo2!!, kPojo3!!, kPojo4!!, kPojo5!!, kPojo6!!, kPojo7!!, kPojo8!!, kPojo9!!, kPojo10!!, kPojo11!!, kPojo12!!, kPojo13!!)
+            addOnCondition(
+                kPojo1!!,
+                kPojo2!!,
+                kPojo3!!,
+                kPojo4!!,
+                kPojo5!!,
+                kPojo6!!,
+                kPojo7!!,
+                kPojo8!!,
+                kPojo9!!,
+                kPojo10!!,
+                kPojo11!!,
+                kPojo12!!,
+                kPojo13!!
+            )
         return this
     }
 
@@ -696,7 +855,22 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
     fun where(addOnCondition: AddOnCondition14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> {
         ifBlankSelectAll()
         whereConditions =
-            addOnCondition(kPojo1!!, kPojo2!!, kPojo3!!, kPojo4!!, kPojo5!!, kPojo6!!, kPojo7!!, kPojo8!!, kPojo9!!, kPojo10!!, kPojo11!!, kPojo12!!, kPojo13!!, kPojo14!!)
+            addOnCondition(
+                kPojo1!!,
+                kPojo2!!,
+                kPojo3!!,
+                kPojo4!!,
+                kPojo5!!,
+                kPojo6!!,
+                kPojo7!!,
+                kPojo8!!,
+                kPojo9!!,
+                kPojo10!!,
+                kPojo11!!,
+                kPojo12!!,
+                kPojo13!!,
+                kPojo14!!
+            )
         return this
     }
 
@@ -709,7 +883,23 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
     fun where(addOnCondition: AddOnCondition15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> {
         ifBlankSelectAll()
         whereConditions =
-            addOnCondition(kPojo1!!, kPojo2!!, kPojo3!!, kPojo4!!, kPojo5!!, kPojo6!!, kPojo7!!, kPojo8!!, kPojo9!!, kPojo10!!, kPojo11!!, kPojo12!!, kPojo13!!, kPojo14!!, kPojo15!!)
+            addOnCondition(
+                kPojo1!!,
+                kPojo2!!,
+                kPojo3!!,
+                kPojo4!!,
+                kPojo5!!,
+                kPojo6!!,
+                kPojo7!!,
+                kPojo8!!,
+                kPojo9!!,
+                kPojo10!!,
+                kPojo11!!,
+                kPojo12!!,
+                kPojo13!!,
+                kPojo14!!,
+                kPojo15!!
+            )
         return this
     }
 
@@ -722,7 +912,24 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
     fun where(addOnCondition: AddOnCondition16<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> {
         ifBlankSelectAll()
         whereConditions =
-            addOnCondition(kPojo1!!, kPojo2!!, kPojo3!!, kPojo4!!, kPojo5!!, kPojo6!!, kPojo7!!, kPojo8!!, kPojo9!!, kPojo10!!, kPojo11!!, kPojo12!!, kPojo13!!, kPojo14!!, kPojo15!!, kPojo16!!)
+            addOnCondition(
+                kPojo1!!,
+                kPojo2!!,
+                kPojo3!!,
+                kPojo4!!,
+                kPojo5!!,
+                kPojo6!!,
+                kPojo7!!,
+                kPojo8!!,
+                kPojo9!!,
+                kPojo10!!,
+                kPojo11!!,
+                kPojo12!!,
+                kPojo13!!,
+                kPojo14!!,
+                kPojo15!!,
+                kPojo16!!
+            )
         return this
     }
 
@@ -739,7 +946,7 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
         joinSqlStatement(
             listOf(
                 onConditions
-            ), onParamMap, nullAllowed
+            ), onParamMap, ifNoValueStrategy
         )
         val whereParamMap = mutableMapOf<String, Any?>()
         paramMaps.values.forEach { paramMap ->
@@ -763,13 +970,13 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
             val whereSql = joinSqlStatement(
                 listOf(
                     whereConditions,
-                     deleted(0, kotoJdbcWrapper, kPojo1!!.tableName, "`${kPojo1!!.tableAlias}`.").declareSql()
-                ), whereParamMap, nullAllowed, showAlias = true
+                    deleted(0, kotoJdbcWrapper, kPojo1!!.tableName, "`${kPojo1!!.tableAlias}`.").declareSql()
+                ), whereParamMap, ifNoValueStrategy, showAlias = true
             )
             whereParamMap.putAll(onParamMap)
             whereParamMap.putAll(finalMap)
             KotoResultSet(
-                "$sql where $whereSql $groupBy $orderBy $suffix".rmRedudantBlk(),
+                "$sql where $whereSql $groupBy $orderBy $suffix".rmRedundantBlk(),
                 whereParamMap,
                 kotoJdbcWrapper,
                 Unknown::class

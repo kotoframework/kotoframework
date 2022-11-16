@@ -377,15 +377,15 @@ Please move to <a href="/#/zh-cn/where?id=_3-Use of `or` and `and` keywords:">Us
 
 ## Where APIs
 
-| function name                             | description                                                                                 | remarks                                  |
-|-------------------------------------------|---------------------------------------------------------------------------------------------|------------------------------------------|
-| `.map(vararg Pair<String,Any?>)`          | Add/override parameter Map value                                                            |                                          |
-| `.suffix(String)`                         | set suffix                                                                                  |                                          |
-| `.first()`                                | limit one                                                                                   | only used in queries                     |
-| `.page(pageIndex: Int, pageSize: Int)`    | query pagination                                                                            | only used in queries                     |
-| `.deleted()`                              | query tombstone data                                                                        | only used in queries                     |
-| `.distinct()`                             | query is different                                                                          | only used in query                       |
-| `.build()`                                | Generate KotoDataSet with sql and paramMap                                                  |                                          |
-| `.orderBy(vararg Field)`                  | Collation                                                                                   | Only used in queries                     |
-| `.groupBy(vararg Field)`                  | grouping rules                                                                              | only used in queries                     |
-| `.allowNull(nullAllowed: Boolean = true)` | When the judgment value of the condition is null, it is automatically converted to isNull() | The default value is false when querying |
+| function name                                                | description                                                                                 | remarks                                  |
+|--------------------------------------------------------------|---------------------------------------------------------------------------------------------|------------------------------------------|
+| `.map(vararg Pair<String,Any?>)`                             | Add/override parameter Map value                                                            |                                          |
+| `.suffix(String)`                                            | set suffix                                                                                  |                                          |
+| `.first()`                                                   | limit one                                                                                   | only used in queries                     |
+| `.page(pageIndex: Int, pageSize: Int)`                       | query pagination                                                                            | only used in queries                     |
+| `.deleted()`                                                 | query tombstone data                                                                        | only used in queries                     |
+| `.distinct()`                                                | query is different                                                                          | only used in query                       |
+| `.build()`                                                   | Generate KotoDataSet with sql and paramMap                                                  |                                          |
+| `.orderBy(vararg Field)`                                     | Collation                                                                                   | Only used in queries                     |
+| `.groupBy(vararg Field)`                                     | grouping rules                                                                              | only used in queries                     |
+| `.ifNoValue(strategy: (Critia) -> NoValueStrategy = Ignore)` | When the judgment value of the condition is null, it is automatically converted to isNull() | The default value is false when querying |

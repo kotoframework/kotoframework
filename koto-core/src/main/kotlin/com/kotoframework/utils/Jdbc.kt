@@ -8,7 +8,7 @@ import com.kotoframework.beans.TableMeta
 import com.kotoframework.beans.TableObject
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.interfaces.KotoQueryHandler
-import com.kotoframework.utils.Extension.isNullOrBlank
+import com.kotoframework.utils.Extension.isNullOrEmpty
 import com.kotoframework.utils.Extension.lineToHump
 import com.kotoframework.utils.Log.log
 import java.util.*
@@ -78,7 +78,7 @@ object Jdbc {
      *
      * @param conditions The list of conditions to be joined
      * @param paramMap The parameter map, which is used to store the parameters of the query.
-     * @param nullAllowed Whether to allow null values
+     * @param ifNoValueStrategy Whether to allow null values
      * @param join The join condition of the condition, and, or, etc.
      * @param brackets Whether to add brackets to the final result
      * @param showAlias Whether to show the alias of the table, the default is false
@@ -87,7 +87,7 @@ object Jdbc {
     fun joinSqlStatement(
         conditions: List<Criteria?>,
         paramMap: MutableMap<String, Any?>,
-        nullAllowed: Boolean = false,
+        ifNoValueStrategy: (Criteria) -> NoValueStrategy = { Ignore },
         join: String = "and",
         brackets: Boolean = false,
         showAlias: Boolean = false
@@ -98,23 +98,37 @@ object Jdbc {
             if (paramMap[it.parameterName] is List<*> && it.type != IN) {
                 it.type = IN
             }
+            if (paramMap[it.parameterName] is ClosedRange<*> && it.type != BETWEEN) {
+                it.type = BETWEEN
+            }
             val realName = when {
                 !it.reName.isNullOrBlank() -> it.reName
-                !it.parameterName.isNullOrBlank() -> it.parameterName
-                else -> ""
+                else -> it.parameterName
             }!!
-            if (realName != "" && it.type != ISNULL && it.type != SQL) {
-                if (!paramMap[it.parameterName].isNullOrBlank() && paramMap[realName].isNullOrBlank()) {
+            if (it.valueAcceptable) {
+                if (!paramMap[it.parameterName].isNullOrEmpty() && paramMap[realName].isNullOrEmpty()) {
                     paramMap[realName] = paramMap[it.parameterName]
                 }
-
-                //if it.value is not null and not a range, then put it into paramMap
-                if (!it.value.isNullOrBlank() && it.type != BETWEEN)
+                if (!it.value.isNullOrEmpty())
                     paramMap[realName] = it.value ?: paramMap[realName]
             }
+            if (paramMap[realName].isNullOrEmpty() && ifNoValueStrategy(it).ignore() && it.ifNoValueStrategy.ignore() && it.valueAcceptable) return@forEach
+
+            val defaultIfNoValue: String? = if (paramMap[realName].isNullOrEmpty() && it.valueAcceptable) {
+                it.ifNoValueStrategy.dealWithNoValue(alias, realName, it, ifNoValueStrategy(it))
+            } else null
+
+            if (defaultIfNoValue != null) {
+                sqls.add(defaultIfNoValue)
+                return@forEach
+            }
+
             when (it.type) {
+                EQUAL, ISNULL -> {
+                    sqls.add(alias + it.sql)
+                }
+
                 LIKE -> {
-                    if (paramMap[realName].isNullOrBlank() && !nullAllowed && !it.allowNull) return@forEach
                     when (it.pos) {
                         Left -> paramMap[realName] = "%${paramMap[realName]}"
                         Right -> paramMap[realName] = "${paramMap[realName]}%"
@@ -125,29 +139,18 @@ object Jdbc {
                     sqls.add(alias + it.sql)
                 }
 
-                EQUAL -> {
-                    if (paramMap[realName].isNullOrBlank() && !nullAllowed && !it.allowNull) return@forEach
-                    if (paramMap[realName] == null) {
-                        sqls.add("${alias}${realName} is null")
-                    } else {
-                        sqls.add(alias + it.sql)
-                    }
-                }
-
                 GT, GE, LT, LE -> {
                     if (it.type == GT || it.type == GE) paramMap[realName] =
                         paramMap[realName.replace("Min", "")] ?: paramMap[realName] ?: it.value
                     else paramMap[realName] = paramMap[realName.replace("Max", "")] ?: paramMap[realName] ?: it.value
-                    if (paramMap[realName].isNullOrBlank() && !nullAllowed && !it.allowNull) return@forEach
                     sqls.add(alias + it.sql)
                 }
 
                 BETWEEN -> {
-                    if (it.value.isNullOrBlank() && !nullAllowed && !it.allowNull) return@forEach
-
                     if (it.value is ClosedRange<*>) {
                         paramMap[realName + "Min"] = it.value.start
                         paramMap[realName + "Max"] = it.value.endInclusive
+                        paramMap.remove(realName)
                     } else {
                         throw IllegalArgumentException("The type of the value of BETWEEN is not supported")
                     }
@@ -156,18 +159,39 @@ object Jdbc {
                 }
 
                 IN -> {
-                    if (paramMap[realName].isNullOrBlank() && !nullAllowed && !it.allowNull) return@forEach
-                    paramMap[realName] = paramMap[realName] ?: listOf<String>()
-                    sqls.add(alias + it.sql)
+                    if (it.value is Collection<*>) {
+                        paramMap[realName] = paramMap[realName] ?: listOf<String>()
+                        sqls.add(alias + it.sql)
+                    } else {
+                        throw IllegalArgumentException("The type of the value of IN is not supported")
+                    }
                 }
 
-                ISNULL -> sqls.add(alias + it.sql)
                 SQL -> sqls.add(it.sql)
                 AND -> {
-                    sqls.add(joinSqlStatement(it.collections, paramMap, nullAllowed, "and", (join != "and"), showAlias))
+                    sqls.add(
+                        joinSqlStatement(
+                            it.collections,
+                            paramMap,
+                            ifNoValueStrategy,
+                            "and",
+                            (join != "and"),
+                            showAlias
+                        )
+                    )
                 }
 
-                OR -> sqls.add(joinSqlStatement(it.collections, paramMap, nullAllowed, "or", (join != "or"), showAlias))
+                OR -> sqls.add(
+                    joinSqlStatement(
+                        it.collections,
+                        paramMap,
+                        ifNoValueStrategy,
+                        "or",
+                        (join != "or"),
+                        showAlias
+                    )
+                )
+
                 else -> {}
             }
         }

@@ -31,12 +31,13 @@ val koto = select(user).where().query()
 // select id, name from user where id = 1
 ```
 
-##### If you want to automatically convert the property to is null when it is null, you can use allowNull/orNull:
+##### If you want to automatically convert the property to is null when it is null, you can use ifNoValue:
 
 ```kotlin
-select(user).where().allowNull().query()
+select(user).where().ifNoValue{ Smart }.query()
 //or
-select(user).where(user::id.eq.orNull() and user::name.eq.orNull()).query()
+select(user).where(user::id.eq.ifNoValue{ IsNull } and user::name.eq.ifNoValue{ IsNull }).query()
+select(user).where(user::id.eq.ifNoValue{ IsNull } and user::name.isIn(list).ifNoValue{ False }).query()
 // select id, name from user where id = 1 and name is null
 ```
 

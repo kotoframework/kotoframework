@@ -10,7 +10,7 @@ import com.kotoframework.definition.aliasName
 import com.kotoframework.definition.columnName
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.core.condition.receiver
-import com.kotoframework.utils.Extension.rmRedudantBlk
+import com.kotoframework.utils.Extension.rmRedundantBlk
 import com.kotoframework.utils.Extension.tableName
 import kotlin.reflect.KProperty1
 
@@ -41,7 +41,7 @@ fun optionList(
         } from $tableName where ${where.sql} $suffix limit 200"
     }
 
-    return KotoResultSet(sql.rmRedudantBlk(), where.paramMap, kClass = String::class)
+    return KotoResultSet(sql.rmRedundantBlk(), where.paramMap, kClass = String::class)
 }
 
 

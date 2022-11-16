@@ -4,6 +4,7 @@ import com.kotoframework.*
 import com.kotoframework.KotoApp.dbType
 import com.kotoframework.beans.KotoResultSet
 import com.kotoframework.beans.Unknown
+import com.kotoframework.core.condition.Criteria
 import com.kotoframework.core.condition.eq
 import com.kotoframework.definition.AddCondition
 import com.kotoframework.function.select.SelectWhere
@@ -12,7 +13,7 @@ import com.kotoframework.interfaces.KotoDataSet
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.utils.Common
 import com.kotoframework.utils.Common.copyProperties
-import com.kotoframework.utils.Extension.rmRedudantBlk
+import com.kotoframework.utils.Extension.rmRedundantBlk
 import com.kotoframework.utils.Jdbc.joinSqlStatement
 import kotlin.reflect.KClass
 
@@ -127,9 +128,9 @@ open class Where<T : KPojo>(
         return this
     }
 
-    private var nullAllowed = false
-    open fun allowNull(nullAllowed: Boolean = true): Where<T> {
-        this.nullAllowed = nullAllowed
+    private var ifNoValueStrategy: (Criteria) -> NoValueStrategy = { Ignore }
+    open fun ifNoValue(strategy: (Criteria) -> NoValueStrategy = { Ignore }): Where<T> {
+        this.ifNoValueStrategy = strategy
         return this
     }
 
@@ -153,7 +154,7 @@ open class Where<T : KPojo>(
             paramMap[key] = value
         }
 
-        val finalSql = joinSqlStatement(conditions, paramMap, nullAllowed)
+        val finalSql = joinSqlStatement(conditions, paramMap, ifNoValueStrategy)
 
         if (distinct && prefix.isNotBlank()) prefix = prefix.replaceFirst("select", "select distinct")
 
@@ -202,7 +203,7 @@ open class Where<T : KPojo>(
         } "
 
         return KotoResultSet<T>(
-            "$prefix $sql $groupBy $orderBy $suffix".rmRedudantBlk(),
+            "$prefix $sql $groupBy $orderBy $suffix".rmRedundantBlk(),
             paramMap,
             kotoJdbcWrapper,
             kClass

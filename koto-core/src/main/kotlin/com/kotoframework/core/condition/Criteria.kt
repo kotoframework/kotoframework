@@ -11,18 +11,21 @@ open class Criteria(
     val parameterName: String = "", // original parameter name
     var not: Boolean = false, // whether the condition is not
     var type: ConditionType? = null, // condition type
-    var pos: LikePosition? = Never, // like position
+    internal var pos: LikePosition? = Never, // like position
     var reName: String? = null, // rename the parameter name in the sql and the paramMap
     var sql: String = "", // sql
-    var allowNull: Boolean = false, // when the value is null, whether to generate sql
+    internal var ifNoValueStrategy: NoValueStrategy = Ignore, // when the value is null, whether to generate sql
     val value: Any? = null, // value
     val tableName: String? = "", // table name
-    val kCallable: KCallable<*>? = null, // the property of the kCallable
-    val collections: List<Criteria?> = mutableListOf() // collection of conditions
+    internal val kCallable: KCallable<*>? = null, // the property of the kCallable
+    internal val collections: List<Criteria?> = mutableListOf() // collection of conditions
 ) {
     init {
         sql = SqlGenerator.generate(this)
     }
+
+    internal val valueAcceptable: Boolean
+        get() = type != ISNULL && type != SQL && type != AND && type != OR
 }
 
 /**
@@ -36,8 +39,7 @@ open class Criteria(
  * @param pos
  * @param reName
  * @param sql
- * @param allowNull
- * @param humpToLine
+ * @param ifNoValueStrategy
  * @param value
  * @param tableName
  * @param collections
@@ -50,7 +52,7 @@ class LikeCriteria(
     pos: LikePosition? = Never,
     reName: String? = null,
     sql: String = "",
-    allowNull: Boolean = false,
+    ifNoValueStrategy: NoValueStrategy = Ignore,
     value: Any? = null,
     tableName: String? = "",
     kCallable: KCallable<*>? = null,
@@ -62,7 +64,7 @@ class LikeCriteria(
     pos,
     reName,
     sql,
-    allowNull,
+    ifNoValueStrategy,
     value,
     tableName,
     kCallable,

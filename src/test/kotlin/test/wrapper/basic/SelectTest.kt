@@ -178,14 +178,14 @@ class SelectTest {
 
         table(userInfo) {
             val koto = select(it, it::id)
-                .where(it::userName.eq and it::age.eq.reName("aage"))
+                .where(it::userName.eq and it::age.eq.alias("aage"))
                 .distinct()
                 .orderBy(it::id.desc(), it::updateTime.asc())
                 .groupBy(it::sex)
                 .build()
 
             assertEquals(
-                "select distinct `id` from tb_user where ${deleted()} and `user_name` = :userName and `age` = :age group by `sex` order by `id` DESC,`update_time` ASC",
+                "select distinct `id` from tb_user where ${deleted()} and `user_name` = :userName and `age` = :aage group by `sex` order by `id` DESC,`update_time` ASC",
                 koto.sql.trim()
             )
 

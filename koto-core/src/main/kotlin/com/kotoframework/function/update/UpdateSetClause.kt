@@ -10,9 +10,9 @@ import com.kotoframework.definition.columnName
 import com.kotoframework.definition.propertyName
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.utils.Common.currentTime
-import com.kotoframework.utils.Extension.isNullOrBlank
+import com.kotoframework.utils.Extension.isNullOrEmpty
 import com.kotoframework.utils.Extension.lineToHump
-import com.kotoframework.utils.Extension.rmRedudantBlk
+import com.kotoframework.utils.Extension.rmRedundantBlk
 import kotlin.reflect.full.declaredMemberProperties
 
 /**
@@ -72,7 +72,9 @@ class UpdateSetClause<T : KPojo>(
         paramMap["updateTime"] = currentTime
 
         conditions = conditions.distinctBy { it!!.reName }
-            .filter { condition -> condition!!.type == EQUAL && !excepted.map { it.propertyName }.contains(condition.parameterName) }
+            .filter { condition ->
+                condition!!.type == EQUAL && !excepted.map { it.propertyName }.contains(condition.parameterName)
+            }
             .toMutableList()
 
         for ((key, value) in finalMap) {
@@ -86,12 +88,15 @@ class UpdateSetClause<T : KPojo>(
                 !it.parameterName.isNullOrBlank() -> it.parameterName
                 else -> ""
             }!!
-            if (!it.value.isNullOrBlank()) {
+            if (!it.value.isNullOrEmpty()) {
                 paramMap[realName] = it.value
             }
             sqls.add(it.sql + "@New")
         }
 
-        return KotoOperationSet(null, "$prefix ${sqls.joinToString(", ")} $suffix".rmRedudantBlk(), paramMap.mapKeys { it.key + "@New" })
+        return KotoOperationSet(
+            null,
+            "$prefix ${sqls.joinToString(", ")} $suffix".rmRedundantBlk(),
+            paramMap.mapKeys { it.key + "@New" })
     }
 }

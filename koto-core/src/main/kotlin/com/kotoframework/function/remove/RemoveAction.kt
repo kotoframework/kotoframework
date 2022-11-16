@@ -11,7 +11,7 @@ import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.core.condition.isNull
 import com.kotoframework.utils.Common.currentTime
 import com.kotoframework.utils.Common.deleted
-import com.kotoframework.utils.Extension.rmRedudantBlk
+import com.kotoframework.utils.Extension.rmRedundantBlk
 import com.kotoframework.utils.Extension.toMap
 
 /**
@@ -54,7 +54,7 @@ class RemoveAction<T : KPojo>(
         paramMap["updateTime"] = currentTime
         return KotoOperationSet(
             jdbcWrapper,
-            sql = "$sql where id = :id".rmRedudantBlk(),
+            sql = "$sql where id = :id".rmRedundantBlk(),
             paramMap = paramMap
         )
     }
@@ -64,7 +64,7 @@ class RemoveAction<T : KPojo>(
         paramMap["updateTime"] = currentTime
         return KotoOperationSet(
             jdbcWrapper,
-            sql = "$sql where id in (:ids)".rmRedudantBlk(),
+            sql = "$sql where id in (:ids)".rmRedundantBlk(),
             paramMap = paramMap
         )
     }

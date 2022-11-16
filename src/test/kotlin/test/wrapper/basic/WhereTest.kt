@@ -166,8 +166,6 @@ class WhereTest : KPojo {
 
         val expectedParamMap = mutableMapOf(
             "active" to true,
-            "age" to 99,
-            "birthday" to "2020-01-01",
             "emailAddress" to "hangzhou@qq.com",
             "habit" to "eat",
             "id" to null,
@@ -228,14 +226,14 @@ class WhereTest : KPojo {
         val koto = Where(searchData) {
             ("userName".eq() or "nickName".eq()) and
                     ("telephone".eq() or "emailAddress".eq()) and
-                    ("emailAddress".eq() or "roles".eq()) and
+                    ("emailAddress".eq() or "roles".isIn(listOf("admin", "user"))) and
                     ("habit".eq() or "active".eq()) and
                     ("birthday".eq() or "age".lt()) and
                     "srq is not null"
         }.build()
 
         assertEquals(
-            "${deleted()} and (`user_name` = :userName or `nick_name` = :nickName) and (`telephone` = :telephone or `email_address` = :emailAddress) and (`email_address` = :emailAddress or `roles` = :roles) and (`habit` = :habit or `active` = :active) and (`birthday` = :birthday or `age` < :ageMax) and srq is not null",
+            "${deleted()} and (`user_name` = :userName or `nick_name` = :nickName) and (`telephone` = :telephone or `email_address` = :emailAddress) and (`email_address` = :emailAddress or `roles` in (:roles)) and (`habit` = :habit or `active` = :active) and (`birthday` = :birthday or `age` < :ageMax) and srq is not null",
             koto.sql.trim()
         )
         assertEquals(
