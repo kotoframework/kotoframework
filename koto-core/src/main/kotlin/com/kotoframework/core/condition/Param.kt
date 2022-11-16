@@ -348,7 +348,7 @@ fun List<Criteria?>.arbitrary(): Criteria {
 
 fun Criteria?.ifNoValue(strategy: (Criteria) -> NoValueStrategy): Criteria? {
     return this?.apply {
-        this.ifNoValueStrategy = strategy(this)
+        this.noValueStrategy = strategy(this)
     }
 }
 

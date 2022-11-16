@@ -112,10 +112,10 @@ object Jdbc {
                 if (!it.value.isNullOrEmpty())
                     paramMap[realName] = it.value ?: paramMap[realName]
             }
-            if (paramMap[realName].isNullOrEmpty() && ifNoValueStrategy(it).ignore() && it.ifNoValueStrategy.ignore() && it.valueAcceptable) return@forEach
+            if (paramMap[realName].isNullOrEmpty() && ifNoValueStrategy(it).ignore() && it.noValueStrategy.ignore() && it.valueAcceptable) return@forEach
 
             val defaultIfNoValue: String? = if (paramMap[realName].isNullOrEmpty() && it.valueAcceptable) {
-                it.ifNoValueStrategy.dealWithNoValue(alias, realName, it, ifNoValueStrategy(it))
+                it.noValueStrategy.dealWithNoValue(alias, realName, it, ifNoValueStrategy(it))
             } else null
 
             if (defaultIfNoValue != null) {

@@ -7,6 +7,7 @@ import kotlin.reflect.KCallable
 /**
  * Created by ousc on 2022/4/18 10:55
  **/
+@Suppress("LeakingThis")
 open class Criteria(
     val parameterName: String = "", // original parameter name
     var not: Boolean = false, // whether the condition is not
@@ -14,14 +15,19 @@ open class Criteria(
     internal var pos: LikePosition? = Never, // like position
     var reName: String? = null, // rename the parameter name in the sql and the paramMap
     var sql: String = "", // sql
-    internal var ifNoValueStrategy: NoValueStrategy = KotoApp.defaultNoValueStrategy, // when the value is null, whether to generate sql
+    internal var noValueStrategy: NoValueStrategy = KotoApp.defaultNoValueStrategy, // when the value is null, whether to generate sql
     val value: Any? = null, // value
     val tableName: String? = "", // table name
     internal val kCallable: KCallable<*>? = null, // the property of the kCallable
     internal val collections: List<Criteria?> = mutableListOf() // collection of conditions
 ) {
     init {
+        //Leaking this can cause memory leaks, because the object is not fully constructed yet, and the object is returned from the constructor.
+        //To fix this, you can use the lateinit modifier, or you can use a factory method.
         sql = SqlGenerator.generate(this)
+        if (type != EQUAL && noValueStrategy == Ignore) {
+            noValueStrategy = Smart
+        }
     }
 
     internal val valueAcceptable: Boolean
