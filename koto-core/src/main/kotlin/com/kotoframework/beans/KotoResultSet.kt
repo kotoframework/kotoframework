@@ -28,15 +28,24 @@ class KotoResultSet<T>(
                 .rmRedundantBlk()
         }
     }
-    companion object{
-        private fun convertCountSql(sql: String): String {
+
+    companion object {
+        fun convertCountSql(sql: String): String {
             return "select count(*) from (${
                 sql.replaceFirst("(?i)select.*?from".toRegex(), "select 1 from")
+                    .replaceFirst("(?i)limit.*".toRegex(), "")
+                    .replaceFirst("(?i)offset.*".toRegex(), "")
             }) as t"
         }
 
         fun getTotalCount(jdbcWrapper: KotoJdbcWrapper?, originalSql: String, map: Map<String, Any?>): Int {
-            return defaultJdbcHandler!!.forObject(jdbcWrapper, convertCountSql(originalSql), map, false, Int::class) as Int
+            return defaultJdbcHandler!!.forObject(
+                jdbcWrapper,
+                convertCountSql(originalSql),
+                map,
+                false,
+                Int::class
+            ) as Int
         }
     }
 
