@@ -122,12 +122,10 @@ object Common {
     fun smartPagination(prefix: String, suffix: String, paramMap: MutableMap<String, Any?>): Pair<String, String> {
         if (paramMap["pageSize"] != null && paramMap["pageIndex"] != null) {
             when (KotoApp.dbType) {
-                MySql -> {
-                    paramMap["pageIndex"] = (paramMap["pageIndex"] as Int - 1) * paramMap["pageSize"] as Int
-                    return Pair(
-                        prefix.replaceFirst("select", "select SQL_CALC_FOUND_ROWS"),
-                        "$suffix limit :pageIndex,:pageSize"
-                    )
+                MySql, PostgreSQL, SQLite -> {
+                    paramMap["limit"] = paramMap["pageSize"] as Int
+                    paramMap["offset"] = (paramMap["pageIndex"] as Int - 1) * paramMap["pageSize"] as Int
+                    return Pair(prefix, "$suffix limit :limit offset :offset")
                 }
 
                 Oracle -> {
@@ -143,12 +141,6 @@ object Common {
                     paramMap["offset"] = (paramMap["pageIndex"] as Int - 1) * paramMap["pageSize"] as Int
                     paramMap["next"] = paramMap["pageIndex"] as Int * paramMap["pageSize"] as Int
                     return Pair(prefix, "$suffix offset :offset rows fetch next :next rows only")
-                }
-
-                PostgreSQL, SQLite -> {
-                    paramMap["limit"] = paramMap["pageSize"] as Int
-                    paramMap["offset"] = (paramMap["pageIndex"] as Int - 1) * paramMap["pageSize"] as Int
-                    return Pair(prefix, "$suffix limit :limit offset :offset")
                 }
 
                 else -> throw Exception("Unsupported database type")

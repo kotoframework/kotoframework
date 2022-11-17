@@ -58,7 +58,7 @@ class SelectTest {
         )
         val koto = select(searchDto).where().distinct().page(1, 20).suffix("order by update_time desc").build()
         assertEquals(
-            "select SQL_CALC_FOUND_ROWS distinct `id`, `user_name` as `userName`, `nickname`, `password`, `sex`, `age`, DATE_FORMAT(`birthday`, '%Y-%m-%d') as `birthday`, `phone_number` as `phoneNumber`, `email_address` as `emailAddress`, `avatar`, DATE_FORMAT(`create_time`, '%Y-%m-%d %H:%i:%s') as `createTime`, DATE_FORMAT(`update_time`, '%Y-%m-%d %H:%i:%s') as `updateTime`, `deleted` from tb_user where ${deleted()} and `user_name` = :userName and `age` = :age order by update_time desc limit :pageIndex,:pageSize",
+            "select distinct `id`, `user_name` as `userName`, `nickname`, `password`, `sex`, `age`, DATE_FORMAT(`birthday`, '%Y-%m-%d') as `birthday`, `phone_number` as `phoneNumber`, `email_address` as `emailAddress`, `avatar`, DATE_FORMAT(`create_time`, '%Y-%m-%d %H:%i:%s') as `createTime`, DATE_FORMAT(`update_time`, '%Y-%m-%d %H:%i:%s') as `updateTime`, `deleted` from tb_user where ${deleted()} and `user_name` = :userName and `age` = :age order by update_time desc limit :limit offset :offset",
             koto.sql
         )
         val expectedMap = mapOf<String, Any?>(
@@ -73,7 +73,9 @@ class SelectTest {
             "telephone" to null,
             "userName" to "ousc",
             "pageIndex" to 0,
-            "pageSize" to 20
+            "pageSize" to 20,
+            "limit" to 20,
+            "offset" to 0,
         )
         assertEquals(
             expectedMap,

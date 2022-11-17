@@ -8,6 +8,7 @@ import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.core.condition.*
 import com.kotoframework.core.where.Where
+import com.kotoframework.function.select.SelectWhere
 import com.kotoframework.utils.Common
 import com.kotoframework.utils.Common.deleted
 import com.kotoframework.utils.Common.smartPagination
@@ -149,8 +150,8 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
         return this
     }
 
-    private var ifNoValueStrategy: (Criteria)-> NoValueStrategy= { KotoApp.defaultNoValueStrategy }
-    fun ifNoValue(strategy: (Criteria)-> NoValueStrategy = { KotoApp.defaultNoValueStrategy }): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> {
+    private var ifNoValueStrategy: (Criteria) -> NoValueStrategy = { KotoApp.defaultNoValueStrategy }
+    fun ifNoValue(strategy: (Criteria) -> NoValueStrategy = { KotoApp.defaultNoValueStrategy }): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> {
         this.ifNoValueStrategy = strategy
         return this
     }
@@ -996,5 +997,9 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
 
     inline fun <reified T> queryForObjectOrNull(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): T? {
         return this.build().queryForObjectOrNull<T>(jdbcWrapper)
+    }
+
+    fun <K> withTotal(action: (AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>) -> K): Pair<K, Int> {
+        return action(this) to build().let { KotoResultSet.getTotalCount(kotoJdbcWrapper, it.sql, it.paramMap) }
     }
 }

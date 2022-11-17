@@ -53,14 +53,16 @@ class AssociateTest {
 
             }.build()
         assertEquals(
-            "select SQL_CALC_FOUND_ROWS `tbUser`.`id` as `id` , `tbUser`.`user_name` as `userName` , `tbUser`.`nickname` as `nickname` , `tbUser`.`password` as `password` , `tbUser`.`sex` as `sex` , `tbUser`.`age` as `age` , DATE_FORMAT(`tbUser`.`birthday`, '%Y-%m-%d') as `birthday` , `tbUser`.`phone_number` as `phoneNumber` , `tbUser`.`email_address` as `emailAddress` , `tbUser`.`avatar` as `avatar` , DATE_FORMAT(`tbUser`.`create_time`, '%Y-%m-%d %H:%i:%s') as `createTime` , DATE_FORMAT(`tbUser`.`update_time`, '%Y-%m-%d %H:%i:%s') as `updateTime` , `tbUser`.`deleted` as `deleted` , `tbGood`.`name` as `name` , `tbGood`.`update_time` as `updateTime@` , `tbGoodCategory`.`name` as `name@` , `tbGoodCategory`.`update_time` as `updateTime@@` , `tbShoppingCart`.`qty` as `qty` , `tbShoppingCart`.`update_time` as `ut` from tb_user as tbUser left join tb_good_category as tbGoodCategory on tbGood.category_id = tbGoodCategory.id and `tbGoodCategory`.${deleted()} left join tb_good as tbGood on `tbGood`.${deleted()} left join tb_shopping_cart as tbShoppingCart on tbUser.id = tbShoppingCart.user_id and tbGood.id = tbShoppingCart.good_id and `tbShoppingCart`.${deleted()} where tbUser.`user_name` = :userName and `tbUser`.${deleted()} group by `tbUser`.`age` order by `tbUser`.`age` DESC limit :pageIndex,:pageSize",
+            "select `tbUser`.`id` as `id` , `tbUser`.`user_name` as `userName` , `tbUser`.`nickname` as `nickname` , `tbUser`.`password` as `password` , `tbUser`.`sex` as `sex` , `tbUser`.`age` as `age` , DATE_FORMAT(`tbUser`.`birthday`, '%Y-%m-%d') as `birthday` , `tbUser`.`phone_number` as `phoneNumber` , `tbUser`.`email_address` as `emailAddress` , `tbUser`.`avatar` as `avatar` , DATE_FORMAT(`tbUser`.`create_time`, '%Y-%m-%d %H:%i:%s') as `createTime` , DATE_FORMAT(`tbUser`.`update_time`, '%Y-%m-%d %H:%i:%s') as `updateTime` , `tbUser`.`deleted` as `deleted` , `tbGood`.`name` as `name` , `tbGood`.`update_time` as `updateTime@` , `tbGoodCategory`.`name` as `name@` , `tbGoodCategory`.`update_time` as `updateTime@@` , `tbShoppingCart`.`qty` as `qty` , `tbShoppingCart`.`update_time` as `ut` from tb_user as tbUser left join tb_good_category as tbGoodCategory on tbGood.category_id = tbGoodCategory.id and `tbGoodCategory`.${deleted()} left join tb_good as tbGood on `tbGood`.${deleted()} left join tb_shopping_cart as tbShoppingCart on tbUser.id = tbShoppingCart.user_id and tbGood.id = tbShoppingCart.good_id and `tbShoppingCart`.${deleted()} where tbUser.`user_name` = :userName and `tbUser`.${deleted()} group by `tbUser`.`age` order by `tbUser`.`age` DESC limit :limit offset :offset",
             koto.sql
         )
         assertEquals(
             mapOf(
                 "userName" to "ousc",
-                "pageIndex" to 0,
+                "pageIndex" to 1,
                 "pageSize" to 10,
+                "limit" to 10,
+                "offset" to 0,
                 "age" to null,
                 "avatar" to null,
                 "birthday" to null,

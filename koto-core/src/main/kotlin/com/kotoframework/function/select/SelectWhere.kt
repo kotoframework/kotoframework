@@ -2,6 +2,7 @@ package com.kotoframework.function.select
 
 import com.kotoframework.NoValueStrategy
 import com.kotoframework.beans.KotoResultSet
+import com.kotoframework.beans.KotoResultSet.Companion.getTotalCount
 import com.kotoframework.core.condition.Criteria
 import com.kotoframework.definition.*
 import com.kotoframework.core.where.Where
@@ -156,5 +157,9 @@ class SelectWhere<T : KPojo>(
         build().let {
             return defaultJdbcHandler!!.forObjectOrNull(jdbcWrapper, it.sql, it.paramMap, kClass) as T?
         }
+    }
+
+    fun <K> withTotal(action: (SelectWhere<T>) -> K): Pair<K, Int> {
+        return action(this) to build().let { getTotalCount(kotoJdbcWrapper, it.sql, it.paramMap) }
     }
 }

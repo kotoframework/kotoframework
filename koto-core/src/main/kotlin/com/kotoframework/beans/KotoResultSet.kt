@@ -1,5 +1,6 @@
 package com.kotoframework.beans
 
+import com.kotoframework.function.select.SelectWhere
 import com.kotoframework.interfaces.KotoDataSet
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.utils.Extension.rmRedundantBlk
@@ -26,6 +27,21 @@ class KotoResultSet<T>(
             sql = File("${classResoucePath}koto/sql/${sql.replace("koto_", "")}.sql").readLines().joinToString(" ")
                 .rmRedundantBlk()
         }
+    }
+    companion object{
+        private fun convertCountSql(sql: String): String {
+            return "select count(*) from (${
+                sql.replaceFirst("(?i)select.*?from".toRegex(), "select 1 from")
+            }) as t"
+        }
+
+        fun getTotalCount(jdbcWrapper: KotoJdbcWrapper?, originalSql: String, map: Map<String, Any?>): Int {
+            return defaultJdbcHandler!!.forObject(jdbcWrapper, convertCountSql(originalSql), map, false, Int::class) as Int
+        }
+    }
+
+    fun <K> withTotal(action: (KotoResultSet<T>) -> K): Pair<K, Int> {
+        return action(this) to getTotalCount(kotoJdbcWrapper, sql, paramMap)
     }
 
     /**
