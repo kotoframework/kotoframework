@@ -2,6 +2,7 @@ package test.wrapper.basic
 
 import com.kotoframework.KotoApp
 import com.kotoframework.KotoBasicJdbcApp.setDynamicDataSource
+import com.kotoframework.beans.KotoResultSet.Companion.convertCountSql
 import com.kotoframework.definition.asc
 import com.kotoframework.definition.desc
 import com.kotoframework.function.select.select
@@ -61,6 +62,12 @@ class SelectTest {
             "select distinct `id`, `user_name` as `userName`, `nickname`, `password`, `sex`, `age`, DATE_FORMAT(`birthday`, '%Y-%m-%d') as `birthday`, `phone_number` as `phoneNumber`, `email_address` as `emailAddress`, `avatar`, DATE_FORMAT(`create_time`, '%Y-%m-%d %H:%i:%s') as `createTime`, DATE_FORMAT(`update_time`, '%Y-%m-%d %H:%i:%s') as `updateTime`, `deleted` from tb_user where ${deleted()} and `user_name` = :userName and `age` = :age order by update_time desc limit :limit offset :offset",
             koto.sql
         )
+
+        assertEquals(
+            "select count(*) from (select 1 from tb_user where ${deleted()} and `user_name` = :userName and `age` = :age order by update_time desc ) as t",
+            convertCountSql(koto.sql)
+        )
+
         val expectedMap = mapOf<String, Any?>(
             "age" to 15,
             "avatar" to null,
@@ -72,7 +79,7 @@ class SelectTest {
             "sex" to null,
             "telephone" to null,
             "userName" to "ousc",
-            "pageIndex" to 0,
+            "pageIndex" to 1,
             "pageSize" to 20,
             "limit" to 20,
             "offset" to 0,

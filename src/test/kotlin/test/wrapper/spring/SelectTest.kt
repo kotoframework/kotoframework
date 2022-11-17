@@ -71,7 +71,7 @@ class SelectTest {
             "sex" to null,
             "telephone" to null,
             "userName" to "ousc",
-            "pageIndex" to 0,
+            "pageIndex" to 1,
             "pageSize" to 20,
             "limit" to 20,
             "offset" to 0,

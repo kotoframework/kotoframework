@@ -52,7 +52,7 @@ class AssociateTest {
         assertEquals(
             mapOf(
                 "userName" to "ousc",
-                "pageIndex" to 0,
+                "pageIndex" to 1,
                 "pageSize" to 10,
                 "limit" to 10,
                 "offset" to 0,

@@ -14,12 +14,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.apache.commons:commons-dbcp2:2.9.0")
     compileOnly("org.jetbrains.kotlin:kotlin-reflect:1.7.20")
-    testImplementation("org.jetbrains.dokka:dokka-gradle-plugin:1.7.20")
-    testImplementation("mysql:mysql-connector-java:8.0.30")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.0")
 }
 
 tasks.getByName<Test>("test") {
