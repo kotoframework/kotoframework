@@ -4,7 +4,6 @@ import com.kotoframework.NamedParameterUtils.parseSqlStatement
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.utils.Extension.toKPojo
-import org.apache.commons.dbcp2.BasicDataSource
 import javax.sql.DataSource
 
 
@@ -18,11 +17,12 @@ class BasicJdbcWrapper : KotoJdbcWrapper() {
         return ds ?: this.ds ?: dynamic?.invoke() ?: throw RuntimeException("DataSource is null")
     }
 
-    val dataSource: BasicDataSource
-        get() = ((ds ?: dynamic?.let { it() }) as BasicDataSource?) ?: throw RuntimeException("dataSource is null")
+    val dataSource: DataSource
+        get() = ds ?: dynamic?.let { it() } ?: throw RuntimeException("dataSource is null")
 
-    override val url: String
-        get() = dataSource.url
+    override
+    val url: String
+        get() = dataSource.connection.metaData.url
 
     override fun forList(sql: String, paramMap: Map<String, Any?>): List<Map<String, Any>> {
         val (jdbcSql, jdbcParamList) = parseSqlStatement(sql, paramMap)
@@ -111,6 +111,8 @@ class BasicJdbcWrapper : KotoJdbcWrapper() {
     override fun update(sql: String, paramMap: Map<String, Any?>): Int {
         val (jdbcSql, jdbcParamList) = parseSqlStatement(sql, paramMap)
         val conn = getDataSource().connection
+        println(jdbcSql)
+        println(jdbcParamList)
         val ps = conn.prepareStatement(jdbcSql)
         jdbcParamList.forEachIndexed { index, any ->
             ps.setObject(index + 1, any)
@@ -137,11 +139,6 @@ class BasicJdbcWrapper : KotoJdbcWrapper() {
         return result
     }
 
-    val dbName: String
-        get() = (getDataSource() as BasicDataSource).url.split("?").first().split(
-            "//"
-        )[1].split("/")[1]
-
     companion object {
         fun DataSource?.wrapper(): BasicJdbcWrapper? {
             if (this == null) {
@@ -161,12 +158,12 @@ class BasicJdbcWrapper : KotoJdbcWrapper() {
             return Pair(jdbcSql, newParamList)
         }
 
-        inline fun <reified T> transact(dataSource: DataSource, block: (BasicJdbcWrapper) -> T): T {
-            var res: T? = null
+        inline fun <reified T> transact(dataSource: DataSource, block: (DataSource) -> T): T {
+            val res: T?
             val conn = dataSource.connection
             conn.autoCommit = false
             try {
-                res = block(BasicJdbcWrapper().apply { ds = dataSource })
+                res = block(dataSource)
                 conn.commit()
             } catch (e: Exception) {
                 conn.rollback()

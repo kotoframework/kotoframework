@@ -1,11 +1,7 @@
 package com.kotoframework
 
-import com.kotoframework.SpringDataWrapper.Companion.wrapper
 import com.kotoframework.utils.Jdbc
 import com.kotoframework.utils.Jdbc.defaultJdbcHandler
-import org.apache.commons.dbcp2.BasicDataSource
-import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 
 /**
  * Created by ousc on 2022/9/20 10:28

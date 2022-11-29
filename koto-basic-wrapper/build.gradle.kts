@@ -14,7 +14,6 @@ repositories {
 
 dependencies {
     compileOnly(project(":koto-core"))
-    compileOnly("org.apache.commons:commons-dbcp2:2.9.0")
 }
 
 tasks.getByName<Test>("test") {

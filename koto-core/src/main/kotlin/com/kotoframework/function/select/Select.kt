@@ -1,5 +1,7 @@
 package com.kotoframework.function.select
 
+import com.kotoframework.*
+import com.kotoframework.KotoApp.dbType
 import com.kotoframework.beans.TableColumn
 import com.kotoframework.definition.*
 import com.kotoframework.interfaces.KPojo
@@ -17,8 +19,6 @@ import com.kotoframework.utils.Jdbc.tableMap
 const val ALL_FIELDS = "*"
 
 
-
-
 @JvmName("generic")
 inline fun <reified T : KPojo> T.select(vararg fields: Field, jdbcWrapper: KotoJdbcWrapper? = null): SelectAction<T> {
     return com.kotoframework.function.select.select(this, *fields, jdbcWrapper = jdbcWrapper)
@@ -32,7 +32,7 @@ inline fun <reified T : KPojo> select(
     initMetaData(meta, jdbcWrapper)
     var selectFields = (if (fields.isEmpty()) listOf(ALL_FIELDS) else fields.toList()).toMutableList()
 
-    if(selectFields.contains(ALL_FIELDS)){
+    if (selectFields.contains(ALL_FIELDS)) {
         selectFields = selectFields.apply {
             remove(ALL_FIELDS)
             addAll(tableMap[Jdbc.getJdbcWrapper(jdbcWrapper).dbName + "_" + meta.tableName]!!.fields.map { it.name.lineToHump() })
@@ -102,8 +102,8 @@ internal fun getSql(
     sql: String, field: Field, type: String, dateTimeFormat: Map<String, String>
 ): String {
     return when {
-        type == "date" -> "$sql DATE_FORMAT(`${field.columnName}`, '${toSqlDate(dateTimeFormat[field.aliasName]) ?: "%Y-%m-%d"}') as `${field.aliasName}`"
-        type == "datetime" -> "$sql DATE_FORMAT(`${field.columnName}`, '${toSqlDate(dateTimeFormat[field.aliasName]) ?: "%Y-%m-%d %H:%i:%s"}') as `${field.aliasName}`"
+        type == "date" -> "$sql ${dateFormatFunc(field.columnName, toSqlDate(dateTimeFormat[field.aliasName]) ?: "%Y-%m-%d", field.aliasName)}"
+        type == "datetime" -> "$sql ${dateFormatFunc(field.columnName, toSqlDate(dateTimeFormat[field.aliasName]) ?: "%Y-%m-%d %H:%i:%s", field.aliasName)}"
         else -> {
             if (field.columnName.contains("(") || field.columnName.lowercase().contains(" as ")) {
                 "$sql ${field.columnName}"
@@ -113,5 +113,16 @@ internal fun getSql(
                 "$sql `${field.columnName}` as `${field.aliasName}`"
             }
         }
+    }
+}
+
+internal fun dateFormatFunc(column: String, format: String, alias: String): String {
+    return when (dbType) {
+        MySql -> "DATE_FORMAT(`${column}`, '${format}') as `${alias}`"
+        SQLite -> "strftime('${format}', `${column}`) as `${alias}`"
+        Oracle -> "TO_CHAR(`${column}`, '${format}') as `${alias}`"
+        MSSql -> "CONVERT(VARCHAR(20), `${column}`, 120) as `${alias}`"
+        PostgreSQL -> "TO_CHAR(`${column}`, '${format}') as `${alias}`"
+        else -> throw Exception("Unsupported database type")
     }
 }

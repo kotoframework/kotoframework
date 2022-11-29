@@ -5,6 +5,7 @@ import com.kotoframework.beans.KotoOperationSet
 import com.kotoframework.core.where.Where
 import com.kotoframework.function.update.update as updateKoto
 import com.kotoframework.*
+import com.kotoframework.KotoApp.dbType
 import com.kotoframework.definition.*
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.core.annotations.Default
@@ -160,30 +161,46 @@ class CreateWhere<T : KPojo>(KPojo: T, kotoJdbcWrapper: KotoJdbcWrapper?) : Wher
                 } ".rmRedundantBlk(),
                 paramMap)
         } else if (onFields.isNotEmpty()) {
-            return KotoOperationSet(
-                kotoJdbcWrapper,
-                "insert into $tableName (`${paramNames.joinToString("`,`")}`) select ${
-                    reNames.joinToString(
-                        ","
-                    ) { ":${it}" }
-                } from dual where not exists (select 1 from $tableName where ${
-                    deleted(
-                        deleted,
-                        kotoJdbcWrapper,
-                        tableName
-                    )
-                } and ${
-                    onFields.joinToString(
-                        " and "
-                    ) { "`${it.columnName}` = :${it.propertyName}" }
-                }) ".rmRedundantBlk(), paramMap,
-                updateKoto<KPojo>(KPojo, *updateFields.toTypedArray(), jdbcWrapper = kotoJdbcWrapper).except("id")
-                    .where(
-                        onFields
-                            .map { it.columnName.lineToHump().eq().alias(it.propertyName) }
-                            .arbitrary()
-                    ).build()
-            )
+            return when (dbType) {
+                MySql -> KotoOperationSet(
+                    kotoJdbcWrapper,
+                    "insert into $tableName (`${paramNames.joinToString("`,`")}`) select ${
+                        reNames.joinToString(
+                            ","
+                        ) { ":${it}" }
+                    } from dual where not exists (select 1 from $tableName where ${
+                        deleted(
+                            deleted,
+                            kotoJdbcWrapper,
+                            tableName
+                        )
+                    } and ${
+                        onFields.joinToString(
+                            " and "
+                        ) { "`${it.columnName}` = :${it.propertyName}" }
+                    }) ".rmRedundantBlk(), paramMap,
+                    updateKoto<KPojo>(KPojo, *updateFields.toTypedArray(), jdbcWrapper = kotoJdbcWrapper).except("id")
+                        .where(
+                            onFields
+                                .map { it.columnName.lineToHump().eq().alias(it.propertyName) }
+                                .arbitrary()
+                        ).build()
+                )
+
+                SQLite -> KotoOperationSet(kotoJdbcWrapper,
+                    "insert into $tableName (`${paramNames.joinToString("`,`")}`) values (${
+                        reNames.joinToString(
+                            ","
+                        ) { ":$it" }
+                    }) on conflict(${onFields.joinToString(",") { "`${it.columnName}`" }}) do update set ${
+                        updateFields.joinToString(",") {
+                            "`${it.columnName}` = :${it.propertyName}"
+                        }
+                    } ".rmRedundantBlk(),
+                    paramMap)
+
+                else -> throw UnsupportedOperationException("Unsupported database type")
+            }
         } else {
             return KotoOperationSet(
                 kotoJdbcWrapper,

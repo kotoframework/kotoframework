@@ -16,21 +16,6 @@ object KotoSpringApp {
         Jdbc.defaultJdbcHandler = SpringDataHandler()
         return this
     }
-
-    fun KotoApp.setDataSource(url: String, userName: String, password: String, driverClassName: String = "com.mysql.cj.jdbc.Driver"): KotoApp {
-        val dataSource = BasicDataSource().apply {
-            this.url = url
-            this.username = userName
-            this.password = password
-            this.driverClassName = driverClassName
-            this.maxTotal = 10
-            this.maxIdle = 5
-        }
-        Jdbc.defaultJdbcWrapper = NamedParameterJdbcTemplate(dataSource).wrapper()
-        Jdbc.defaultJdbcHandler = SpringDataHandler()
-        return this
-    }
-
     fun KotoApp.setDataSource(dataSource: BasicDataSource): KotoApp {
         Jdbc.defaultJdbcWrapper = NamedParameterJdbcTemplate(dataSource).wrapper()
         Jdbc.defaultJdbcHandler = SpringDataHandler()

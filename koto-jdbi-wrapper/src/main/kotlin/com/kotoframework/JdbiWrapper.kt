@@ -1,9 +1,8 @@
 package com.kotoframework
 
-import com.kotoframework.Patch.dbName
 import com.kotoframework.interfaces.KotoJdbcWrapper
-import org.apache.commons.dbcp2.BasicDataSource
 import org.jdbi.v3.core.Jdbi
+import javax.sql.DataSource
 
 /**
  * Created by ousc on 2022/9/19 23:24
@@ -15,9 +14,9 @@ class JdbiWrapper : KotoJdbcWrapper() {
         return jdbi ?: this.jdbi ?: dynamic?.invoke() ?: throw RuntimeException("NamedParameterJdbcTemplate is null")
     }
 
-    val dataSource: BasicDataSource
-        get() = (jdbi ?: dynamic?.invoke())?.withHandle<BasicDataSource?, RuntimeException> {
-            it.connection.unwrap(BasicDataSource::class.java)
+    val dataSource: DataSource
+        get() = (jdbi ?: dynamic?.invoke())?.withHandle<DataSource?, RuntimeException> {
+            it.connection.unwrap(DataSource::class.java)
         } ?: throw RuntimeException("DataSource is null")
 
     override fun forList(sql: String, paramMap: Map<String, Any?>): List<Map<String, Any>> {
@@ -56,7 +55,7 @@ class JdbiWrapper : KotoJdbcWrapper() {
     }
 
     override val url: String
-        get() = dataSource.url
+        get() = dataSource.connection.metaData.url
 
     companion object {
         fun Jdbi?.wrapper(): JdbiWrapper? {

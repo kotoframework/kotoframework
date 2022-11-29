@@ -1,12 +1,8 @@
 package com.kotoframework
 
-import com.kotoframework.definition.Field
-import com.kotoframework.function.remove.RemoveAction
-import com.kotoframework.function.update.UpdateAction
-import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoJdbcWrapper
-import org.apache.commons.dbcp2.BasicDataSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
+import javax.sql.DataSource
 
 /**
  * Created by ousc on 2022/9/19 23:24
@@ -18,8 +14,8 @@ class SpringDataWrapper : KotoJdbcWrapper() {
         return jdbc ?: namedJdbc ?: dynamic?.invoke() ?: throw RuntimeException("NamedParameterJdbcTemplate is null")
     }
 
-    private val dataSource: BasicDataSource
-        get() = (namedJdbc ?: dynamic?.invoke())?.jdbcTemplate?.dataSource as BasicDataSource?
+    private val dataSource: DataSource
+        get() = (namedJdbc ?: dynamic?.invoke())?.jdbcTemplate?.dataSource
             ?: throw RuntimeException("dataSource is null")
 
     override fun forList(sql: String, paramMap: Map<String, Any?>): List<Map<String, Any>> {
@@ -43,7 +39,7 @@ class SpringDataWrapper : KotoJdbcWrapper() {
     }
 
     override val url: String
-        get() = dataSource.url
+        get() = dataSource.connection.metaData.url
 
     companion object {
         fun NamedParameterJdbcTemplate?.wrapper(): SpringDataWrapper? {

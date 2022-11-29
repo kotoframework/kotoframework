@@ -1,5 +1,7 @@
 package com.kotoframework.utils
 
+import com.kotoframework.*
+import com.kotoframework.KotoApp.dbType
 import com.kotoframework.beans.LogLine
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.utils.Printer.BLACK
@@ -10,16 +12,10 @@ import com.kotoframework.utils.Printer.GREEN
 import com.kotoframework.utils.Printer.GREY
 import com.kotoframework.utils.Printer.MAGENTA
 import com.kotoframework.utils.Printer.RED
-import com.kotoframework.utils.Printer.outPrint
-import com.kotoframework.utils.Printer.outPrintln
-import com.kotoframework.utils.Common.currentDate
 import com.kotoframework.utils.Common.currentTimeM
-import com.kotoframework.utils.Printer.PrintCode
+import com.kotoframework.utils.Jdbc.getDBNameFromUrl
 import com.kotoframework.utils.Printer.YELLOW
-import java.io.File
-import java.io.FileWriter
 import java.lang.Integer.min
-import java.lang.Thread.sleep
 import java.util.regex.Pattern
 
 /**
@@ -110,8 +106,7 @@ object Log {
         type: String,
         result: String? = null
     ): List<LogLine> {
-        val dataSource =
-            jdbcWrapper.url.split("?").first().split("//")[1]
+        val dataSource = getDBNameFromUrl(jdbcWrapper.url)
         val tableName = getTableNameFromSQL(sql.lowercase(), type)
         val logLines = mutableListOf(
             LogLine("INFO START | ", arrayOf(GREEN, BOLD)),

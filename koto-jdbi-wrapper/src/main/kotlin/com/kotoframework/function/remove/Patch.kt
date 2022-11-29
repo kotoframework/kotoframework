@@ -7,8 +7,8 @@ import org.jdbi.v3.core.Jdbi
  * Created by ousc on 2022/9/20 11:36
  */
 object Patch {
-    fun RemoveAction<*>.execute(jdbi: Jdbi? = null): KotoExecuteResult {
+    fun RemoveAction<*>.execute(): KotoExecuteResult {
         val koto = where().build()
-        return koto.execute(jdbi)
+        return koto.execute()
     }
 }

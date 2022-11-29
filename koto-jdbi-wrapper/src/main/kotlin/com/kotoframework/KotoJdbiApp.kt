@@ -17,25 +17,6 @@ object KotoJdbiApp {
         return this
     }
 
-    fun KotoApp.setDataSource(
-        url: String,
-        userName: String,
-        password: String,
-        driverClassName: String = "com.mysql.cj.jdbc.Driver"
-    ): KotoApp {
-        val dataSource = BasicDataSource().apply {
-            this.url = url
-            this.username = userName
-            this.password = password
-            this.driverClassName = driverClassName
-            this.maxTotal = 10
-            this.maxIdle = 5
-        }
-        Jdbc.defaultJdbcWrapper = Jdbi.create(dataSource).wrapper()
-        Jdbc.defaultJdbcHandler = JdbiHandler()
-        return this
-    }
-
     fun KotoApp.setDataSource(dataSource: BasicDataSource): KotoApp {
         Jdbc.defaultJdbcWrapper = Jdbi.create(dataSource).wrapper()
         Jdbc.defaultJdbcHandler = JdbiHandler()

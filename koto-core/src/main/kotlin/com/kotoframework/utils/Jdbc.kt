@@ -3,6 +3,7 @@ package com.kotoframework.utils
 import com.kotoframework.beans.KotoExecuteResult
 import com.kotoframework.core.condition.Criteria
 import com.kotoframework.*
+import com.kotoframework.KotoApp.dbType
 import com.kotoframework.beans.TableColumn
 import com.kotoframework.beans.TableMeta
 import com.kotoframework.beans.TableObject
@@ -37,10 +38,18 @@ object Jdbc {
     }
 
     val KotoJdbcWrapper.dbName
-        get() = url.split("?").first().split(
-            "//"
-        )[1].split("/")[1]
+        get() = getDBNameFromUrl(url)
 
+    fun getDBNameFromUrl(url: String): String {
+        return when (dbType) {
+            MySql -> url.split("?").first().split("//")[1]
+            SQLite -> url.split("//").last()
+            Oracle -> url.split("@").last()
+            MSSql -> url.split("//").last().split(";").first()
+            PostgreSQL -> url.split("//").last().split("/").first()
+            else -> throw Exception("Unsupported database type.")
+        }
+    }
 
     /**
      * It gets the table structure from the database and stores it in a map.
@@ -58,11 +67,20 @@ object Jdbc {
         if (tableMap[key] != null) {
             return tableMap[key]!!
         }
-        val list = wrapper.forList("show full fields from ${meta.tableName}", mapOf())
+        val list = wrapper.forList(
+            when (dbType) {
+                MySql -> "show full fields from ${meta.tableName}"
+                SQLite -> "PRAGMA table_info(${meta.tableName})"
+                Oracle -> "SELECT COLUMN_NAME as Field, DATA_TYPE as Type FROM USER_TAB_COLUMNS WHERE TABLE_NAME = '${meta.tableName}'"
+                MSSql -> "SELECT COLUMN_NAME as Field, DATA_TYPE as Type FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '${meta.tableName}'"
+                PostgreSQL -> "SELECT COLUMN_NAME as Field, DATA_TYPE as Type FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '${meta.tableName}'"
+                else -> throw Exception("Unsupported database type.")
+            }
+        )
         val columns = list.map {
             TableColumn(
-                it["Field"] as String,
-                it["Type"] as String
+                (it["Field"] ?: it["name"]) as String,
+                (it["Type"] ?: it["type"]) as String
             )
         }
         tableMap[key] =
@@ -251,7 +269,16 @@ object Jdbc {
 
         if (sql.contains("insert")) {
             lastInsertId =
-                wrapper.forObject("select last_insert_id()", emptyMap<String, String>(), Integer::class.java)?.toInt()
+                wrapper.forObject(
+                    when (dbType) {
+                        MySql -> "select last_insert_id()"
+                        SQLite -> "select last_insert_rowid()"
+                        Oracle -> "select last_insert_id() from dual"
+                        MSSql -> "select @@identity"
+                        PostgreSQL -> "select lastval()"
+                        else -> throw IllegalArgumentException("Unsupported database type")
+                    }, emptyMap<String, String>(), Integer::class.java
+                )?.toInt()
                     ?: 0
             if (lastInsertId == 0) {
                 lastInsertId = null

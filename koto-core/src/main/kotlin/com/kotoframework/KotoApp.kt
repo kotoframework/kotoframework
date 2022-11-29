@@ -25,7 +25,11 @@ object KotoApp {
 
     fun setSoftDelete(enabled: Boolean = true, str: String = "deleted"): KotoApp {
         softDeleteEnabled = enabled
-        softDeleteColumn = str
+        if(softDeleteEnabled){
+            softDeleteColumn = str
+        } else {
+            softDeleteColumn = ""
+        }
         return this
     }
 

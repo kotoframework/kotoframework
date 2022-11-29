@@ -65,7 +65,7 @@ internal val Field.aliasName: String
     }
 
 internal val Field.selectBy: Criteria
-    get() = this.fd.propertyName.eq(if (this is Pair<*, *>) second else null)
+    get() = this.propertyName.eq(if (this is Pair<*, *>) second else null)
 
 internal val Field.direction: String
     get() =

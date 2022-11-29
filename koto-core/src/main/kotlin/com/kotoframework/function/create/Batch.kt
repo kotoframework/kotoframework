@@ -32,13 +32,13 @@ fun Collection<UpdateSetClause<*>?>.batchExecute(jdbcWrapper: KotoJdbcWrapper? =
 fun Collection<KotoOperationSet<*, *>?>.batchExecute(jdbcWrapper: KotoJdbcWrapper? = null): Int {
     val builds = filterNotNull()
     val result = if (isNotEmpty()) Jdbc.batchExecute(
-        jdbcWrapper,
+        jdbcWrapper ?: first()!!.jdbcWrapper,
         builds.first().sql,
         builds.map { it.paramMap }.toTypedArray(),
     ) else 0
 
     if (builds.first().then != null) {
-        builds.map { it.then }.batchExecute(jdbcWrapper)
+        builds.map { it.then }.batchExecute()
     }
 
     return result
