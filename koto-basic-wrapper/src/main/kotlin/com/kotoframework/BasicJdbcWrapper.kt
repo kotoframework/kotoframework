@@ -173,7 +173,7 @@ class BasicJdbcWrapper : KotoJdbcWrapper() {
                 conn.commit()
             } catch (e: Exception) {
                 conn.rollback()
-                throw e
+                throw IllegalStateException()
             } finally {
                 conn.close()
             }

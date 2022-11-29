@@ -21,7 +21,7 @@ class JdbiHandler : KotoQueryHandler() {
         kClass: KClass<*>
     ): List<Any> {
         val wrapper =
-            ((jdbc?: Jdbc.defaultJdbcWrapper) as JdbiWrapper)
+            ((jdbc ?: Jdbc.defaultJdbcWrapper) as JdbiWrapper)
         val unwrapped = wrapper.getJdbi()
         Log.log(wrapper, sql, listOf(paramMap), "query")
         return if (kClass isAssignableFrom KPojo::class) {
@@ -44,7 +44,7 @@ class JdbiHandler : KotoQueryHandler() {
         kClass: KClass<*>
     ): Any {
         val wrapper =
-            ((jdbi?: Jdbc.defaultJdbcWrapper) as JdbiWrapper)
+            ((jdbi ?: Jdbc.defaultJdbcWrapper) as JdbiWrapper)
         val unwrapped = wrapper.getJdbi()
         Log.log(wrapper, sql, listOf(paramMap), "query")
         try {
@@ -61,10 +61,11 @@ class JdbiHandler : KotoQueryHandler() {
         } catch (e: Exception) {
             when (e) {
                 is java.lang.NullPointerException, is IndexOutOfBoundsException, is NoSuchElementException -> {
-                    Printer.errorPrintln("You are using 【queryForObject】 to get a single column, but the result set is empty.If you want to query for a nullable column, use 【queryForObjectOrNull】 instead.").takeUnless { withoutErrorPrintln }
+                    Printer.errorPrintln("You are using 【queryForObject】 to get a single column, but the result set is empty.If you want to query for a nullable column, use 【queryForObjectOrNull】 instead.")
+                        .takeUnless { withoutErrorPrintln }
                 }
             }
-            throw e
+            throw IllegalStateException()
         }
     }
 
@@ -79,7 +80,7 @@ class JdbiHandler : KotoQueryHandler() {
         } catch (e: Exception) {
             when (e) {
                 is NullPointerException, is IndexOutOfBoundsException, is NoSuchElementException -> null
-                else -> throw e
+                else -> throw IllegalStateException()
             }
         }
     }

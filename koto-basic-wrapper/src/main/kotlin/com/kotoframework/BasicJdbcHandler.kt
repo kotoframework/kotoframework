@@ -59,7 +59,7 @@ class BasicJdbcHandler : KotoQueryHandler() {
                     }
                 }
             }
-            throw e
+            throw IllegalStateException()
         }
     }
 
@@ -74,7 +74,7 @@ class BasicJdbcHandler : KotoQueryHandler() {
         } catch (e: Exception) {
             when (e) {
                 is NullPointerException, is IndexOutOfBoundsException, is NoSuchElementException -> null
-                else -> throw e
+                else -> throw IllegalStateException()
             }
         }
     }

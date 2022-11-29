@@ -67,7 +67,7 @@ class SpringDataHandler : KotoQueryHandler() {
                     }
                 }
             }
-            throw e
+            throw IllegalStateException()
         }
     }
 
@@ -84,10 +84,10 @@ class SpringDataHandler : KotoQueryHandler() {
                 is EmptyResultDataAccessException, is NullPointerException, is IndexOutOfBoundsException, is NoSuchElementException -> null
                 is IncorrectResultSizeDataAccessException -> {
                     Printer.errorPrintln("You are using 【queryForObjectOrNull】 on a query that returns more than one row. This is not supported. Use 【queryForList】 instead.")
-                    throw e
+                    throw IllegalStateException()
                 }
 
-                else -> throw e
+                else -> throw IllegalStateException()
             }
         }
     }
