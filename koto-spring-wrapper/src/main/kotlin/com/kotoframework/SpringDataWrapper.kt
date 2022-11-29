@@ -39,7 +39,12 @@ class SpringDataWrapper : KotoJdbcWrapper() {
     }
 
     override val url: String
-        get() = dataSource.connection.metaData.url
+        get() {
+            val conn = dataSource.connection
+            val url = conn.metaData.url
+            conn.close()
+            return url
+        }
 
     companion object {
         fun NamedParameterJdbcTemplate?.wrapper(): SpringDataWrapper? {

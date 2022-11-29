@@ -20,9 +20,13 @@ class BasicJdbcWrapper : KotoJdbcWrapper() {
     val dataSource: DataSource
         get() = ds ?: dynamic?.let { it() } ?: throw RuntimeException("dataSource is null")
 
-    override
-    val url: String
-        get() = dataSource.connection.metaData.url
+    override val url: String
+        get() {
+            val conn = dataSource.connection
+            val url = conn.metaData.url
+            conn.close()
+            return url
+        }
 
     override fun forList(sql: String, paramMap: Map<String, Any?>): List<Map<String, Any>> {
         val (jdbcSql, jdbcParamList) = parseSqlStatement(sql, paramMap)
