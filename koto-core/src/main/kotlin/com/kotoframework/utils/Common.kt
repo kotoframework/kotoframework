@@ -143,7 +143,7 @@ object Common {
                     return Pair(prefix, "$suffix offset :offset rows fetch next :next rows only")
                 }
 
-                else -> throw Exception("Unsupported database type")
+                else -> throw UnsupportedOperationException("Unsupported database type")
             }
         } else return Pair(prefix, suffix)
     }

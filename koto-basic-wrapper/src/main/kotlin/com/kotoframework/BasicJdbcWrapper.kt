@@ -1,6 +1,8 @@
 package com.kotoframework
 
 import com.kotoframework.NamedParameterUtils.parseSqlStatement
+import com.kotoframework.beans.NoDataSourceSpecifiedException
+import com.kotoframework.beans.UnsupportedTypeException
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.utils.Extension.toKPojo
@@ -14,11 +16,11 @@ class BasicJdbcWrapper : KotoJdbcWrapper() {
     var ds: DataSource? = null
     var dynamic: (() -> DataSource)? = null
     fun getDataSource(ds: DataSource? = null): DataSource {
-        return ds ?: this.ds ?: dynamic?.invoke() ?: throw RuntimeException("DataSource is null")
+        return ds ?: this.ds ?: dynamic?.invoke() ?: throw NoDataSourceSpecifiedException("DataSource is null")
     }
 
     val dataSource: DataSource
-        get() = ds ?: dynamic?.let { it() } ?: throw RuntimeException("dataSource is null")
+        get() = ds ?: dynamic?.let { it() } ?: throw NoDataSourceSpecifiedException("DataSource is null")
 
     override val url: String
         get() {
@@ -107,7 +109,7 @@ class BasicJdbcWrapper : KotoJdbcWrapper() {
             try {
                 map?.values?.firstOrNull()?.toString()?.let { clazz.cast(it) }
             } catch (e: Exception) {
-                throw RuntimeException("Unsupported type: ${clazz.name}")
+                throw UnsupportedTypeException("Unsupported type: ${clazz.name}")
             }
         }
     }

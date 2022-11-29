@@ -1,12 +1,9 @@
 package com.kotoframework.utils
 
-import com.kotoframework.beans.KotoExecuteResult
 import com.kotoframework.core.condition.Criteria
 import com.kotoframework.*
 import com.kotoframework.KotoApp.dbType
-import com.kotoframework.beans.TableColumn
-import com.kotoframework.beans.TableMeta
-import com.kotoframework.beans.TableObject
+import com.kotoframework.beans.*
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.interfaces.KotoQueryHandler
 import com.kotoframework.utils.Extension.isNullOrEmpty
@@ -47,7 +44,7 @@ object Jdbc {
             Oracle -> url.split("@").last()
             MSSql -> url.split("//").last().split(";").first()
             PostgreSQL -> url.split("//").last().split("/").first()
-            else -> throw Exception("Unsupported database type.")
+            else -> throw UnsupportedDatabaseTypeException()
         }
     }
 
@@ -74,7 +71,7 @@ object Jdbc {
                 Oracle -> "SELECT COLUMN_NAME as Field, DATA_TYPE as Type FROM USER_TAB_COLUMNS WHERE TABLE_NAME = '${meta.tableName}'"
                 MSSql -> "SELECT COLUMN_NAME as Field, DATA_TYPE as Type FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '${meta.tableName}'"
                 PostgreSQL -> "SELECT COLUMN_NAME as Field, DATA_TYPE as Type FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '${meta.tableName}'"
-                else -> throw Exception("Unsupported database type.")
+                else -> throw UnsupportedDatabaseTypeException()
             }
         )
         val columns = list.map {

@@ -1,5 +1,6 @@
 package com.kotoframework
 
+import com.kotoframework.beans.NoDataSourceSpecifiedException
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import javax.sql.DataSource
@@ -11,12 +12,13 @@ class SpringDataWrapper : KotoJdbcWrapper() {
     var namedJdbc: NamedParameterJdbcTemplate? = null
     var dynamic: (() -> NamedParameterJdbcTemplate)? = null
     fun getNamedJdbc(jdbc: NamedParameterJdbcTemplate? = null): NamedParameterJdbcTemplate {
-        return jdbc ?: namedJdbc ?: dynamic?.invoke() ?: throw RuntimeException("NamedParameterJdbcTemplate is null")
+        return jdbc ?: namedJdbc ?: dynamic?.invoke()
+        ?: throw NoDataSourceSpecifiedException("NamedParameterJdbcTemplate is null")
     }
 
     private val dataSource: DataSource
         get() = (namedJdbc ?: dynamic?.invoke())?.jdbcTemplate?.dataSource
-            ?: throw RuntimeException("dataSource is null")
+            ?: throw NoDataSourceSpecifiedException("dataSource is null")
 
     override fun forList(sql: String, paramMap: Map<String, Any?>): List<Map<String, Any>> {
         return getNamedJdbc().queryForList(sql, paramMap) ?: emptyList()

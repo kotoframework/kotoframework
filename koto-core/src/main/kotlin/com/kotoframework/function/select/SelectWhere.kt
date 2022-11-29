@@ -1,6 +1,7 @@
 package com.kotoframework.function.select
 
 import com.kotoframework.NoValueStrategy
+import com.kotoframework.beans.InvalidSqlException
 import com.kotoframework.beans.KotoResultSet
 import com.kotoframework.beans.KotoResultSet.Companion.getTotalCount
 import com.kotoframework.core.condition.Criteria
@@ -33,7 +34,7 @@ class SelectWhere<T : KPojo>(
     fun validate() {
         if (!this.prefix.contains("select", true)
         ) {
-            throw RuntimeException("The prefix of the sql is not correct.")
+            throw InvalidSqlException("The prefix of the sql is not correct.")
         }
     }
 

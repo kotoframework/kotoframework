@@ -1,5 +1,6 @@
 package com.kotoframework
 
+import com.kotoframework.beans.NoDataSourceSpecifiedException
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import org.jdbi.v3.core.Jdbi
 import javax.sql.DataSource
@@ -11,13 +12,13 @@ class JdbiWrapper : KotoJdbcWrapper() {
     var jdbi: Jdbi? = null
     var dynamic: (() -> Jdbi)? = null
     fun getJdbi(jdbi: Jdbi? = null): Jdbi {
-        return jdbi ?: this.jdbi ?: dynamic?.invoke() ?: throw RuntimeException("NamedParameterJdbcTemplate is null")
+        return jdbi ?: this.jdbi ?: dynamic?.invoke() ?: throw NoDataSourceSpecifiedException("NamedParameterJdbcTemplate is null")
     }
 
     val dataSource: DataSource
         get() = (jdbi ?: dynamic?.invoke())?.withHandle<DataSource?, RuntimeException> {
             it.connection.unwrap(DataSource::class.java)
-        } ?: throw RuntimeException("DataSource is null")
+        } ?: throw NoDataSourceSpecifiedException("DataSource is null")
 
     override fun forList(sql: String, paramMap: Map<String, Any?>): List<Map<String, Any>> {
         return getJdbi().withHandle<List<Map<String, Any>>, RuntimeException> {

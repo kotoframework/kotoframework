@@ -3,6 +3,7 @@ package com.kotoframework.function.select
 import com.kotoframework.*
 import com.kotoframework.KotoApp.dbType
 import com.kotoframework.beans.TableColumn
+import com.kotoframework.beans.UnsupportedDatabaseTypeException
 import com.kotoframework.definition.*
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoJdbcWrapper
@@ -123,6 +124,6 @@ internal fun dateFormatFunc(column: String, format: String, alias: String): Stri
         Oracle -> "TO_CHAR(`${column}`, '${format}') as `${alias}`"
         MSSql -> "CONVERT(VARCHAR(20), `${column}`, 120) as `${alias}`"
         PostgreSQL -> "TO_CHAR(`${column}`, '${format}') as `${alias}`"
-        else -> throw Exception("Unsupported database type")
+        else -> throw UnsupportedDatabaseTypeException()
     }
 }
