@@ -14,7 +14,6 @@ repositories {
 
 dependencies {
     compileOnly(project(":koto-core"))
-    compileOnly("org.apache.commons:commons-dbcp2:2.9.0")
     compileOnly("org.springframework:spring-jdbc:5.3.23")
     compileOnly("org.springframework:spring-tx:5.3.23")
     compileOnly("org.springframework:spring-beans:5.3.23")

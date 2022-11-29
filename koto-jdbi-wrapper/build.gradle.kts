@@ -14,7 +14,6 @@ repositories {
 
 dependencies {
     compileOnly(project(":koto-core"))
-    compileOnly("org.apache.commons:commons-dbcp2:2.9.0")
     compileOnly("org.jdbi:jdbi3-bom:3.32.0")
     compileOnly("org.jdbi:jdbi3-core:3.32.0")
     compileOnly("org.jdbi:jdbi3-kotlin:3.32.0")
