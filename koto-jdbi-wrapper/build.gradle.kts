@@ -14,10 +14,10 @@ repositories {
 
 dependencies {
     compileOnly(project(":koto-core"))
-    compileOnly("org.jdbi:jdbi3-bom:3.32.0")
-    compileOnly("org.jdbi:jdbi3-core:3.32.0")
-    compileOnly("org.jdbi:jdbi3-kotlin:3.32.0")
-    compileOnly("org.jdbi:jdbi3-kotlin-sqlobject:3.32.0")
+    compileOnly("org.jdbi:jdbi3-bom:3.34.0")
+    compileOnly("org.jdbi:jdbi3-core:3.34.0")
+    compileOnly("org.jdbi:jdbi3-kotlin:3.34.0")
+    compileOnly("org.jdbi:jdbi3-kotlin-sqlobject:3.34.0")
 }
 
 tasks.getByName<Test>("test") {

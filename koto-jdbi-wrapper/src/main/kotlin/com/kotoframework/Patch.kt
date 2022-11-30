@@ -3,8 +3,8 @@ package com.kotoframework
 import com.kotoframework.JdbiWrapper.Companion.wrapper
 import com.kotoframework.utils.Jdbc
 import com.kotoframework.utils.Jdbc.defaultJdbcHandler
-import org.apache.commons.dbcp2.BasicDataSource
 import org.jdbi.v3.core.Jdbi
+import javax.sql.DataSource
 
 /**
  * Created by ousc on 2022/9/20 10:28
@@ -38,12 +38,4 @@ object Patch {
     ): T? {
         return defaultJdbcHandler!!.forObjectOrNull(this.wrapper(), sql, paramMap, T::class) as T?
     }
-
-    val Jdbi.dbName: String
-        get() = (this.withHandle<BasicDataSource, RuntimeException> { it.connection.unwrap(BasicDataSource::class.java) } as BasicDataSource).url.split(
-            "?"
-        ).first().split(
-            "//"
-        )[1].split("/")[1]
-
 }
