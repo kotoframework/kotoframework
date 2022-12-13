@@ -31,7 +31,7 @@ object Jdbc {
      * exception is thrown.
      */
     fun getJdbcWrapper(jdbcWrapper: KotoJdbcWrapper?): KotoJdbcWrapper {
-        return jdbcWrapper ?: defaultJdbcWrapper ?: throw RuntimeException("jdbcWrapper is null")
+        return jdbcWrapper ?: defaultJdbcWrapper ?: throw NullPointerException("JdbcWrapper is null")
     }
 
     val KotoJdbcWrapper.dbName
@@ -76,16 +76,16 @@ object Jdbc {
         )
         val columns = list.map {
             TableColumn(
-                (it["Field"] ?: it["name"]) as String,
-                (it["Type"] ?: it["type"]) as String
+                (it["Field"] ?: it["name"]).toString(),
+                (it["Type"] ?: it["type"]).toString()
             )
         }
-        tableMap[key] =
-            TableObject(
-                columns,
-                meta
-            )
-        return tableMap[key]!!
+        return TableObject(
+            columns,
+            meta
+        ).apply {
+            tableMap[key] = this
+        }
     }
 
     /**
@@ -111,7 +111,7 @@ object Jdbc {
         conditions.filterNotNull().forEach {
             val alias = if (showAlias) "${it.tableName!!.lineToHump()}." else ""
 
-            if (paramMap[it.parameterName] is List<*> && it.type != IN) {
+            if (paramMap[it.parameterName] is Collection<*> && it.type != IN) {
                 it.type = IN
             }
 
@@ -167,23 +167,23 @@ object Jdbc {
                 }
 
                 BETWEEN -> {
-                    if (it.value is ClosedRange<*>) {
-                        paramMap[realName + "Min"] = it.value.start
-                        paramMap[realName + "Max"] = it.value.endInclusive
+                    if (paramMap[realName] is ClosedRange<*>) {
+                        paramMap[realName + "Min"] = (paramMap[realName] as ClosedRange<*>).start
+                        paramMap[realName + "Max"] = (paramMap[realName] as ClosedRange<*>).endInclusive
                         paramMap.remove(realName)
                     } else {
-                        throw IllegalArgumentException("The type of the value of BETWEEN is not supported")
+                        throw IllegalArgumentException("The type `${paramMap[realName]!!::class.java.simpleName}` of the value of BETWEEN is not supported")
                     }
 
                     sqls.add(alias + it.sql)
                 }
 
                 IN -> {
-                    if (it.value is Collection<*>) {
+                    if (paramMap[realName] is Collection<*>?) {
                         paramMap[realName] = paramMap[realName] ?: listOf<String>()
                         sqls.add(alias + it.sql)
                     } else {
-                        throw IllegalArgumentException("The type of the value of IN is not supported")
+                        throw IllegalArgumentException("The type `${paramMap[realName]!!::class.java.simpleName}` of the value of IN is not supported")
                     }
                 }
 

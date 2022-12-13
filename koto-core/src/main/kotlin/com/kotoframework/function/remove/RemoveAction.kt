@@ -29,20 +29,6 @@ class RemoveAction<T : KPojo>(
         paramMap.putAll(KPojo.toMap())
     }
 
-    fun where(addCondition: AddCondition<T>? = null): RemoveWhere<T> {
-        paramMap["updateTime"] = currentTime
-        return Where(KPojo, jdbcWrapper) { addCondition?.invoke(KPojo) }.map(
-            *paramMap.toList().toTypedArray()
-        ).prefixOW("$sql where ").getRemoveWhere()
-    }
-
-    fun where(vararg condition: Criteria?): RemoveWhere<T> {
-        paramMap["updateTime"] = currentTime
-        return Where(KPojo, jdbcWrapper) { condition.toList().arbitrary() }.map(
-            *paramMap.toList().toTypedArray()
-        ).prefixOW("${this.sql} where ").getRemoveWhere()
-    }
-
     fun soft(): RemoveAction<T> {
         sql = "update $tableName set ${deleted(1, jdbcWrapper, tableName)}, update_time = :updateTime"
         paramMap["updateTime"] = currentTime
@@ -85,5 +71,19 @@ class RemoveAction<T : KPojo>(
             .prefixOW("$sql where ")
             .build()
         return KotoOperationSet(jdbcWrapper, koto.sql, koto.paramMap)
+    }
+
+    fun where(addCondition: AddCondition<T>? = null): RemoveWhere<T> {
+        paramMap["updateTime"] = currentTime
+        return Where(KPojo, jdbcWrapper) { addCondition?.invoke(KPojo) }.map(
+            *paramMap.toList().toTypedArray()
+        ).prefixOW("$sql where ").getRemoveWhere()
+    }
+
+    fun where(vararg condition: Criteria?): RemoveWhere<T> {
+        paramMap["updateTime"] = currentTime
+        return Where(KPojo, jdbcWrapper) { condition.toList().arbitrary() }.map(
+            *paramMap.toList().toTypedArray()
+        ).prefixOW("${this.sql} where ").getRemoveWhere()
     }
 }

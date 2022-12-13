@@ -211,4 +211,35 @@ class CreateWhere<T : KPojo>(KPojo: T, kotoJdbcWrapper: KotoJdbcWrapper?) : Wher
                 }) ".rmRedundantBlk(), paramMap)
         }
     }
+
+    companion object{
+        @OptIn(NeedTableIndexes::class)
+        fun <K : KPojo> Collection<CreateWhere<K>>.onDuplicateUpdate(vararg fields: Field): Collection<CreateWhere<K>> {
+            return this.map { it.onDuplicateUpdate(*fields) }
+        }
+
+        fun <K : KPojo> Collection<CreateWhere<K>>.onId(): Collection<CreateWhere<K>> {
+            return this.map { it.onId() }
+        }
+
+        fun <K : KPojo> Collection<CreateWhere<K>>.on(field: Field, vararg fields: Field): Collection<CreateWhere<K>> {
+            return this.map { it.on(field, *fields) }
+        }
+
+        fun <K : KPojo> Collection<CreateWhere<K>>.update(field: Field, vararg fields: Field): Collection<CreateWhere<K>> {
+            return this.map { it.update(field, *fields) }
+        }
+
+        fun <K : KPojo> Collection<CreateWhere<K>>.except(field: Field, vararg fields: Field): Collection<CreateWhere<K>> {
+            return this.map { it.except(field, *fields) }
+        }
+
+        fun <K : KPojo> Collection<CreateWhere<K>>.map(vararg pairs: Pair<String, Any?>): Collection<CreateWhere<K>> {
+            return this.map { it.map(*pairs) }
+        }
+
+        fun <K : KPojo> Collection<CreateWhere<K>>.build(): Collection<KotoOperationSet<CreateWhere<K>, K>> {
+            return this.map { it.build() }
+        }
+    }
 }
