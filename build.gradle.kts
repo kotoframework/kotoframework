@@ -2,8 +2,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.7.20"
-    // maven plugin
-    id("maven-publish")
 }
 
 group = "com.kotoframework"
@@ -21,7 +19,7 @@ dependencies {
     testImplementation(project(":koto-core"))
     testImplementation(project(":koto-spring-wrapper"))
     testImplementation(project(":koto-basic-wrapper"))
-    testImplementation("mysql:mysql-connector-java:8.0.30")
+    testImplementation("mysql:mysql-connector-java:8.0.32")
     testImplementation("org.apache.commons:commons-dbcp2:2.9.0")
     testImplementation("org.jdbi:jdbi:2.78")
     testImplementation("org.springframework:spring-beans:5.3.23")
