@@ -56,12 +56,12 @@ publishing {
             artifact(jarJavadoc)
 
             groupId = project.group.toString()
-            artifactId = project.name
+            artifactId = "koto-basic-wrapper"
             version = project.version.toString()
 
             pom {
-                name.set("${project.group}:koto-basic-wrapper")
-                description.set("Kotoframework's built-in database operation plug-in based on the original jdbc supports variable templates and multiple databases.")
+                name.set("${project.group}:")
+                description.set("Kotoframework 's built-in database operation plug-in based on the original jdbc supports variable templates and multiple databases.")
                 url.set("https://www.kotoframework.com")
                 licenses {
                     license {

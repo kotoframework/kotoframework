@@ -16,10 +16,10 @@ repositories {
 
 dependencies {
     compileOnly(project(":koto-core"))
-    compileOnly("org.jdbi:jdbi3-bom:3.34.0")
-    compileOnly("org.jdbi:jdbi3-core:3.34.0")
-    compileOnly("org.jdbi:jdbi3-kotlin:3.34.0")
-    compileOnly("org.jdbi:jdbi3-kotlin-sqlobject:3.34.0")
+    compileOnly("org.jdbi:jdbi3-bom:3.35.0")
+    compileOnly("org.jdbi:jdbi3-core:3.35.0")
+    compileOnly("org.jdbi:jdbi3-kotlin:3.35.0")
+    compileOnly("org.jdbi:jdbi3-kotlin-sqlobject:3.35.0")
 }
 
 tasks.getByName<Test>("test") {
@@ -59,12 +59,12 @@ publishing {
             artifact(jarJavadoc)
 
             groupId = project.group.toString()
-            artifactId = project.name
+            artifactId = "koto-jdbi-wrapper"
             version = project.version.toString()
 
             pom {
-                name.set("${project.group}:${project.name}")
-                description.set("An easy-to-use, flexible, lightweight data persistence layer ORM framework designed for kotlin.")
+                name.set("${project.group}:koto-jdbi-wrapper")
+                description.set("Provides contact support for koto-core and Jdbi libraries.")
                 url.set("https://www.kotoframework.com")
                 licenses {
                     license {

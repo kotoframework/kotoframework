@@ -59,7 +59,7 @@ publishing {
             artifact(jarJavadoc)
 
             groupId = project.group.toString()
-            artifactId = project.name
+            artifactId = "koto-spring-wrapper"
             version = project.version.toString()
 
             pom {
