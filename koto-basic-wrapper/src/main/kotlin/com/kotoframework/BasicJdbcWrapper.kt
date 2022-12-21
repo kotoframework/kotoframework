@@ -117,8 +117,6 @@ class BasicJdbcWrapper : KotoJdbcWrapper() {
     override fun update(sql: String, paramMap: Map<String, Any?>): Int {
         val (jdbcSql, jdbcParamList) = parseSqlStatement(sql, paramMap)
         val conn = getDataSource().connection
-        println(jdbcSql)
-        println(jdbcParamList)
         val ps = conn.prepareStatement(jdbcSql)
         jdbcParamList.forEachIndexed { index, any ->
             ps.setObject(index + 1, any)
