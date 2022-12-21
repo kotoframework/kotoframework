@@ -35,6 +35,10 @@ object Log {
      * @return The table name from the SQL statement.
      */
     private fun getTableNameFromSQL(sql: String, mode: String): String {
+        if (sql.startsWith("select count(*) from (")) {
+            val sql2 = sql.substring(22, sql.length - 1)
+            return getTableNameFromSQL(sql2, mode)
+        }
         val pattern = when (mode) {
             "update" -> Pattern.compile("(?i)update\\s+(\\S+)\\s+set\\s+")
             "remove" -> Pattern.compile("(?i)from\\s+(\\S+)\\s+")
