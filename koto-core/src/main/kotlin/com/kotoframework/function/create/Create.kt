@@ -12,6 +12,6 @@ fun <T : KPojo> create(KPojo: T, jdbcWrapper: KotoJdbcWrapper? = null): CreateWh
 }
 
 
-fun <T: KPojo> create(KPojos: Collection<T>, jdbcWrapper: KotoJdbcWrapper? = null): Collection<CreateWhere<T>> {
-    return KPojos.map { create(it, jdbcWrapper) }
+fun <T: KPojo> create(listOfKPojo: Collection<T>, jdbcWrapper: KotoJdbcWrapper? = null): List<CreateWhere<T>> {
+    return listOfKPojo.map { create(it, jdbcWrapper) }
 }

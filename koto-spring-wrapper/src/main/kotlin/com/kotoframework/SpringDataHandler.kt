@@ -59,15 +59,17 @@ class SpringDataHandler : KotoQueryHandler() {
                     if (!withoutErrorPrintln) {
                         Printer.errorPrintln("You are using 【queryForObject】 to get a single column, but the result set is empty.If you want to query for a nullable column, use 【queryForObjectOrNull】 instead.")
                     }
+                    throw e
                 }
 
                 is IncorrectResultSizeDataAccessException -> {
                     if (!withoutErrorPrintln) {
                         Printer.errorPrintln("You are using 【queryForObject】 on a query that returns more than one row. This is not supported. Use 【queryForList】 instead.")
                     }
+                    throw e
                 }
             }
-            throw IllegalStateException()
+            throw IllegalStateException(e.message, e.cause)
         }
     }
 
@@ -84,10 +86,10 @@ class SpringDataHandler : KotoQueryHandler() {
                 is EmptyResultDataAccessException, is NullPointerException, is IndexOutOfBoundsException, is NoSuchElementException -> null
                 is IncorrectResultSizeDataAccessException -> {
                     Printer.errorPrintln("You are using 【queryForObjectOrNull】 on a query that returns more than one row. This is not supported. Use 【queryForList】 instead.")
-                    throw IllegalStateException()
+                    throw e
                 }
 
-                else -> throw IllegalStateException()
+                else -> throw IllegalStateException(e.message, e.cause)
             }
         }
     }

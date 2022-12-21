@@ -10,9 +10,9 @@ import javax.sql.DataSource
  */
 object KotoSpringApp {
     fun KotoApp.setDynamicDataSource(namedJdbc: () -> NamedParameterJdbcTemplate): KotoApp {
-        val springjdbcWrapper = SpringDataWrapper()
-        springjdbcWrapper.dynamic = namedJdbc
-        Jdbc.defaultJdbcWrapper = springjdbcWrapper
+        val springJdbcWrapper = SpringDataWrapper()
+        springJdbcWrapper.dynamic = namedJdbc
+        Jdbc.defaultJdbcWrapper = springJdbcWrapper
         Jdbc.defaultJdbcHandler = SpringDataHandler()
         return this
     }

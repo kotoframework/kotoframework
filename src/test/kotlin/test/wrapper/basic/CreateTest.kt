@@ -1,6 +1,7 @@
 package test.wrapper.basic
 
 import com.kotoframework.BasicJdbcWrapper.Companion.transact
+import com.kotoframework.BasicJdbcWrapper.Companion.wrapper
 import test.wrapper.DataSource.namedJdbc
 import com.kotoframework.KotoApp
 import com.kotoframework.KotoBasicJdbcApp.setDynamicDataSource
@@ -157,7 +158,7 @@ class CreateTest {
 
         val updated = user.toKPojo<TbUser>("userName" to "updated")
         transact(dataSource) {
-            val kotoUpdated = it.create(updated).on("id")
+            val kotoUpdated = it.wrapper()!!.create(updated).on("id")
             kotoUpdated.execute()
         }
 

@@ -10,10 +10,9 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
  */
 object Patch {
     fun CreateWhere<*>.execute(): KotoExecuteResult {
-        val koto = this.build()
-        koto.then?.let {
-            koto.execute()
+        return build().let {
+            val result = it.execute()
+            it.then?.execute() ?: result
         }
-        return koto.execute()
     }
 }
