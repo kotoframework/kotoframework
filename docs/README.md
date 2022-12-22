@@ -3,7 +3,7 @@ Koto SQL Framework for Kotlin
 
 [![build](https://github.com/kotoframework/kotoframework/actions/workflows/build.yml/badge.svg)](https://github.com/kotoframework/kotoframework/actions/workflows/build.yml)
 [![Maven central](https://img.shields.io/maven-central/v/com.kotoframework/koto-core.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.kotoframework%22)
-[![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/s/https/s01.oss.sonatype.org/com.kotoframework/koto-core.svg)](https://s01.oss.sonatype.org/content/repositories/snapshots/com/kotoframework/koto-core/)
+[![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/s/https/s01.oss.sonatype.org/com.kotoframework/koto-core.svg)](https://s01.oss.sonatype.org/content/repositories/snapshots/com/kotoframework/)
 [![License](https://img.shields.io/:license-apache-brightgreen.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 <img src="https://cdn.leinbo.com/assets/images/koto-logo.png" alt="koto" style="zoom: 33%;" />
@@ -78,18 +78,18 @@ from user
 <dependency>
     <groupId>com.kotoframework</groupId>
     <artifactId>koto-core</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.3</version>
 </dependency>
 ```
 
 ##### gradle
 
 ```groovy
-compile "com.kotoframework:koto-core:${koto.version}"
+compile "com.kotoframework:koto-core:1.0.3"
 ```
 
 ```kotlin
-complie("com.kotoframework:koto-core:${koto.version}")
+complie("com.kotoframework:koto-core:1.0.3")
 ```
 
 #### 2. Configuration
@@ -121,52 +121,40 @@ fun getUserInfoById(id): User {
 // from<User> {  it.select(it).by(it::id to 1) }.queryForObject()
 ```
 
-You can also use Where to create more complex query conditions, such as:
+You can also use Where to build more complex query conditions, such as:
 
 ```kotlin
-fun getUserBySomeCondition(user: User): UserInfo? { // query a single entity
-    return select(user).where {
+fun getUserBySomeCondition(user: User): UserInfo? { // query for object or null
+    return select(user).where{
         it::id.eq and
-                it::userName.notNull and
-                it::active.eq(true) and
-                it::age.lt() // < user.age
-    }.queryForObjectOrNull()
+        it::userName.notNull and
+        it::active.eq(true) and
+        it::age.lt() // < user.age
+   }.queryForObjectOrNull()
 }
 
-fun getUser(user: User): List<User> { // Query the list of entities that meet the condition
-    return select(user).where {
+fun getUser(user: User): Pair<List<User>, Int>{ // query for list and count
+    return select(user).where{
         it::id.eq and
-                it::userName.eq and
-                it::active.eq and
-                it::age.eq
-    }.queryForList()
-}
-
-//In fact, the second query can be abbreviated as the following,
-// koto will automatically generate query conditions based on KPojo, 
-// and when the condition value is null,
-// it will not be added to the where condition:
-fun getUserUseWhere(user: User): List<User> {
-    return select(user).where().queryForList()
+        it::userName.eq and
+        it::active.eq and
+        it::age.eq
+    }
+      .orderBy(it::id.desc)
+      .page(1, 10)
+      .withTotal{
+          it.queryForList()
+      }
+   //can be simplified to return select(user).where().orderBy... 
 }
 ```
 
-Use Koto to quickly create a piece of data from the passed in object:
+quickly create or delete a record by passing in an KPojo data class:
 
 ```kotlin
-fun createUserInfo(user: UserInfo): KotoExecuteResult {
-    return create(user).execute()
-// With create(user).on(*Fields), 
-// you can specify to update the record instead of creating it when certain fields are the same
-}
-```
+create(user).execute()
 
-Delete some data with Koto:
-
-```kotlin
-fun deleteUserInfo(user: UserInfo): KotoExecuteResult {
-    return remove(user).execute()
-}
+remove(user).byId().execute()
 ```
 
 ### 📚Koto Api Documentation
