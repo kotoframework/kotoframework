@@ -1,10 +1,14 @@
 Koto SQL Framework for Kotlin
 =============================
-[![build](https://github.com/kotoframework/kotoframework/actions/workflows/build.yml/badge.svg)](https://github.com/kotlin-orm/ktorm/actions/workflows/build.yml)
-[![maven-central](https://img.shields.io/maven-central/v/com.kotoframework/koto-core.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.kotoframework%22)
-[![Awesome Kotlin Badge](https://kotlin.link/awesome-kotlin.svg)](https://github.com/KotlinBy/awesome-kotlin)
+
+[![build](https://github.com/kotoframework/kotoframework/actions/workflows/build.yml/badge.svg)](https://github.com/kotoframework/kotoframework/actions/workflows/build.yml)
+[![Maven central](https://img.shields.io/maven-central/v/com.kotoframework/koto-core.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.kotoframework%22)
+[![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/s/https/s01.oss.sonatype.org/com.kotoframework/koto-core.svg)](https://s01.oss.sonatype.org/content/repositories/snapshots/com/kotoframework/koto-core/)
+[![License](https://img.shields.io/:license-apache-brightgreen.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 <img src="https://cdn.leinbo.com/assets/images/koto-logo.png" alt="koto" style="zoom: 33%;" />
+
+### English🇬🇧 | [中文🇨🇳](zh-cn/README.md)
 
 official website: [https://kotoframework.com](https://kotoframework.com)
 
