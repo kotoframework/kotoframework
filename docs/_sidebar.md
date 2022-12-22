@@ -16,13 +16,12 @@
 
   - [Where condition object](where.md)
   - [select](select.md)
+  - [column search](column_search.md)
   - [associate](associate.md)
   - [create row](create.md)
   - [update row](update.md)
   - [remove row](remove.md)
   - [Batch Operations and Dynamic Data Sources](batch_and_dynamic.md)
-  - [optionList](option_list.md)
-  - [statistic](statistic.md)
 
 - Use with other persistence layer frameworks
 
