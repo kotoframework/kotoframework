@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.jetbrains.kotlin:kotlin-reflect:1.7.20")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.20")
 }
 
 tasks.getByName<Test>("test") {

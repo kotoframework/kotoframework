@@ -4,12 +4,17 @@ import com.kotoframework.core.condition.Criteria
 import com.kotoframework.*
 import com.kotoframework.KotoApp.dbType
 import com.kotoframework.beans.*
+import com.kotoframework.core.annotations.Column
+import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.interfaces.KotoQueryHandler
+import com.kotoframework.utils.Extension.humpToLine
 import com.kotoframework.utils.Extension.isNullOrEmpty
 import com.kotoframework.utils.Extension.lineToHump
 import com.kotoframework.utils.Log.log
 import java.util.*
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.findAnnotation
 
 /**
  * Created by ousc on 2022/4/18 13:12
@@ -58,22 +63,41 @@ object Jdbc {
     fun initMetaData(
         meta: TableMeta,
         jdbcWrapper: KotoJdbcWrapper? = null,
+        kPojo: KPojo? = null
     ): TableObject {
         val wrapper = getJdbcWrapper(jdbcWrapper)
         val key = "${wrapper.dbName}_${meta.tableName}"
         if (tableMap[key] != null) {
             return tableMap[key]!!
         }
-        val list = wrapper.forList(
-            when (dbType) {
-                MySql -> "show full fields from ${meta.tableName}"
-                SQLite -> "PRAGMA table_info(${meta.tableName})"
-                Oracle -> "SELECT COLUMN_NAME as Field, DATA_TYPE as Type FROM USER_TAB_COLUMNS WHERE TABLE_NAME = '${meta.tableName}'"
-                MSSql -> "SELECT COLUMN_NAME as Field, DATA_TYPE as Type FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '${meta.tableName}'"
-                PostgreSQL -> "SELECT COLUMN_NAME as Field, DATA_TYPE as Type FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '${meta.tableName}'"
-                else -> throw UnsupportedDatabaseTypeException()
+        val list = try {
+            wrapper.forList(
+                when (dbType) {
+                    MySql -> "show full fields from ${meta.tableName}"
+                    SQLite -> "PRAGMA table_info(${meta.tableName})"
+                    Oracle -> "SELECT COLUMN_NAME as Field, DATA_TYPE as Type FROM USER_TAB_COLUMNS WHERE TABLE_NAME = '${meta.tableName}'"
+                    MSSql -> "SELECT COLUMN_NAME as Field, DATA_TYPE as Type FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '${meta.tableName}'"
+                    PostgreSQL -> "SELECT COLUMN_NAME as Field, DATA_TYPE as Type FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '${meta.tableName}'"
+                    else -> throw UnsupportedDatabaseTypeException()
+                }
+            )
+        } catch (e: Exception) {
+            if (kPojo == null) {
+                throw e
+            } else {
+                kPojo::class.declaredMemberProperties.map {
+                    return@map it.findAnnotation<Column>()?.let { column ->
+                        mapOf(
+                            "Field" to column.name.ifEmpty { it.name.humpToLine() },
+                            "Type" to column.type.ifEmpty { "varchar(255)" }
+                        )
+                    } ?: mapOf(
+                        "Field" to it.name.humpToLine(),
+                        "Type" to "varchar(255)"
+                    )
+                }
             }
-        )
+        }
         val columns = list.map {
             TableColumn(
                 (it["Field"] ?: it["name"]).toString(),

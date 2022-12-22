@@ -12,14 +12,13 @@ repositories {
 }
 
 dependencies {
-    compileOnly(kotlin("stdlib-jdk8"))
-    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.7.20")
+    implementation(kotlin("stdlib-jdk8"))
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.7.20")
     testImplementation("org.jetbrains.kotlin:kotlin-reflect:1.7.20")
     testImplementation(kotlin("test"))
     testImplementation(project(":koto-core"))
     testImplementation(project(":koto-spring-wrapper"))
     testImplementation(project(":koto-basic-wrapper"))
-    testImplementation("mysql:mysql-connector-java:8.0.31")
     testImplementation("org.apache.commons:commons-dbcp2:2.9.0")
     testImplementation("org.jdbi:jdbi:2.78")
     testImplementation("org.springframework:spring-beans:5.3.23")

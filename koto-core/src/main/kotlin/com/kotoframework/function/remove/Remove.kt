@@ -13,9 +13,9 @@ import com.kotoframework.utils.Jdbc
 /**
  * Created by ousc on 2022/5/30 17:17
  */
-fun <T : KPojo> remove(KPojo: T, jdbcWrapper: KotoJdbcWrapper? = null): RemoveAction<T> {
+inline fun <reified T : KPojo> remove(KPojo: T, jdbcWrapper: KotoJdbcWrapper? = null): RemoveAction<T> {
     val meta = KPojo.tableMeta
-    Jdbc.initMetaData(meta, jdbcWrapper)
+    Jdbc.initMetaData(meta, jdbcWrapper, KPojo)
     return RemoveAction(KPojo.tableName, KPojo, jdbcWrapper)
 }
 

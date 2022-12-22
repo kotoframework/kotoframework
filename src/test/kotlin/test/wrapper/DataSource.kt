@@ -8,9 +8,9 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
  */
 object DataSource {
     val dataSource = BasicDataSource().apply {
-        url = "jdbc:mysql://localhost:3306/koto_test?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8"
+        url = "jdbc:mysql://localhost:3306/koto?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8"
         username = "root"
-        password = "Leinbo2103221541@"
+        password = "root"
         driverClassName = "com.mysql.cj.jdbc.Driver"
     }
     val namedJdbc = NamedParameterJdbcTemplate(dataSource)

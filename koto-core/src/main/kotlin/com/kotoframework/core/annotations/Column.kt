@@ -12,4 +12,4 @@ package com.kotoframework.core.annotations
  */
 @Target(AnnotationTarget.FIELD, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class Column(val name: String)
+annotation class Column(val name: String, val type: String, val comment: String)
