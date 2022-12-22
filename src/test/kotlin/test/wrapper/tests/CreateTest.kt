@@ -1,16 +1,10 @@
-package test.wrapper.spring
+package test.wrapper.tests
 
-import test.wrapper.DataSource.namedJdbc
 import com.kotoframework.KotoApp
-import com.kotoframework.KotoSpringApp.setDynamicDataSource
-import com.kotoframework.function.create.Patch.execute
 import test.wrapper.beans.TbUser
 import com.kotoframework.function.create.create
-import com.kotoframework.interfaces.Patch.execute
 import com.kotoframework.core.annotations.NeedTableIndexes
 import com.kotoframework.utils.Common.deleted
-import com.kotoframework.utils.Extension.toKPojo
-import com.kotoframework.utils.Extension.toMap
 import com.kotoframework.utils.Extension.toMutableMap
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -20,10 +14,10 @@ import kotlin.test.assertEquals
  */
 class CreateTest {
     init {
-        KotoApp.setDynamicDataSource { namedJdbc }.setLog("console")
+        KotoApp.setLog("console", true)
     }
 
-    val user = TbUser(
+    private val user = TbUser(
         id = 300,
         userName = "Leinbo",
         password = "Leinbo",

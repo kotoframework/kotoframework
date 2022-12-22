@@ -55,7 +55,7 @@ class AssociateAction<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo
             kPojo16
         )
         kPojos.forEach {
-            initMetaData(it.tableMeta, jdbcWrapper)
+            initMetaData(it.tableMeta, jdbcWrapper, it)
         }
         return kPojos.map { it.tableName }
     }

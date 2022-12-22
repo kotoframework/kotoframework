@@ -11,6 +11,6 @@ package com.kotoframework.core.annotations
  * @constructor Create empty DateTimeFormat
  * @author ousc
  */
+@Target(AnnotationTarget.FIELD, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.FIELD)
 annotation class DateTimeFormat(val pattern: String = "")

@@ -1,11 +1,9 @@
-package test.wrapper.basic
+package test.wrapper.tests
 
 import com.kotoframework.KotoApp
-import com.kotoframework.KotoBasicJdbcApp.setDynamicDataSource
 import com.kotoframework.utils.Extension.toKPojo
 import com.kotoframework.utils.Extension.toMap
 import org.junit.jupiter.api.Test
-import test.wrapper.DataSource.dataSource
 import test.wrapper.beans.TbUser
 import kotlin.test.assertEquals
 
@@ -14,10 +12,10 @@ import kotlin.test.assertEquals
  */
 class CommonTest {
     init {
-        KotoApp.setDynamicDataSource { dataSource }.setLog("console", true)
+        KotoApp.setLog("console", true)
     }
 
-    val user = TbUser(
+    private val user = TbUser(
         id = 9938,
         userName = "Leinbo",
         password = "Leinbo",

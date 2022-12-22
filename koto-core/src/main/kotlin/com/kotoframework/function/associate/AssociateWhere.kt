@@ -19,10 +19,9 @@ import com.kotoframework.utils.Extension.rmRedundantBlk
 import com.kotoframework.utils.Extension.tableAlias
 import com.kotoframework.utils.Extension.tableName
 import com.kotoframework.utils.Extension.toMutableMap
-import com.kotoframework.utils.Jdbc.dbName
-import com.kotoframework.utils.Jdbc.getJdbcWrapper
 import com.kotoframework.utils.Jdbc.joinSqlStatement
 import com.kotoframework.utils.Jdbc.tableMap
+import com.kotoframework.utils.Jdbc.tableMetaKey
 import kotlin.reflect.KCallable
 
 /**
@@ -244,7 +243,7 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
         } else if (field isAssignableFrom KPojo::class) {
             val tableName = (field as KPojo).tableName
             val tableAlias = field.tableAlias
-            val fields = tableMap[getJdbcWrapper(kotoJdbcWrapper).dbName + "_" + tableName]!!.fields
+            val fields = tableMap[tableMetaKey(kotoJdbcWrapper, tableName)]!!.fields
 
             return fields.map {
                 it.fd.apply {
@@ -281,14 +280,13 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
                     throw IllegalArgumentException("${field.javaClass.simpleName} is not a KPojo")
                 }
             }
-            val tbKey = getJdbcWrapper(kotoJdbcWrapper).dbName + "_" + tableName
 
             return listOf(
                 field.fd.apply {
                     columnName = getSql(
                         "",
                         field,
-                        tableMap[tbKey]!!.fields.find { it.name == it.columnName }!!.type,
+                        tableMap[tableMetaKey(kotoJdbcWrapper, tableName)]!!.fields.find { it.name == it.columnName }!!.type,
                         tableAlias,
                         complex
                     )

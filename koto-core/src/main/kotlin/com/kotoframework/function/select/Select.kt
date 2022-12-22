@@ -11,10 +11,11 @@ import com.kotoframework.core.annotations.DateTimeFormat
 import com.kotoframework.utils.Common.toSqlDate
 import com.kotoframework.utils.Extension.lineToHump
 import com.kotoframework.utils.Extension.tableMeta
-import com.kotoframework.utils.Jdbc
-import com.kotoframework.utils.Jdbc.dbName
 import com.kotoframework.utils.Jdbc.initMetaData
 import com.kotoframework.utils.Jdbc.tableMap
+import com.kotoframework.utils.Jdbc.tableMetaKey
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.findAnnotation
 
 
 const val ALL_FIELDS = "*"
@@ -30,13 +31,13 @@ inline fun <reified T : KPojo> select(
 ): SelectAction<T> {
     val table = KPojo ?: T::class.java.newInstance()
     val meta = table.tableMeta
-    initMetaData(meta, jdbcWrapper)
+    initMetaData(meta, jdbcWrapper, table)
     var selectFields = (if (fields.isEmpty()) listOf(ALL_FIELDS) else fields.toList()).toMutableList()
 
     if (selectFields.contains(ALL_FIELDS)) {
         selectFields = selectFields.apply {
             remove(ALL_FIELDS)
-            addAll(tableMap[Jdbc.getJdbcWrapper(jdbcWrapper).dbName + "_" + meta.tableName]!!.fields.map { it.name.lineToHump() })
+            addAll(tableMap[tableMetaKey(jdbcWrapper, meta.tableName)]!!.fields.map { it.name.lineToHump() })
         }.distinct().toMutableList()
     }
 
@@ -55,13 +56,13 @@ inline fun <reified T : KPojo> generateSelectSqlByFields(
     tableName: String, fields: List<Field>, KPojo: T, jdbcWrapper: KotoJdbcWrapper? = null
 ): SelectAction<T> {
     val dateTimeFormat =
-        T::class.java.declaredFields.filter { field -> field.annotations.any { it is DateTimeFormat } }
+        KPojo::class.declaredMemberProperties.filter { field -> field.findAnnotation<DateTimeFormat>() != null }
             .associate { it.name to (it.annotations.first { annotation -> annotation is DateTimeFormat } as DateTimeFormat).pattern }
 
     val sql = generateSqlByFieldAndType(
         tableName,
         fields,
-        tableMap[Jdbc.getJdbcWrapper(jdbcWrapper).dbName + "_" + tableName]!!.fields,
+        tableMap[tableMetaKey(jdbcWrapper, tableName)]!!.fields,
         dateTimeFormat
     )
     return SelectAction(sql, KPojo, jdbcWrapper, T::class)
@@ -91,7 +92,7 @@ fun generateSqlByFieldAndType(
         sql = getSql(
             sql,
             field.value,
-            fields.firstOrNull { it.name == field.value.columnName }?.type ?: "varchar(255)",
+            fields.firstOrNull { it.name == field.value.columnName }?.type ?: "varchar",
             dateTimeFormat
         )
     }

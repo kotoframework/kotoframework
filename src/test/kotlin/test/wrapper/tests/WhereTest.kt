@@ -1,14 +1,12 @@
-package test.wrapper.spring
+package test.wrapper.tests
 
 import com.kotoframework.KotoApp
-import com.kotoframework.KotoSpringApp.setDynamicDataSource
 import test.wrapper.beans.UserInfo
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.core.condition.*
 import com.kotoframework.core.where.Where
 import com.kotoframework.utils.Common.deleted
 import org.junit.jupiter.api.Test
-import test.wrapper.DataSource
 import kotlin.test.assertEquals
 
 class WhereTest : KPojo {
@@ -20,7 +18,7 @@ class WhereTest : KPojo {
     )
 
     init {
-        KotoApp.setDynamicDataSource { DataSource.namedJdbc }.setLog("console")
+        KotoApp.setLog("console")
     }
 
     @Test

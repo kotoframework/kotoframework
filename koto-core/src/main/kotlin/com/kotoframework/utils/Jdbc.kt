@@ -5,6 +5,7 @@ import com.kotoframework.*
 import com.kotoframework.KotoApp.dbType
 import com.kotoframework.beans.*
 import com.kotoframework.core.annotations.Column
+import com.kotoframework.core.annotations.DateTimeFormat
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.interfaces.KotoQueryHandler
@@ -53,6 +54,14 @@ object Jdbc {
         }
     }
 
+    fun tableMetaKey(jdbcWrapper: KotoJdbcWrapper?, tableName: String): String {
+        return try {
+            "${getJdbcWrapper(jdbcWrapper).dbName}_$tableName"
+        } catch (npe: NullPointerException) {
+            tableName
+        }
+    }
+
     /**
      * It gets the table structure from the database and stores it in a map.
      *
@@ -65,50 +74,81 @@ object Jdbc {
         jdbcWrapper: KotoJdbcWrapper? = null,
         kPojo: KPojo? = null
     ): TableObject {
-        val wrapper = getJdbcWrapper(jdbcWrapper)
-        val key = "${wrapper.dbName}_${meta.tableName}"
-        if (tableMap[key] != null) {
-            return tableMap[key]!!
-        }
-        val list = try {
-            wrapper.forList(
-                when (dbType) {
-                    MySql -> "show full fields from ${meta.tableName}"
-                    SQLite -> "PRAGMA table_info(${meta.tableName})"
-                    Oracle -> "SELECT COLUMN_NAME as Field, DATA_TYPE as Type FROM USER_TAB_COLUMNS WHERE TABLE_NAME = '${meta.tableName}'"
-                    MSSql -> "SELECT COLUMN_NAME as Field, DATA_TYPE as Type FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '${meta.tableName}'"
-                    PostgreSQL -> "SELECT COLUMN_NAME as Field, DATA_TYPE as Type FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '${meta.tableName}'"
-                    else -> throw UnsupportedDatabaseTypeException()
-                }
-            )
-        } catch (e: Exception) {
+        val key = tableMetaKey(jdbcWrapper, meta.tableName)
+        val defaultMetaData = {
             if (kPojo == null) {
-                throw e
+                null
             } else {
-                kPojo::class.declaredMemberProperties.map {
-                    return@map it.findAnnotation<Column>()?.let { column ->
-                        mapOf(
-                            "Field" to column.name.ifEmpty { it.name.humpToLine() },
-                            "Type" to column.type.ifEmpty { "varchar(255)" }
+                val columns = kPojo::class.declaredMemberProperties.map {
+                    val columnAnnotation = it.findAnnotation<Column>()
+                    val defaultName = it.name.humpToLine()
+                    val defaultType = if (it.findAnnotation<DateTimeFormat>() != null) {
+                        "datetime"
+                    } else {
+                        val t = it.returnType.toString()
+                        when {
+                            t.contains("Int") -> "int"
+                            t.contains("Long") -> "bigint"
+                            t.contains("Float") -> "float"
+                            t.contains("Double") -> "double"
+                            t.contains("String") -> "varchar"
+                            t.contains("Boolean") -> "tinyint"
+                            else -> "varchar"
+                        }
+                    }
+                    if (columnAnnotation != null) {
+                        return@map columnAnnotation.let { column ->
+                            TableColumn(
+                                column.name.ifEmpty { defaultName },
+                                column.type.ifEmpty { defaultType }
+                            )
+                        }
+                    } else {
+                        return@map TableColumn(
+                            defaultName,
+                            defaultType
                         )
-                    } ?: mapOf(
-                        "Field" to it.name.humpToLine(),
-                        "Type" to "varchar(255)"
-                    )
+                    }
+                }
+
+                TableObject(
+                    columns,
+                    meta
+                ).apply {
+                    tableMap[key] = this
                 }
             }
         }
-        val columns = list.map {
-            TableColumn(
-                (it["Field"] ?: it["name"]).toString(),
-                (it["Type"] ?: it["type"]).toString()
-            )
-        }
-        return TableObject(
-            columns,
-            meta
-        ).apply {
-            tableMap[key] = this
+        try {
+            val wrapper = getJdbcWrapper(jdbcWrapper)
+            if (tableMap[key] != null) {
+                return tableMap[key]!!
+            }
+            val list =
+                wrapper.forList(
+                    when (dbType) {
+                        MySql -> "show full fields from ${meta.tableName}"
+                        SQLite -> "PRAGMA table_info(${meta.tableName})"
+                        Oracle -> "SELECT COLUMN_NAME as Field, DATA_TYPE as Type FROM USER_TAB_COLUMNS WHERE TABLE_NAME = '${meta.tableName}'"
+                        MSSql -> "SELECT COLUMN_NAME as Field, DATA_TYPE as Type FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '${meta.tableName}'"
+                        PostgreSQL -> "SELECT COLUMN_NAME as Field, DATA_TYPE as Type FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '${meta.tableName}'"
+                        else -> throw UnsupportedDatabaseTypeException()
+                    }
+                )
+            val columns = list.map {
+                TableColumn(
+                    (it["Field"] ?: it["name"]).toString(),
+                    (it["Type"] ?: it["type"]).toString()
+                )
+            }
+            return TableObject(
+                columns,
+                meta
+            ).apply {
+                tableMap[key] = this
+            }
+        } catch (e: Exception) {
+            return defaultMetaData() ?: throw e
         }
     }
 

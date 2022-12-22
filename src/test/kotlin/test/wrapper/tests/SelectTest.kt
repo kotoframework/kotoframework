@@ -1,8 +1,7 @@
-package test.wrapper.spring
+package test.wrapper.tests
 
-import test.wrapper.DataSource.namedJdbc
 import com.kotoframework.KotoApp
-import com.kotoframework.KotoSpringApp.setDynamicDataSource
+import com.kotoframework.beans.KotoResultSet.Companion.convertCountSql
 import com.kotoframework.definition.asc
 import com.kotoframework.definition.desc
 import com.kotoframework.function.select.select
@@ -19,12 +18,7 @@ import kotlin.test.assertEquals
  */
 class SelectTest {
     init {
-        KotoApp.setDynamicDataSource { namedJdbc }.setLog("console")
-    }
-
-    @Test
-    fun selectAll(){
-        val list = select<TbUser>().queryForList()
+        KotoApp.setLog("console")
     }
 
     @Test
@@ -57,9 +51,15 @@ class SelectTest {
         )
         val koto = select(searchDto).where().distinct().page(1, 20).suffix("order by update_time desc").build()
         assertEquals(
-            "select distinct `id`, `user_name` as `userName`, `nickname`, `password`, `sex`, `age`, DATE_FORMAT(`birthday`, '%Y-%m-%d') as `birthday`, `phone_number` as `phoneNumber`, `email_address` as `emailAddress`, `avatar`, DATE_FORMAT(`create_time`, '%Y-%m-%d %H:%i:%s') as `createTime`, DATE_FORMAT(`update_time`, '%Y-%m-%d %H:%i:%s') as `updateTime`, `deleted` from tb_user where ${deleted()} and `user_name` = :userName and `age` = :age order by update_time desc limit :limit offset :offset",
+            "select distinct `age`, `avatar`, DATE_FORMAT(`birthday`, '%Y-%m-%d') as `birthday`, `email_address` as `emailAddress`, `id`, `nickname`, `password`, `sex`, `phone_number` as `phoneNumber`, `user_name` as `userName` from tb_user where ${deleted()} and `user_name` = :userName and `age` = :age order by update_time desc limit :limit offset :offset",
             koto.sql
         )
+
+        assertEquals(
+            "select count(*) from (select 1 from tb_user where ${deleted()} and `user_name` = :userName and `age` = :age order by update_time desc ) as t",
+            convertCountSql(koto.sql)
+        )
+
         val expectedMap = mapOf<String, Any?>(
             "age" to 15,
             "avatar" to null,
@@ -116,7 +116,7 @@ class SelectTest {
         )
         val koto = select(searchDto).where().first().build()
         assertEquals(
-            "select `id`, `user_name` as `userName`, `nickname`, `password`, `sex`, `age`, DATE_FORMAT(`birthday`, '%Y-%m-%d') as `birthday`, `phone_number` as `phoneNumber`, `email_address` as `emailAddress`, `avatar`, DATE_FORMAT(`create_time`, '%Y-%m-%d %H:%i:%s') as `createTime`, DATE_FORMAT(`update_time`, '%Y-%m-%d %H:%i:%s') as `updateTime`, `deleted` from tb_user where ${deleted()} and `user_name` = :userName and `age` = :age limit 1",
+            "select `age`, `avatar`, DATE_FORMAT(`birthday`, '%Y-%m-%d') as `birthday`, `email_address` as `emailAddress`, `id`, `nickname`, `password`, `sex`, `phone_number` as `phoneNumber`, `user_name` as `userName` from tb_user where ${deleted()} and `user_name` = :userName and `age` = :age limit 1",
             koto.sql.trim()
         )
 
@@ -179,14 +179,14 @@ class SelectTest {
 
         table(userInfo) {
             val koto = select(it, it::id)
-                .where(it::userName.eq and it::age.eq.reName("aage"))
+                .where(it::userName.eq and it::age.eq.alias("aage"))
                 .distinct()
                 .orderBy(it::id.desc(), it::updateTime.asc())
                 .groupBy(it::sex)
                 .build()
 
             assertEquals(
-                "select distinct `id` from tb_user where ${deleted()} and `user_name` = :userName and `age` = :age group by `sex` order by `id` DESC,`update_time` ASC",
+                "select distinct `id` from tb_user where ${deleted()} and `user_name` = :userName and `age` = :aage group by `sex` order by `id` DESC,`update_time` ASC",
                 koto.sql.trim()
             )
 

@@ -6,7 +6,7 @@ import com.kotoframework.definition.columnName
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.core.condition.Criteria
 import com.kotoframework.utils.Extension.humpToLine
-import com.kotoframework.utils.Jdbc.dbName
+import com.kotoframework.utils.Jdbc.tableMetaKey
 import java.beans.IntrospectionException
 import java.beans.Introspector
 import java.lang.reflect.InvocationTargetException
@@ -101,11 +101,8 @@ object Common {
         tableName: String = "",
         tableAlias: String? = ""
     ): String {
-        val wrapper = Jdbc.getJdbcWrapper(jdbcWrapper)
-        val meta = wrapper.let {
-            Jdbc.tableMap["${it.dbName}_$tableName"]?.meta
-        }
-        val softDeleteColumn = meta?.softDelete?.column ?: KotoApp.softDeleteColumn
+        val tableMeta = Jdbc.tableMap[tableMetaKey(jdbcWrapper, tableName)]?.meta
+        val softDeleteColumn = tableMeta?.softDelete?.column ?: KotoApp.softDeleteColumn
         return if (softDeleteColumn.isBlank()) "true" else "$tableAlias`$softDeleteColumn` = $value"
     }
 

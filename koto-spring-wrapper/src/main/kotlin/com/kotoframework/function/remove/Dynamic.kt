@@ -9,7 +9,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
  * Created by ousc on 2022/5/30 16:46
  */
 
-fun <T : KPojo> NamedParameterJdbcTemplate.remove(KPojo: T): RemoveAction<T> {
+inline fun <reified T : KPojo> NamedParameterJdbcTemplate.remove(KPojo: T): RemoveAction<T> {
     return remove(KPojo, this.wrapper())
 }
 

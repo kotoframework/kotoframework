@@ -18,14 +18,8 @@ dependencies {
     testImplementation(kotlin("test"))
     testImplementation(project(":koto-core"))
     testImplementation(project(":koto-spring-wrapper"))
+    testImplementation(project(":koto-jdbi-wrapper"))
     testImplementation(project(":koto-basic-wrapper"))
-    testImplementation("org.apache.commons:commons-dbcp2:2.9.0")
-    testImplementation("org.jdbi:jdbi:2.78")
-    testImplementation("org.springframework:spring-beans:5.3.23")
-    testImplementation("org.springframework:spring-jdbc:5.3.23")
-    testImplementation("org.springframework:spring-tx:5.3.23")
-    testImplementation("org.springframework:spring-beans:5.3.23")
-    testImplementation("org.springframework:spring-core:5.3.23")
 }
 
 tasks.test {

@@ -1,5 +1,6 @@
-package test.wrapper.spring
+package test.wrapper.tests
 
+import com.kotoframework.KotoApp
 import com.kotoframework.function.statistic.Statistic.Companion.statistic
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.utils.Common.deleted
@@ -10,9 +11,9 @@ import kotlin.test.assertEquals
  * Created by ousc on 2022/4/18 21:46
  */
 class StatisticTest : KPojo {
-//    init {
-//        KotoApp.setDynamicDataSource { DataSource.namedJdbc }.setLog("console")
-//    }
+    init {
+        KotoApp.setLog("console")
+    }
     @Test
     fun testGetPastTotal() { // 测试获取过去全部时间的总数
         val koto = statistic("user_info")

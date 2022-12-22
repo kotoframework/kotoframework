@@ -1,8 +1,6 @@
-package test.wrapper.basic
+package test.wrapper.tests
 
 import com.kotoframework.KotoApp
-import com.kotoframework.KotoBasicJdbcApp.setDynamicDataSource
-import com.kotoframework.Right
 import test.wrapper.beans.TbUser
 import com.kotoframework.function.update.update
 import com.kotoframework.interfaces.KPojo
@@ -12,7 +10,6 @@ import com.kotoframework.core.condition.like
 import com.kotoframework.core.condition.matchRight
 import com.kotoframework.utils.Common.deleted
 import org.junit.jupiter.api.Test
-import test.wrapper.DataSource.dataSource
 import kotlin.test.assertEquals
 
 /**
@@ -20,7 +17,7 @@ import kotlin.test.assertEquals
  */
 class UpdateTest : KPojo {
     init {
-        KotoApp.setDynamicDataSource { dataSource }.setLog("console")
+        KotoApp.setLog("console")
     }
 
     private val user = TbUser(
