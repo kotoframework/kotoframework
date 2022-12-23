@@ -147,8 +147,8 @@ object Jdbc {
             ).apply {
                 tableMap[key] = this
             }
-        } catch (e: NullPointerException) {
-            return defaultMetaData() ?: throw e
+        } catch (npe: NullPointerException) {
+            return defaultMetaData() ?: throw npe
         }
     }
 
