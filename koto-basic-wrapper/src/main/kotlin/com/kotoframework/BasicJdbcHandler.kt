@@ -43,23 +43,19 @@ class BasicJdbcHandler : KotoQueryHandler() {
             ((jdbc ?: Jdbc.defaultJdbcWrapper) as BasicJdbcWrapper)
         val ds = wrapper.getDataSource()
         Log.log(wrapper, sql, listOf(paramMap), "query")
-        try {
-            return if (kClass isAssignableFrom KPojo::class) {
+        return try {
+            if (kClass isAssignableFrom KPojo::class) {
                 Jdbc.queryKotoJdbcData(wrapper, sql, paramMap).first().toKPojo(kClass)
             } else {
                 ds.query(
                     sql, paramMap, kClass.java
                 ).first()
             }
-        } catch (e: Exception) {
-            when (e) {
-                is NullPointerException, is IndexOutOfBoundsException, is NoSuchElementException -> {
-                    if (!withoutErrorPrintln){
-                        Printer.errorPrintln("You are using 【queryForObject】 to get a single column, but the result set is empty.If you want to query for a nullable column, use 【queryForObjectOrNull】 instead")
-                    }
-                }
+        } catch (e: NoSuchElementException) {
+            if (!withoutErrorPrintln) {
+                Printer.errorPrintln("You are using 【queryForObject】 to get a single column, but the result set is empty.If you want to query for a nullable column, use 【queryForObjectOrNull】 instead")
             }
-            throw IllegalStateException()
+            throw e
         }
     }
 
@@ -71,11 +67,8 @@ class BasicJdbcHandler : KotoQueryHandler() {
     ): Any? {
         return try {
             forObject(jdbc, sql, paramMap, true, kClass)
-        } catch (e: Exception) {
-            when (e) {
-                is NullPointerException, is IndexOutOfBoundsException, is NoSuchElementException -> null
-                else -> throw IllegalStateException()
-            }
+        } catch (e: NoSuchElementException) {
+            null
         }
     }
 

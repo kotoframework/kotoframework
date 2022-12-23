@@ -16,13 +16,12 @@
 
   - [Where条件对象](zh-cn/where.md)
   - [数据查询](zh-cn/select.md)
+  - [单列模糊搜索](zh-cn/column_search.md)
   - [连表查询](zh-cn/associate.md)
   - [插入行](zh-cn/create.md)
   - [更新行](zh-cn/update.md)
   - [删除行](zh-cn/remove.md)
   - [批量操作和动态数据源](zh-cn/batch_and_dynamic.md)
-  - [选项列表](zh-cn/option_list.md)
-  - [统计](zh-cn/statistic.md)
 
 - 与其他持久层框架使用
 
