@@ -10,6 +10,7 @@ import com.kotoframework.definition.aliasName
 import com.kotoframework.definition.columnName
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.core.condition.receiver
+import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.utils.Extension.rmRedundantBlk
 import com.kotoframework.utils.Extension.tableName
 import kotlin.reflect.KProperty1
@@ -22,7 +23,8 @@ fun columnSearch(
     fields: Pair<Field, String?>,
     queryFields: Collection<Field>? = null,
     suffix: String? = "order by `id` desc",
-    limit: Int = 200
+    limit: Int = 200,
+    wrapper: KotoJdbcWrapper? = null
 ): KotoResultSet<String> {
     val fieldName = fields.first.columnName
     val fieldAlias = fields.first.aliasName
@@ -42,7 +44,7 @@ fun columnSearch(
         } from $tableName where ${where.sql} $suffix limit $limit"
     }
 
-    return KotoResultSet(sql.rmRedundantBlk(), where.paramMap, kClass = String::class)
+    return KotoResultSet(sql.rmRedundantBlk(), where.paramMap, wrapper, String::class)
 }
 
 
@@ -50,10 +52,11 @@ fun <T : KPojo> columnSearch(
     field: Pair<KProperty1<T, String?>, String?>,
     queryFields: Collection<Field>? = null,
     suffix: String? = "order by `id` desc",
-    limit: Int = 200
+    limit: Int = 200,
+    wrapper: KotoJdbcWrapper? = null
 ): KotoResultSet<String> {
     return columnSearch(
-        field.first.receiver.tableName, Pair(field.first.name, field.second), queryFields, suffix, limit
+        field.first.receiver.tableName, Pair(field.first.name, field.second), queryFields, suffix, limit, wrapper
     )
 }
 
