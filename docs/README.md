@@ -5,6 +5,7 @@ Koto SQL Framework for Kotlin
 [![Maven central](https://img.shields.io/maven-central/v/com.kotoframework/koto-core.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.kotoframework%22)
 [![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/s/https/s01.oss.sonatype.org/com.kotoframework/koto-core.svg)](https://s01.oss.sonatype.org/content/repositories/snapshots/com/kotoframework/)
 [![License](https://img.shields.io/:license-apache-brightgreen.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
+[![Coverage Status](https://coveralls.io/repos/github/kotoframework/kotoframework/badge.svg?branch=main)](https://coveralls.io/github/kotoframework/kotoframework?branch=main)
 
 <img src="https://cdn.leinbo.com/assets/images/koto-logo.png" alt="koto" style="zoom: 33%;" />
 
