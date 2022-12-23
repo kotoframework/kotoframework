@@ -36,7 +36,7 @@ object Jdbc {
      * @return The namedJdbc parameter if it is not null, otherwise the defaultNamedJdbc if it is not null, otherwise an
      * exception is thrown.
      */
-    fun getJdbcWrapper(jdbcWrapper: KotoJdbcWrapper?): KotoJdbcWrapper {
+    private fun getJdbcWrapper(jdbcWrapper: KotoJdbcWrapper?): KotoJdbcWrapper {
         return jdbcWrapper ?: defaultJdbcWrapper ?: throw NullPointerException("JdbcWrapper is null")
     }
 
@@ -147,7 +147,7 @@ object Jdbc {
             ).apply {
                 tableMap[key] = this
             }
-        } catch (e: Exception) {
+        } catch (e: NullPointerException) {
             return defaultMetaData() ?: throw e
         }
     }
