@@ -76,6 +76,8 @@ class SpringDataHandler : KotoQueryHandler() {
             forObject(jdbc, sql, paramMap, true, kClass)
         } catch (e: NoSuchElementException) {
             null
+        } catch (e: EmptyResultDataAccessException) {
+            null
         } catch (e: IncorrectResultSizeDataAccessException) {
             Printer.errorPrintln("You are using 【queryForObjectOrNull】 on a query that returns more than one row. This is not supported. Use 【queryForList】 instead.")
             throw e
