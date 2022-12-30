@@ -58,6 +58,11 @@ class SpringDataHandler : KotoQueryHandler() {
                 Printer.errorPrintln("You are using 【queryForObject】 to get a single column, but the result set is empty.If you want to query for a nullable column, use 【queryForObjectOrNull】 instead.")
             }
             throw e
+        } catch (e: EmptyResultDataAccessException) {
+            if (!withoutErrorPrintln) {
+                Printer.errorPrintln("You are using 【queryForObject】 to get a single column, but the result set is empty.If you want to query for a nullable column, use 【queryForObjectOrNull】 instead.")
+            }
+            throw e
         }
     }
 
