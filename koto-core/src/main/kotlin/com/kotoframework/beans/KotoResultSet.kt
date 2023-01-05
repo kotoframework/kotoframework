@@ -108,7 +108,7 @@ class KotoResultSet<T>(
      * @return
      * @author ousc
      */
-    @JvmName("queryForList1")
+    @JvmName("queryForListK")
     @Suppress("UNCHECKED_CAST")
     fun queryForList(
         jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper
@@ -123,7 +123,7 @@ class KotoResultSet<T>(
      * @return
      * @author ousc
      */
-    @JvmName("queryForObject1")
+    @JvmName("queryForObjectK")
     @Suppress("UNCHECKED_CAST")
     fun queryForObject(
         jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper
@@ -138,7 +138,7 @@ class KotoResultSet<T>(
      * @return
      * @author ousc
      */
-    @JvmName("queryForObjectOrNull1")
+    @JvmName("queryForObjectOrNullK")
     @Suppress("UNCHECKED_CAST")
     fun queryForObjectOrNull(
         jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper

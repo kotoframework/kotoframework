@@ -60,7 +60,7 @@ class SelectAction<T : KPojo>(
         return where().queryForObject<T>(jdbcWrapper)
     }
 
-    @JvmName("queryForList1")
+    @JvmName("queryForListK")
     fun queryForList(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): List<T> {
         return where().queryForList(jdbcWrapper)
     }

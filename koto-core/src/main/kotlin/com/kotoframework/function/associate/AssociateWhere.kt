@@ -7,9 +7,6 @@ import com.kotoframework.beans.Unknown
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.core.condition.*
-import com.kotoframework.core.where.Where
-import com.kotoframework.function.select.SelectWhere
-import com.kotoframework.utils.Common
 import com.kotoframework.utils.Common.deleted
 import com.kotoframework.utils.Common.smartPagination
 import com.kotoframework.utils.Extension.isAssignableFrom

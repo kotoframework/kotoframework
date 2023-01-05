@@ -75,7 +75,7 @@ inline fun <reified T : KPojo> generateSelectSqlByFields(
  * @param tableName The name of the table you want to query.
  * @param filterFields The fields that are not to be included in the query.
  * @param fields The fields that you want to filter on.
- * @param types The list of types of the fields in the table.
+ * @param dateTimeFormat The format of the date field.
  * @return A string
  */
 fun generateSqlByFieldAndType(
@@ -106,15 +106,9 @@ internal fun getSql(
     return when {
         type == "date" -> "$sql ${dateFormatFunc(field.columnName, toSqlDate(dateTimeFormat[field.aliasName]) ?: "%Y-%m-%d", field.aliasName)}"
         type == "datetime" -> "$sql ${dateFormatFunc(field.columnName, toSqlDate(dateTimeFormat[field.aliasName]) ?: "%Y-%m-%d %H:%i:%s", field.aliasName)}"
-        else -> {
-            if (field.columnName.contains("(") || field.columnName.lowercase().contains(" as ")) {
-                "$sql ${field.columnName}"
-            } else if (field.columnName == field.aliasName) {
-                "$sql `${field.aliasName}`"
-            } else {
-                "$sql `${field.columnName}` as `${field.aliasName}`"
-            }
-        }
+        field.columnName.contains("(") || field.columnName.lowercase().contains(" as ") -> "$sql ${field.columnName}"
+        field.columnName == field.aliasName ->  "$sql `${field.aliasName}`"
+        else -> "$sql `${field.columnName}` as `${field.aliasName}`"
     }
 }
 

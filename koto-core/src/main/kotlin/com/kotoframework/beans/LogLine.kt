@@ -1,6 +1,5 @@
 package com.kotoframework.beans
 
-import com.kotoframework.utils.Common
 import com.kotoframework.utils.Common.currentDate
 import com.kotoframework.utils.Printer
 import java.io.File
