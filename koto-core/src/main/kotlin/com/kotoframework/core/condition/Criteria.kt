@@ -9,15 +9,15 @@ import kotlin.reflect.KCallable
  **/
 @Suppress("LeakingThis")
 open class Criteria(
-    open val parameterName: String = "", // original parameter name
-    open var not: Boolean = false, // whether the condition is not
-    open var type: ConditionType? = null, // condition type
+    internal open val parameterName: String = "", // original parameter name
+    internal open var not: Boolean = false, // whether the condition is not
+    internal open var type: ConditionType? = null, // condition type
     internal open var pos: LikePosition? = Never, // like position
-    open var reName: String? = null, // rename the parameter name in the sql and the paramMap
-    open var sql: String = "", // sql
+    internal open var reName: String? = null, // rename the parameter name in the sql and the paramMap
+    internal open var sql: String = "", // sql
     internal open var noValueStrategy: NoValueStrategy = KotoApp.defaultNoValueStrategy, // when the value is null, whether to generate sql
-    open val value: Any? = null, // value
-    open val tableName: String? = "", // table name
+    internal open val value: Any? = null, // value
+    internal open val tableName: String? = "", // table name
     internal open val kCallable: KCallable<*>? = null, // the property of the kCallable
     internal open val collections: List<Criteria?> = mutableListOf() // collection of conditions
 ) {
@@ -52,17 +52,17 @@ open class Criteria(
  * @author ousc
  */
 open class LikeCriteria(
-    override val parameterName: String,
-    override var not: Boolean = false,
-    override var type: ConditionType? = LIKE,
-    override var pos: LikePosition? = Never,
-    override var reName: String? = null,
-    override var sql: String = "",
-    override var noValueStrategy: NoValueStrategy = KotoApp.defaultNoValueStrategy,
-    override var value: Any? = null,
-    override var tableName: String? = "",
-    override var kCallable: KCallable<*>? = null,
-    override var collections: List<Criteria?> = mutableListOf()
+    parameterName: String,
+    not: Boolean = false,
+    type: ConditionType? = LIKE,
+    pos: LikePosition? = Never,
+    reName: String? = null,
+    sql: String = "",
+    noValueStrategy: NoValueStrategy = KotoApp.defaultNoValueStrategy,
+    value: Any? = null,
+    tableName: String? = "",
+    kCallable: KCallable<*>? = null,
+    collections: List<Criteria?> = mutableListOf()
 ) : Criteria(
     parameterName,
     not,
