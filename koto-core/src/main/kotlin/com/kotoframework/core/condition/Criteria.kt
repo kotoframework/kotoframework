@@ -9,15 +9,15 @@ import kotlin.reflect.KCallable
  **/
 @Suppress("LeakingThis")
 open class Criteria(
-    internal open val parameterName: String = "", // original parameter name
-    internal open var not: Boolean = false, // whether the condition is not
-    internal open var type: ConditionType? = null, // condition type
+    open val parameterName: String = "", // original parameter name
+    open var not: Boolean = false, // whether the condition is not
+    open var type: ConditionType? = null, // condition type
     internal open var pos: LikePosition? = Never, // like position
-    internal open var reName: String? = null, // rename the parameter name in the sql and the paramMap
-    internal open var sql: String = "", // sql
+    open var reName: String? = null, // rename the parameter name in the sql and the paramMap
+    open var sql: String = "", // sql
     internal open var noValueStrategy: NoValueStrategy = KotoApp.defaultNoValueStrategy, // when the value is null, whether to generate sql
-    internal open val value: Any? = null, // value
-    internal open val tableName: String? = "", // table name
+    open val value: Any? = null, // value
+    open val tableName: String? = "", // table name
     internal open val kCallable: KCallable<*>? = null, // the property of the kCallable
     internal open val collections: List<Criteria?> = mutableListOf() // collection of conditions
 ) {
@@ -30,7 +30,7 @@ open class Criteria(
         }
     }
 
-    internal val valueAcceptable: Boolean
+    val valueAcceptable: Boolean
         get() = type != ISNULL && type != SQL && type != AND && type != OR
 }
 
