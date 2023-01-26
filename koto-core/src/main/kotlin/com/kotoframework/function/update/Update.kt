@@ -8,7 +8,7 @@ import com.kotoframework.interfaces.KotoJdbcWrapper
  * Created by ousc on 2022/5/30 17:06
  */
 
-inline fun <reified T : KPojo> update(
+fun <T : KPojo> update(
     KPojo: T,
     vararg fields: Field,
     jdbcWrapper: KotoJdbcWrapper? = null

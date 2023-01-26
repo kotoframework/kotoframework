@@ -179,7 +179,7 @@ class CreateWhere<T : KPojo>(KPojo: T, kotoJdbcWrapper: KotoJdbcWrapper?) : Wher
                             " and "
                         ) { "`${it.columnName}` = :${it.propertyName}" }
                     }) ".rmRedundantBlk(), paramMap,
-                    updateKoto<KPojo>(KPojo, *updateFields.toTypedArray(), jdbcWrapper = kotoJdbcWrapper).except("id")
+                    updateKoto(KPojo, *updateFields.toTypedArray(), jdbcWrapper = kotoJdbcWrapper).except("id")
                         .where(
                             onFields
                                 .map { it.columnName.lineToHump().eq().alias(it.propertyName) }
