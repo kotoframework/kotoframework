@@ -30,7 +30,7 @@ open class Criteria(
         }
     }
 
-    val valueAcceptable: Boolean
+    internal val valueAcceptable: Boolean
         get() = type != ISNULL && type != SQL && type != AND && type != OR
 }
 

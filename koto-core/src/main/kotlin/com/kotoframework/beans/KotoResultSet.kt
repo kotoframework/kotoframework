@@ -1,6 +1,5 @@
 package com.kotoframework.beans
 
-import com.kotoframework.function.select.SelectWhere
 import com.kotoframework.interfaces.KotoDataSet
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.utils.Extension.rmRedundantBlk

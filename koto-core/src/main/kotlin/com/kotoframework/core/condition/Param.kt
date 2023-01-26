@@ -96,6 +96,18 @@ fun String.notIn(
     return Condition(this).notIn(value)
 }
 
+fun String.isIn(
+    vararg value: Any?
+): Criteria {
+    return Condition(this).isIn(value.toList())
+}
+
+fun String.notIn(
+    vararg value: Any?
+): Criteria {
+    return Condition(this).isIn(value.toList())
+}
+
 @JvmName("getIsNull")
 fun String.isNull(): Criteria {
     return Condition(this).isNull()
@@ -324,6 +336,17 @@ fun KCallable<*>.notIn(
     value: Collection<*>?
 ): Criteria {
     return Condition(name, this).notIn(value, receiver.tableName)
+}
+fun KCallable<*>.isIn(
+    vararg value: Any?
+): Criteria {
+    return Condition(name, this).isIn(value.toList(), false, receiver.tableName)
+}
+
+fun KCallable<*>.notIn(
+    vararg value: Any?
+): Criteria {
+    return Condition(name, this).notIn(value.toList(), receiver.tableName)
 }
 
 @JvmName("getIsNull")
