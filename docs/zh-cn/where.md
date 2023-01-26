@@ -334,17 +334,18 @@ select(User(1), User::userName).where{ it::id.notBetween(1..100) }.query()
 
 isIn、notIn分别代表是否处于某集合判断，可以接受以下4个参数：
 
-| 参数名     | 说明                                                          | 类型            | 默认值 |
-|---------|-------------------------------------------------------------|---------------|-----|
-| `value` | 集合,可传入Array/List/MutatbleList等，<strong><u>必须传入</u></strong> | Collection<*> | /   |
+| 参数名     | 说明                                                                     | 类型            | 默认值 |
+|---------|------------------------------------------------------------------------|---------------|-----|
+| `value` | 直接传入多个值或传入值集合,可传入Array/List/MutatbleList等，<strong><u>必须传入</u></strong> | Collection<*> | /   |
 
 使用示例：
 
 ```kotlin
-select(User(1), User::userName).where{ it::id.isIn(listOf(1, 2, 3)) }.query()
+val ids = listOf(1, 2, 3)
+select(User(1), User::userName).where{it::id.isIn(ids) and it::id.isIn(4, 5, 6) }.query()
 // select user_name from user where id in (1, 2, 3)
 
-select(User(1), User::userName).where{it::id.notIn(listOf(1, 2, 3)) }.query()
+select(User(1), User::userName).where{it::id.notIn(ids) and it::id.notIn(4, 5, 6) }.query()
 // select user_name from user where id not in (1, 2, 3)
 ```
 

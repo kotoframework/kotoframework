@@ -330,17 +330,18 @@ select(User(1), User::userName).where{ it::id.notBetween(1..100) }.query()
 
 isIn and notIn respectively represent whether they are in a certain set and can accept the following 4 parameters:
 
-| parameter name | description                                                                                          | type          | default value |
-|----------------|------------------------------------------------------------------------------------------------------|---------------|---------------|
-| `value`        | Collection, can be passed in Array/List/MutatbleList, etc. <strong><u>must be passed in</u></strong> | Collection<*> | /             |
+| parameter name | description                                                                                                         | type          | default value |
+|----------------|---------------------------------------------------------------------------------------------------------------------|---------------|---------------|
+| `value`        | vararg Any? or Collection, can be passed in Array/List/MutatbleList, etc. <strong><u>must be passed in</u></strong> | Collection<*> | /             |
 
 Example of use:
 
 ```kotlin
-select(User(1), User::userName).where{ it::id.isIn(listOf(1, 2, 3)) }.query()
+val ids = listOf(1, 2, 3)
+select(User(1), User::userName).where{it::id.isIn(ids) and it::id.isIn(4, 5, 6) }.query()
 // select user_name from user where id in (1, 2, 3)
 
-select(User(1), User::userName).where{it::id.notIn(listOf(1, 2, 3)) }.query()
+select(User(1), User::userName).where{it::id.notIn(ids) and it::id.notIn(4, 5, 6) }.query()
 // select user_name from user where id not in (1, 2, 3)
 ````
 

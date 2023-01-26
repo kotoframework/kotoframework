@@ -50,7 +50,7 @@ fun search(movie: Movie){
 <code>query</code>函数是最基本的函数，它会返回一个包含全部查询结果的List<Map<String, Any>>，如：
 
 ```kotlin
-val movies = select<Movie>().where{ it::movieName.like("%xxx") }.query()
+val movies = select<Movie>().where{ it::movieName.like("%xxx") and it::movieType.notNull }.query()
 
 // movies: List<Map<String, Any>>
 ```
@@ -91,7 +91,7 @@ val movie = select(Movie(id = 1)).where().queryForObjectOrNull()
 
 ## `.where(...conditions)`完整查询条件
 
-可以通过调用.where使用where查询条件，[where查询条件的具体用法](where.md)｜<a href="/#/zh-cn/where?id=where-api">所有where后可使用的Api</a>
+可以通过调用.where使用where查询条件，<a href="/#/zh-cn/where">where查询条件的具体用法</a>｜<a href="/#/zh-cn/where?id=where-api">所有where后可使用的Api</a>
 
 > 根据where查询条件查询带分页和带排序的不同记录的全部字段实例
 

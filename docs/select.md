@@ -50,7 +50,7 @@ There are four query functions in koto, query, queryForList, queryForObject and 
 The <code>query</code> function is the most basic function, it will return a List<Map<String, Any>> containing all the query results, such as:
 
 ```kotlin
-val movies = select<Movie>().where{ it::movieName.like("%xxx") }.query()
+val movies = select<Movie>().where{ it::movieName.like("%xxx") and it::movieType.notNull }.query()
 
 // movies: List<Map<String, Any>>
 ```
