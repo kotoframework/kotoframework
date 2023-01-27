@@ -2,7 +2,7 @@ package com.kotoframework.function.associate
 
 import com.kotoframework.beans.Unknown
 import com.kotoframework.definition.Field
-import com.kotoframework.definition.fd
+import com.kotoframework.definition.toColumn
 import com.kotoframework.definition.aliasName
 import com.kotoframework.interfaces.KPojo
 import kotlin.reflect.KClass
@@ -259,13 +259,14 @@ internal fun getSql(
     } else {
         "`${field.aliasName}`"
     }
+    val (columnName) = field.toColumn()
     return when {
-        type == "date" -> "$sql DATE_FORMAT(`$tableAlias`.`${field.fd.columnName}`, '%Y-%m-%d') as $fieldAlias"
-        type == "datetime" -> "$sql DATE_FORMAT(`$tableAlias`.`${field.fd.columnName}`, '%Y-%m-%d %H:%i:%s') as $fieldAlias"
+        type == "date" -> "$sql DATE_FORMAT(`$tableAlias`.`$columnName`, '%Y-%m-%d') as $fieldAlias"
+        type == "datetime" -> "$sql DATE_FORMAT(`$tableAlias`.`$columnName`, '%Y-%m-%d %H:%i:%s') as $fieldAlias"
         else -> {
-            if (field.fd.columnName.contains("(") || field.fd.columnName.lowercase().contains(" as ")) {
-                "$sql ${field.fd.columnName}"
-            } else "$sql `$tableAlias`.`${field.fd.columnName}` as $fieldAlias"
+            if (columnName.contains("(") || columnName.lowercase().contains(" as ")) {
+                "$sql $columnName"
+            } else "$sql `$tableAlias`.`$columnName` as $fieldAlias"
         }
     }
 }

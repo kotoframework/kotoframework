@@ -3,7 +3,7 @@ package com.kotoframework.function.create
 import com.kotoframework.core.condition.eq
 import com.kotoframework.beans.KotoOperationSet
 import com.kotoframework.core.where.Where
-import com.kotoframework.function.update.update as updateKoto
+import com.kotoframework.function.update.update as updateClause
 import com.kotoframework.*
 import com.kotoframework.KotoApp.dbType
 import com.kotoframework.definition.*
@@ -13,21 +13,22 @@ import com.kotoframework.core.annotations.NeedTableIndexes
 import com.kotoframework.core.condition.alias
 import com.kotoframework.core.condition.arbitrary
 import com.kotoframework.interfaces.KotoJdbcWrapper
-import com.kotoframework.utils.Common.deleted
 import com.kotoframework.utils.Common.currentTime
+import com.kotoframework.utils.Common.deleted
 import com.kotoframework.utils.Common.getColumnName
 import com.kotoframework.utils.Extension.isNullOrEmpty
 import com.kotoframework.utils.Extension.lineToHump
 import com.kotoframework.utils.Extension.rmRedundantBlk
+import com.kotoframework.utils.Extension.tableMeta
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
 
 /**
  * Created by ousc on 2022/5/10 02:42
  */
-class CreateWhere<T : KPojo>(KPojo: T, kotoJdbcWrapper: KotoJdbcWrapper?) : Where<T>(KPojo, kotoJdbcWrapper) {
-    private var updateFields: List<KotoField> = mutableListOf()
-    private var onFields: List<KotoField> = mutableListOf()
+class CreateWhere<T : KPojo>(kPojo: T, kotoJdbcWrapper: KotoJdbcWrapper?) : Where<T>(kPojo, kotoJdbcWrapper) {
+    private var updateFields: List<ColumnMeta> = mutableListOf()
+    private var onFields: List<ColumnMeta> = mutableListOf()
     private var replaceInto = false
     private var duplicateUpdate = false
 
@@ -36,12 +37,12 @@ class CreateWhere<T : KPojo>(KPojo: T, kotoJdbcWrapper: KotoJdbcWrapper?) : Wher
         if (fields.isEmpty()) {
             this.duplicateUpdate = false
             this.replaceInto = true
-            this.updateFields = KPojo::class.declaredMemberProperties.map { it.fd }
+            this.updateFields = KPojo::class.declaredMemberProperties.map { it.toColumn() }
             return this
         } else {
             this.replaceInto = false
             this.duplicateUpdate = true
-            this.updateFields = fields.map { it.fd }
+            this.updateFields = fields.map { it.toColumn() }
             return this
         }
     }
@@ -54,8 +55,8 @@ class CreateWhere<T : KPojo>(KPojo: T, kotoJdbcWrapper: KotoJdbcWrapper?) : Wher
     fun on(field: Field, vararg fields: Field): CreateWhere<T> {
         this.duplicateUpdate = false
         this.replaceInto = false
-        this.onFields = fields.map { it.fd }.toMutableList().apply { add(field.fd) }
-        this.updateFields = KPojo::class.declaredMemberProperties.map { it.fd }
+        this.onFields = fields.map { it.toColumn() }.toMutableList().apply { add(field.toColumn()) }
+        this.updateFields = KPojo::class.declaredMemberProperties.map { it.toColumn() }
         return this
     }
 
@@ -64,7 +65,7 @@ class CreateWhere<T : KPojo>(KPojo: T, kotoJdbcWrapper: KotoJdbcWrapper?) : Wher
             this.replaceInto = false
             this.duplicateUpdate = true
         }
-        this.updateFields = fields.map { it.fd }.toMutableList().apply { add(field.fd) }.distinct()
+        this.updateFields = fields.map { it.toColumn() }.toMutableList().apply { add(field.toColumn()) }.distinct()
         return this
     }
 
@@ -103,10 +104,17 @@ class CreateWhere<T : KPojo>(KPojo: T, kotoJdbcWrapper: KotoJdbcWrapper?) : Wher
             conditions.add(it.columnName.lineToHump().eq().alias(it.name))
         }
 
-        conditions.add("updateTime".eq())
-        conditions.add("createTime".eq())
-        paramMap["updateTime"] = currentTime
-        paramMap["createTime"] = currentTime
+        val tableMeta = KPojo.tableMeta
+
+        if (tableMeta.updateTime.enabled) {
+            conditions.add(tableMeta.updateTime.alias.eq())
+            paramMap[tableMeta.updateTime.alias] = currentTime
+        }
+
+        if (tableMeta.createTime.enabled) {
+            conditions.add(tableMeta.createTime.alias.eq())
+            paramMap[tableMeta.createTime.alias] = currentTime
+        }
 
         conditions = conditions.filterNotNull().distinctBy { it.reName }.toMutableList()
 
@@ -126,7 +134,7 @@ class CreateWhere<T : KPojo>(KPojo: T, kotoJdbcWrapper: KotoJdbcWrapper?) : Wher
             }
         }
 
-        val (paramNames, reNames) = conditions.filter { it!!.type == EQUAL }
+        val (paramNames, reNames) = conditions
             .map { getColumnName(it!!) to it.reName }.unzip()
 
         KPojo::class.declaredMemberProperties.forEach {
@@ -179,7 +187,7 @@ class CreateWhere<T : KPojo>(KPojo: T, kotoJdbcWrapper: KotoJdbcWrapper?) : Wher
                             " and "
                         ) { "`${it.columnName}` = :${it.propertyName}" }
                     }) ".rmRedundantBlk(), paramMap,
-                    updateKoto(KPojo, *updateFields.toTypedArray(), jdbcWrapper = kotoJdbcWrapper).except("id")
+                    updateClause(KPojo, *updateFields.toTypedArray(), jdbcWrapper = kotoJdbcWrapper).except("id")
                         .where(
                             onFields
                                 .map { it.columnName.lineToHump().eq().alias(it.propertyName) }
@@ -212,7 +220,7 @@ class CreateWhere<T : KPojo>(KPojo: T, kotoJdbcWrapper: KotoJdbcWrapper?) : Wher
         }
     }
 
-    companion object{
+    companion object {
         @OptIn(NeedTableIndexes::class)
         fun <K : KPojo> Collection<CreateWhere<K>>.onDuplicateUpdate(vararg fields: Field): Collection<CreateWhere<K>> {
             return this.map { it.onDuplicateUpdate(*fields) }
@@ -226,11 +234,17 @@ class CreateWhere<T : KPojo>(KPojo: T, kotoJdbcWrapper: KotoJdbcWrapper?) : Wher
             return this.map { it.on(field, *fields) }
         }
 
-        fun <K : KPojo> Collection<CreateWhere<K>>.update(field: Field, vararg fields: Field): Collection<CreateWhere<K>> {
+        fun <K : KPojo> Collection<CreateWhere<K>>.update(
+            field: Field,
+            vararg fields: Field
+        ): Collection<CreateWhere<K>> {
             return this.map { it.update(field, *fields) }
         }
 
-        fun <K : KPojo> Collection<CreateWhere<K>>.except(field: Field, vararg fields: Field): Collection<CreateWhere<K>> {
+        fun <K : KPojo> Collection<CreateWhere<K>>.except(
+            field: Field,
+            vararg fields: Field
+        ): Collection<CreateWhere<K>> {
             return this.map { it.except(field, *fields) }
         }
 

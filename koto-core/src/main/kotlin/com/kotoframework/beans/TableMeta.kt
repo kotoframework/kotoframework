@@ -1,5 +1,7 @@
 package com.kotoframework.beans
 
+import com.kotoframework.KotoApp
+
 /**
  * Created by sundaiyue on 2022/11/12 14:20
  */
@@ -7,5 +9,8 @@ package com.kotoframework.beans
 
 data class TableMeta(
     var tableName: String,
-    var softDelete: TableSoftDelete = TableSoftDelete(),
+    var softDelete: KotoApp.Config,
+    var createTime: KotoApp.Config,
+    var updateTime: KotoApp.Config,
+    var deleteTime: KotoApp.Config,
 )

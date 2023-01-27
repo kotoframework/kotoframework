@@ -8,4 +8,5 @@ import kotlin.reflect.full.memberProperties
 interface KPojo {
     fun createTime() {}
     fun updateTime() {}
+    fun deleteTime() {}
 }

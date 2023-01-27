@@ -11,7 +11,9 @@ import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.core.condition.isNull
 import com.kotoframework.utils.Common.currentTime
 import com.kotoframework.utils.Common.deleted
+import com.kotoframework.utils.Extension.lineToHump
 import com.kotoframework.utils.Extension.rmRedundantBlk
+import com.kotoframework.utils.Extension.tableMeta
 import com.kotoframework.utils.Extension.toMap
 
 /**
@@ -19,25 +21,31 @@ import com.kotoframework.utils.Extension.toMap
  */
 class RemoveAction<T : KPojo>(
     private val tableName: String,
-    private val KPojo: T,
+    private val kPojo: T,
     private val jdbcWrapper: KotoJdbcWrapper? = null
 ) {
     var sql = "delete from $tableName"
     val paramMap = mutableMapOf<String, Any?>()
 
     init {
-        paramMap.putAll(KPojo.toMap())
+        paramMap.putAll(kPojo.toMap())
     }
 
     fun soft(): RemoveAction<T> {
-        sql = "update $tableName set ${deleted(1, jdbcWrapper, tableName)}, update_time = :updateTime"
-        paramMap["updateTime"] = currentTime
+        val tableMeta = kPojo.tableMeta
+        sql = "update $tableName set ${deleted(1, jdbcWrapper, tableName)}, ${
+            if (tableMeta.deleteTime.enabled) {
+                paramMap[tableMeta.deleteTime.alias] = currentTime
+                "`${tableMeta.deleteTime.column}` = :${tableMeta.deleteTime.alias}"
+            } else {
+                ""
+            }
+        }"
         return this
     }
 
     fun byId(id: Number = paramMap["id"] as Number): KotoOperationSet<RemoveWhere<T>, T> {
         paramMap["id"] = id
-        paramMap["updateTime"] = currentTime
         return KotoOperationSet(
             jdbcWrapper,
             sql = "$sql where id = :id".rmRedundantBlk(),
@@ -47,7 +55,6 @@ class RemoveAction<T : KPojo>(
 
     fun byIds(ids: List<Number>): KotoOperationSet<RemoveWhere<T>, T> {
         paramMap["ids"] = ids
-        paramMap["updateTime"] = currentTime
         return KotoOperationSet(
             jdbcWrapper,
             sql = "$sql where id in (:ids)".rmRedundantBlk(),
@@ -63,26 +70,24 @@ class RemoveAction<T : KPojo>(
         }
         val columns = fields.map { it.first }
         val koto = Where(
-            KPojo, jdbcWrapper
+            kPojo, jdbcWrapper
         ) {
             columns.map { if (paramMap[it] == null) it.isNull() else it.eq() }.arbitrary()
         }
-            .map(*fields, "updateTime" to currentTime)
+            .map(*fields)
             .prefixOW("$sql where ")
             .build()
         return KotoOperationSet(jdbcWrapper, koto.sql, koto.paramMap)
     }
 
     fun where(addCondition: AddCondition<T>? = null): RemoveWhere<T> {
-        paramMap["updateTime"] = currentTime
-        return Where(KPojo, jdbcWrapper) { addCondition?.invoke(KPojo) }.map(
+        return Where(kPojo, jdbcWrapper) { addCondition?.invoke(kPojo) }.map(
             *paramMap.toList().toTypedArray()
         ).prefixOW("$sql where ").getRemoveWhere()
     }
 
     fun where(vararg condition: Criteria?): RemoveWhere<T> {
-        paramMap["updateTime"] = currentTime
-        return Where(KPojo, jdbcWrapper) { condition.toList().arbitrary() }.map(
+        return Where(kPojo, jdbcWrapper) { condition.toList().arbitrary() }.map(
             *paramMap.toList().toTypedArray()
         ).prefixOW("${this.sql} where ").getRemoveWhere()
     }

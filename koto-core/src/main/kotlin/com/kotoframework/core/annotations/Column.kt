@@ -5,10 +5,10 @@ package com.kotoframework.core.annotations
  */
 
 /**
- * Column
+ * ColumnMeta
  *
  * @property name
- * @constructor Create empty Column
+ * @constructor Create empty ColumnMeta
  */
 @Target(AnnotationTarget.FIELD, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.RUNTIME)

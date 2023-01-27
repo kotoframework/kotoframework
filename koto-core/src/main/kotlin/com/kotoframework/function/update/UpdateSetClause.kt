@@ -13,6 +13,7 @@ import com.kotoframework.utils.Common.currentTime
 import com.kotoframework.utils.Extension.isNullOrEmpty
 import com.kotoframework.utils.Extension.lineToHump
 import com.kotoframework.utils.Extension.rmRedundantBlk
+import com.kotoframework.utils.Extension.tableMeta
 import kotlin.reflect.full.declaredMemberProperties
 
 /**
@@ -20,7 +21,7 @@ import kotlin.reflect.full.declaredMemberProperties
  */
 class UpdateSetClause<T : KPojo>(
     val kPojo: T,
-    val excepted: List<KotoField> = listOf(),
+    val excepted: List<ColumnMeta> = listOf(),
     addCondition: AddCondition<T>? = null,
 ) : BaseWhere<T>(kPojo, addCondition) {
     private var prefix = ""
@@ -68,8 +69,11 @@ class UpdateSetClause<T : KPojo>(
             }
         }
 
-        conditions.add("updateTime".eq())
-        paramMap["updateTime"] = currentTime
+        val tableMeta = kPojo.tableMeta
+        if (tableMeta.updateTime.enabled) {
+            conditions.add(tableMeta.updateTime.alias.eq())
+            paramMap[tableMeta.updateTime.alias] = currentTime
+        }
 
         conditions = conditions.distinctBy { it!!.reName }
             .filter { condition ->
@@ -85,7 +89,7 @@ class UpdateSetClause<T : KPojo>(
         conditions.forEach {
             val realName = when {
                 !it!!.reName.isNullOrBlank() -> it.reName
-                !it.parameterName.isNullOrBlank() -> it.parameterName
+                it.parameterName.isNotBlank() -> it.parameterName
                 else -> ""
             }!!
             if (!it.value.isNullOrEmpty()) {

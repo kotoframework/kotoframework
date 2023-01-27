@@ -8,6 +8,9 @@ import com.kotoframework.interfaces.KPojo
  */
 @Table("tb_user")
 @SoftDelete(enable = true, column = "deleted")
+@CreateTime()
+@UpdateTime()
+@DeleteTime()
 data class TbUser(
     val id: Int? = null,
     val userName: String? = null,

@@ -21,7 +21,7 @@ class RemoveTest {
         val koto = remove(TbUser()).byId(1)
         assertEquals(
             mapOf(
-                "id" to 1, "updateTime" to koto.paramMap["updateTime"],
+                "id" to 1,
                 "birthday" to null,
                 "password" to null,
                 "sex" to null,
@@ -44,7 +44,6 @@ class RemoveTest {
         assertEquals(
             mapOf(
                 "ids" to listOf(1, 2, 3, 4),
-                "updateTime" to koto.paramMap["updateTime"],
                 "birthday" to null,
                 "password" to null,
                 "sex" to null,
@@ -75,7 +74,6 @@ class RemoveTest {
                 "userName" to "ousc",
                 "sex" to "男",
                 "city" to "hangzhou",
-                "updateTime" to koto.paramMap["updateTime"],
                 "birthday" to null,
                 "password" to null,
                 "nickname" to null,
@@ -110,7 +108,6 @@ class RemoveTest {
                 "sex" to null,
                 "telephone" to null,
                 "userName" to "XiaoQi",
-                "updateTime" to koto.paramMap["updateTime"]
             ), koto.paramMap
         )
         assertEquals(
@@ -125,7 +122,7 @@ class RemoveTest {
         assertEquals(
             mapOf(
                 "id" to 1,
-                "updateTime" to koto.paramMap["updateTime"],
+                "deleteTime" to koto.paramMap["deleteTime"],
                 "birthday" to null,
                 "password" to null,
                 "sex" to null,
@@ -138,7 +135,7 @@ class RemoveTest {
             ), koto.paramMap
         )
         assertEquals(
-            "update tb_user set ${deleted(1)}, update_time = :updateTime where id = :id", koto.sql
+            "update tb_user set ${deleted(1)}, `delete_time` = :deleteTime where id = :id", koto.sql
         )
     }
 
@@ -163,7 +160,6 @@ class RemoveTest {
                 "sex" to null,
                 "telephone" to null,
                 "userName" to "XiaoLiu",
-                "updateTime" to koto.paramMap["updateTime"]
             ), koto.paramMap
         )
         assertEquals(

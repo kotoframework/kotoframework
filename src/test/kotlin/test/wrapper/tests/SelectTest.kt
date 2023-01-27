@@ -178,7 +178,8 @@ class SelectTest {
         )
 
         table(userInfo) {
-            val koto = select(it, it::id)
+            val koto =
+                select(it, it::id)
                 .where(it::userName.eq and it::age.eq.alias("aage"))
                 .distinct()
                 .orderBy(it::id.desc(), it::updateTime.asc())

@@ -46,7 +46,7 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
     var kotoJdbcWrapper: KotoJdbcWrapper? = null
 ) {
     private var sql: String = ""
-    private var fields: MutableList<KotoField> = mutableListOf()
+    private var fields: MutableList<ColumnMeta> = mutableListOf()
     private var whereConditions: Criteria? = null
     private var finalMap: MutableMap<String, Any?> = mutableMapOf()
     private var joinType = "left"
@@ -234,16 +234,16 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
         return this
     }
 
-    private fun getFieldSql(field: Field): List<KotoField> {
+    private fun getFieldSql(field: Field): List<ColumnMeta> {
         if (field is String) {
-            return listOf(field.fd)
+            return listOf(field.toColumn())
         } else if (field isAssignableFrom KPojo::class) {
             val tableName = (field as KPojo).tableName
             val tableAlias = field.tableAlias
             val fields = tableMap[tableMetaKey(kotoJdbcWrapper, tableName)]!!.fields
 
             return fields.map {
-                it.fd.apply {
+                it.toColumn().apply {
                     columnName = getSql(
                         "",
                         it.name.lineToHump(),
@@ -279,7 +279,7 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
             }
 
             return listOf(
-                field.fd.apply {
+                field.toColumn().apply {
                     columnName = getSql(
                         "",
                         field,

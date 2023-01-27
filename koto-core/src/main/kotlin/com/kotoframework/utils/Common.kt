@@ -1,6 +1,7 @@
 package com.kotoframework.utils
 
 import com.kotoframework.*
+import com.kotoframework.KotoApp.Config.Companion.softDeleteConfig
 import com.kotoframework.definition.Field
 import com.kotoframework.definition.columnName
 import com.kotoframework.interfaces.KotoJdbcWrapper
@@ -102,7 +103,7 @@ object Common {
         tableAlias: String? = ""
     ): String {
         val tableMeta = Jdbc.tableMap[tableMetaKey(jdbcWrapper, tableName)]?.meta
-        val softDeleteColumn = tableMeta?.softDelete?.column ?: KotoApp.softDeleteColumn
+        val softDeleteColumn = tableMeta?.softDelete?.column ?: softDeleteConfig.column
         return if (softDeleteColumn.isBlank()) "true" else "$tableAlias`$softDeleteColumn` = $value"
     }
 

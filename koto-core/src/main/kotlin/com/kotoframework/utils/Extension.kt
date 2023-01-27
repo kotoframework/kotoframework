@@ -1,11 +1,12 @@
 package com.kotoframework.utils
 
 import com.kotoframework.KotoApp
+import com.kotoframework.KotoApp.Config.Companion.createTimeConfig
+import com.kotoframework.KotoApp.Config.Companion.deleteTimeConfig
+import com.kotoframework.KotoApp.Config.Companion.softDeleteConfig
+import com.kotoframework.KotoApp.Config.Companion.updateTimeConfig
 import com.kotoframework.beans.TableMeta
-import com.kotoframework.beans.TableSoftDelete
-import com.kotoframework.core.annotations.SoftDelete
-import com.kotoframework.core.annotations.Table
-import com.kotoframework.definition.columnName
+import com.kotoframework.core.annotations.*
 import com.kotoframework.interfaces.KPojo
 import java.beans.BeanInfo
 import java.beans.Introspector
@@ -26,7 +27,7 @@ object Extension {
 
     /* It converts a string with camel case to a string with underscores. */
     internal fun String.humpToLine(): String {
-        if(!KotoApp.hump2line) return this
+        if (!KotoApp.hump2line) return this
         val matcher: Matcher = Pattern.compile("[A-Z]").matcher(this)
         var sb = StringBuffer()
         var temp: String
@@ -43,7 +44,7 @@ object Extension {
 
     /* It converts a string with underscores to a string with camel case. */
     fun String.lineToHump(): String {
-        if(!KotoApp.hump2line) return this
+        if (!KotoApp.hump2line) return this
         var temp = this
         val linePattern = Pattern.compile("_(\\w)")
         temp = temp.lowercase(Locale.getDefault())
@@ -80,26 +81,54 @@ object Extension {
         return this::class.annotations.firstOrNull { it is T } as T?
     }
 
+    @Suppress("UNCHECKED_CAST")
+    private fun <T : Any> KPojo.getConfig(
+        kClass: KClass<T>,
+        enabled: (T) -> Boolean,
+        column: (T) -> String
+    ): KotoApp.Config {
+        val annotation = this::class.annotations.firstOrNull {
+            it.annotationClass == kClass
+        } as T?
+        val global = listOf(
+            softDeleteConfig,
+            createTimeConfig,
+            updateTimeConfig,
+            deleteTimeConfig
+        ).first {
+            it.type == kClass
+        }
+
+        return if (annotation == null) {
+            global
+        } else {
+            KotoApp.Config(
+                kClass,
+                enabled(annotation) || global.enabled,
+                column(annotation).ifEmpty { global.column }
+            )
+        }.apply {
+            if (!this.enabled) {
+                this.column = ""
+            }
+        }
+    }
+
     val KPojo.tableMeta: TableMeta
         get() {
-            val tableAnnotation = getAnnotation<Table>()
-            val softDeleteAnnotation = getAnnotation<SoftDelete>()
-            val tableName = tableAnnotation?.name?.ifEmpty { tableName } ?: tableName
-            val softDelete = if (softDeleteAnnotation != null) {
-                val enabled = softDeleteAnnotation.enable || KotoApp.softDeleteEnabled
-                val columnName = softDeleteAnnotation.column.columnName.ifEmpty { KotoApp.softDeleteColumn }
-                TableSoftDelete(
-                    enabled,
-                    columnName
-                )
-            } else {
-                TableSoftDelete(
-                    KotoApp.softDeleteEnabled,
-                    KotoApp.softDeleteColumn
-                )
-            }
+            val tableName = getAnnotation<Table>()?.name?.ifEmpty { tableName } ?: tableName
+            val softDelete = getConfig(SoftDelete::class, { it.enable }, { it.column })
+            val createTime = getConfig(CreateTime::class, { it.enable }, { it.column })
+            val updateTime = getConfig(UpdateTime::class, { it.enable }, { it.column })
+            val deleteTime = getConfig(DeleteTime::class, { it.enable }, { it.column })
 
-            return TableMeta(tableName, softDelete)
+            return TableMeta(
+                tableName,
+                softDelete,
+                createTime,
+                updateTime,
+                deleteTime
+            )
         }
 
     val KClass<*>.tableName: String

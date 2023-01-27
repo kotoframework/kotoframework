@@ -23,7 +23,7 @@ class UpdateAction<T : KPojo>(
     val jdbcWrapper: KotoJdbcWrapper?
 ) : KPojo {
     fun except(vararg fields: Field): UpdateAction<T> {
-        init(fields.map { it.fd }.toList())
+        init(fields.map { it.toColumn() }.toList())
         return this
     }
 
@@ -31,14 +31,12 @@ class UpdateAction<T : KPojo>(
         init()
     }
 
-    fun init(expects: List<KotoField> = listOf()) {
+    fun init(expects: List<ColumnMeta> = listOf()) {
         val build = if (fields.isEmpty()) {
-            UpdateSetClause(KPojo, excepted = expects).build()
+            UpdateSetClause(KPojo, expects).build()
         } else {
-            UpdateSetClause(KPojo, excepted = expects) {
-                Criteria(
-                    type = ConditionType.AND,
-                    collections = fields.map { it.columnName.lineToHump().eq().alias(it.propertyName) })
+            UpdateSetClause(KPojo, expects) {
+                fields.map { it.columnName.lineToHump().eq().alias(it.propertyName) }.arbitrary()
             }.build()
         }
         sql = "update ${KPojo.tableName} set ${build.sql}"
@@ -55,12 +53,12 @@ class UpdateAction<T : KPojo>(
      * @return Where<T>
      */
     fun where(addCondition: AddCondition<T>? = null): UpdateWhere<T> {
-        return Where(KPojo, kotoJdbcWrapper = jdbcWrapper) { addCondition?.invoke(KPojo) }.map(*paramMap.toList().toTypedArray())
+        return Where(KPojo, jdbcWrapper) { addCondition?.invoke(KPojo) }.map(*paramMap.toList().toTypedArray())
             .prefixOW("$sql where ").getUpdateWhere()
     }
 
     fun where(vararg condition: Criteria?): UpdateWhere<T> {
-        return Where(KPojo, kotoJdbcWrapper = jdbcWrapper) { condition.toList().arbitrary() }.map(*paramMap.toList().toTypedArray())
+        return Where(KPojo, jdbcWrapper) { condition.toList().arbitrary() }.map(*paramMap.toList().toTypedArray())
             .prefixOW("$sql where ").getUpdateWhere()
     }
 

@@ -2,14 +2,36 @@ package com.kotoframework
 
 import com.kotoframework.utils.Log
 import com.kotoframework.utils.Jdbc
+import com.kotoframework.KotoApp.Config.Companion.createTimeConfig
+import com.kotoframework.KotoApp.Config.Companion.deleteTimeConfig
+import com.kotoframework.KotoApp.Config.Companion.softDeleteConfig
+import com.kotoframework.KotoApp.Config.Companion.updateTimeConfig
+import com.kotoframework.core.annotations.CreateTime
+import com.kotoframework.core.annotations.DeleteTime
+import com.kotoframework.core.annotations.SoftDelete
+import com.kotoframework.core.annotations.UpdateTime
+import com.kotoframework.utils.Extension.lineToHump
+import kotlin.reflect.KClass
 
 /**
  * Created by ousc on 2022/4/18 21:06
  */
 object KotoApp {
-    internal var softDeleteEnabled: Boolean = false
+    class Config(
+        val type: KClass<*>,
+        var enabled: Boolean,
+        var column: String
+    ) {
+        companion object {
+            internal val softDeleteConfig = Config(SoftDelete::class, false, "deleted")
+            internal val createTimeConfig = Config(CreateTime::class, false, "create_time")
+            internal val updateTimeConfig = Config(UpdateTime::class, false, "update_time")
+            internal val deleteTimeConfig = Config(DeleteTime::class, false, "delete_time")
+        }
+        val alias get() = column.lineToHump()
+    }
+
     internal var hump2line: Boolean = true
-    internal var softDeleteColumn: String = "deleted"
     internal var kPojoSuffix: String = ""
     internal var dbType: DBType = MySql
     internal var defaultNoValueStrategy = Ignore
@@ -24,11 +46,41 @@ object KotoApp {
     }
 
     fun setSoftDelete(enabled: Boolean = true, str: String = "deleted"): KotoApp {
-        softDeleteEnabled = enabled
-        if(softDeleteEnabled){
-            softDeleteColumn = str
+        softDeleteConfig.enabled = enabled
+        if (enabled) {
+            softDeleteConfig.column = str
         } else {
-            softDeleteColumn = ""
+            softDeleteConfig.column = ""
+        }
+        return this
+    }
+
+    fun setCreateTime(enabled: Boolean = true, str: String = "create_time"): KotoApp {
+        createTimeConfig.enabled = enabled
+        if (enabled) {
+            createTimeConfig.column = str
+        } else {
+            createTimeConfig.column = ""
+        }
+        return this
+    }
+
+    fun setUpdateTime(enabled: Boolean = true, str: String = "update_time"): KotoApp {
+        updateTimeConfig.enabled = enabled
+        if (enabled) {
+            updateTimeConfig.column = str
+        } else {
+            updateTimeConfig.column = ""
+        }
+        return this
+    }
+
+    fun setDeleteTime(enabled: Boolean = true, str: String = "delete_time"): KotoApp {
+        deleteTimeConfig.enabled = enabled
+        if (enabled) {
+            deleteTimeConfig.column = str
+        } else {
+            deleteTimeConfig.column = ""
         }
         return this
     }

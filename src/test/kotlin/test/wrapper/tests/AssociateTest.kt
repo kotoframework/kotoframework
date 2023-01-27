@@ -19,28 +19,30 @@ import kotlin.test.assertEquals
  */
 class AssociateTest {
     init {
-        KotoApp.setLog("console", true)
+        KotoApp
+            .setLog("console", true)
+            .setSoftDelete(true, "deleted")
     }
 
     @Test
     fun testAssociate() {
         val koto = from<TbUser, TbGoodCategory, TbGood, TbShoppingCart> { user, goodCategory, good, shoppingCart ->
             associate(user, goodCategory, good, shoppingCart).on(
-                    user::id.eq(shoppingCart::userId) and good::categoryId.eq(goodCategory::id) and good::id.eq(
-                        shoppingCart::goodId
-                    )
-                ).select(
-                    user,
-                    user::userName,
-                    good::name,
-                    good::updateTime,
-                    goodCategory::name,
-                    goodCategory::updateTime,
-                    shoppingCart::qty,
-                    shoppingCart::updateTime to "ut"
-                ).where(
-                    user::userName.eq("ousc")
-                ).orderBy(user::age.desc()).groupBy(user::age).page(1, 10)
+                user::id.eq(shoppingCart::userId) and good::categoryId.eq(goodCategory::id) and good::id.eq(
+                    shoppingCart::goodId
+                )
+            ).select(
+                user,
+                user::userName,
+                good::name,
+                good::updateTime,
+                goodCategory::name,
+                goodCategory::updateTime,
+                shoppingCart::qty,
+                shoppingCart::updateTime to "ut"
+            ).where(
+                user::userName.eq("ousc")
+            ).orderBy(user::age.desc()).groupBy(user::age).page(1, 10)
 
         }.build()
         assertEquals(
