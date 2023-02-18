@@ -2,35 +2,15 @@ package com.kotoframework
 
 import com.kotoframework.utils.Log
 import com.kotoframework.utils.Jdbc
-import com.kotoframework.KotoApp.Config.Companion.createTimeConfig
-import com.kotoframework.KotoApp.Config.Companion.deleteTimeConfig
-import com.kotoframework.KotoApp.Config.Companion.softDeleteConfig
-import com.kotoframework.KotoApp.Config.Companion.updateTimeConfig
-import com.kotoframework.core.annotations.CreateTime
-import com.kotoframework.core.annotations.DeleteTime
-import com.kotoframework.core.annotations.SoftDelete
-import com.kotoframework.core.annotations.UpdateTime
-import com.kotoframework.utils.Extension.lineToHump
-import kotlin.reflect.KClass
+import com.kotoframework.beans.Config.Companion.createTimeConfig
+import com.kotoframework.beans.Config.Companion.deleteTimeConfig
+import com.kotoframework.beans.Config.Companion.softDeleteConfig
+import com.kotoframework.beans.Config.Companion.updateTimeConfig
 
 /**
  * Created by ousc on 2022/4/18 21:06
  */
 object KotoApp {
-    class Config(
-        val type: KClass<*>,
-        var enabled: Boolean,
-        var column: String
-    ) {
-        companion object {
-            internal val softDeleteConfig = Config(SoftDelete::class, false, "deleted")
-            internal val createTimeConfig = Config(CreateTime::class, false, "create_time")
-            internal val updateTimeConfig = Config(UpdateTime::class, false, "update_time")
-            internal val deleteTimeConfig = Config(DeleteTime::class, false, "delete_time")
-        }
-        val alias get() = column.lineToHump()
-    }
-
     internal var hump2line: Boolean = true
     internal var kPojoSuffix: String = ""
     internal var dbType: DBType = MySql

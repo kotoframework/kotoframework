@@ -3,8 +3,10 @@ package com.kotoframework
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.interfaces.KotoQueryHandler
+import com.kotoframework.utils.Extension.asMutable
 import com.kotoframework.utils.Printer
 import com.kotoframework.utils.Extension.isAssignableFrom
+import com.kotoframework.utils.Extension.lineToHump
 import com.kotoframework.utils.Extension.toKPojo
 import com.kotoframework.utils.Log
 import com.kotoframework.utils.Jdbc
@@ -25,7 +27,15 @@ class JdbiHandler : KotoQueryHandler() {
         val unwrapped = wrapper.getJdbi()
         Log.log(wrapper, sql, listOf(paramMap), "query")
         return if (kClass isAssignableFrom KPojo::class) {
-            Jdbc.queryKotoJdbcData(wrapper, sql, paramMap).map { it.toKPojo(kClass) }
+            Jdbc.queryKotoJdbcData(wrapper, sql, paramMap).asMutable().onEach {
+                for ((key, value) in it) {
+                    if (key.contains("_")) {
+                        if (it[key.lineToHump()] == null) {
+                            it[key.lineToHump()] = value
+                        }
+                    }
+                }
+            }.map { it.toKPojo(kClass) }
         } else {
             unwrapped.withHandle<List<Any>, Exception> { handle ->
                 handle.createQuery(sql)
@@ -49,7 +59,15 @@ class JdbiHandler : KotoQueryHandler() {
         Log.log(wrapper, sql, listOf(paramMap), "query")
         return try {
             if (kClass isAssignableFrom KPojo::class) {
-                Jdbc.queryKotoJdbcData(wrapper, sql, paramMap).first().toKPojo(kClass)
+                Jdbc.queryKotoJdbcData(wrapper, sql, paramMap).first().toMutableMap().apply {
+                    for ((key, value) in this) {
+                        if (key.contains("_")) {
+                            if (this[key.lineToHump()] == null) {
+                                this[key.lineToHump()] = value
+                            }
+                        }
+                    }
+                }.toKPojo(kClass)
             } else {
                 unwrapped.withHandle<Any, Exception> { handle ->
                     handle.createQuery(sql)

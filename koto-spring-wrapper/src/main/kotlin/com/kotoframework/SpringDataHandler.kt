@@ -6,7 +6,9 @@ import com.kotoframework.utils.Jdbc
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.interfaces.KotoQueryHandler
+import com.kotoframework.utils.Extension.asMutable
 import com.kotoframework.utils.Extension.isAssignableFrom
+import com.kotoframework.utils.Extension.lineToHump
 import com.kotoframework.utils.Extension.toKPojo
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.dao.IncorrectResultSizeDataAccessException
@@ -28,7 +30,15 @@ class SpringDataHandler : KotoQueryHandler() {
         val namedJdbc = wrapper.getNamedJdbc()
         Log.log(wrapper, sql, listOf(paramMap), "query")
         return if (kClass isAssignableFrom KPojo::class) {
-            Jdbc.queryKotoJdbcData(wrapper, sql, paramMap).map { it.toKPojo(kClass) }
+            Jdbc.queryKotoJdbcData(wrapper, sql, paramMap).asMutable().onEach {
+                for ((key, value) in it) {
+                    if (key.contains("_")) {
+                        if (it[key.lineToHump()] == null) {
+                            it[key.lineToHump()] = value
+                        }
+                    }
+                }
+            }.map { it.toKPojo(kClass) }
         } else {
             namedJdbc.query(sql, paramMap, SingleColumnRowMapper(kClass.java)) as List<Any>
         }
@@ -47,7 +57,15 @@ class SpringDataHandler : KotoQueryHandler() {
         Log.log(wrapper, sql, listOf(paramMap), "query")
         try {
             return if (kClass isAssignableFrom KPojo::class) {
-                Jdbc.queryKotoJdbcData(wrapper, sql, paramMap).first().toKPojo(kClass)
+                Jdbc.queryKotoJdbcData(wrapper, sql, paramMap).first().toMutableMap().apply {
+                    for ((key, value) in this) {
+                        if (key.contains("_")) {
+                            if (this[key.lineToHump()] == null) {
+                                this[key.lineToHump()] = value
+                            }
+                        }
+                    }
+                }.toKPojo(kClass)
             } else {
                 namedJdbc.queryForObject(
                     sql, paramMap, SingleColumnRowMapper(kClass.java)

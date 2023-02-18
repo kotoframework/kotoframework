@@ -215,7 +215,7 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
         }
         val mainTable = tableNames.first()
         val joinedTables = tableNames.slice(1 until tableNames.size)
-        this.sql =
+        sql =
             "select ${
                 fields.joinToString(" , ") { it.columnName }
             } from $mainTable as ${mainTable.lineToHump()}" + joinedTables.joinToString(

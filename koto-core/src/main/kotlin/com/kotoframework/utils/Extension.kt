@@ -1,10 +1,11 @@
 package com.kotoframework.utils
 
 import com.kotoframework.KotoApp
-import com.kotoframework.KotoApp.Config.Companion.createTimeConfig
-import com.kotoframework.KotoApp.Config.Companion.deleteTimeConfig
-import com.kotoframework.KotoApp.Config.Companion.softDeleteConfig
-import com.kotoframework.KotoApp.Config.Companion.updateTimeConfig
+import com.kotoframework.beans.Config
+import com.kotoframework.beans.Config.Companion.softDeleteConfig
+import com.kotoframework.beans.Config.Companion.createTimeConfig
+import com.kotoframework.beans.Config.Companion.deleteTimeConfig
+import com.kotoframework.beans.Config.Companion.updateTimeConfig
 import com.kotoframework.beans.TableMeta
 import com.kotoframework.core.annotations.*
 import com.kotoframework.interfaces.KPojo
@@ -86,7 +87,7 @@ object Extension {
         kClass: KClass<T>,
         enabled: (T) -> Boolean,
         column: (T) -> String
-    ): KotoApp.Config {
+    ): Config {
         val annotation = this::class.annotations.firstOrNull {
             it.annotationClass == kClass
         } as T?
@@ -102,7 +103,7 @@ object Extension {
         return if (annotation == null) {
             global
         } else {
-            KotoApp.Config(
+            Config(
                 kClass,
                 enabled(annotation) || global.enabled,
                 column(annotation).ifEmpty { global.column }

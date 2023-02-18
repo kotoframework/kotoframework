@@ -101,18 +101,18 @@ class CreateWhere<T : KPojo>(kPojo: T, kotoJdbcWrapper: KotoJdbcWrapper?) : Wher
      */
     override fun build(): KotoOperationSet<CreateWhere<T>, T> {
         KPojo::class.declaredMemberProperties.forEach {
-            conditions.add(it.columnName.lineToHump().eq().alias(it.name))
+            conditions.add(it.columnName.lineToHump().eq.alias(it.name))
         }
 
         val tableMeta = KPojo.tableMeta
 
         if (tableMeta.updateTime.enabled) {
-            conditions.add(tableMeta.updateTime.alias.eq())
+            conditions.add(tableMeta.updateTime.alias.eq)
             paramMap[tableMeta.updateTime.alias] = currentTime
         }
 
         if (tableMeta.createTime.enabled) {
-            conditions.add(tableMeta.createTime.alias.eq())
+            conditions.add(tableMeta.createTime.alias.eq)
             paramMap[tableMeta.createTime.alias] = currentTime
         }
 

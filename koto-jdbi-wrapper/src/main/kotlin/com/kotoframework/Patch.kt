@@ -12,7 +12,7 @@ import javax.sql.DataSource
 object Patch {
     fun Jdbi.query(
         sql: String,
-        paramMap: Map<String, Any?>
+        paramMap: Map<String, Any?> = mapOf()
     ): List<Map<String, Any>> {
         return Jdbc.query(this.wrapper(), sql, paramMap)
     }
@@ -20,21 +20,21 @@ object Patch {
     @Suppress("UNCHECKED_CAST")
     inline fun <reified T> Jdbi.queryForList(
         sql: String,
-        paramMap: Map<String, Any?>
+        paramMap: Map<String, Any?> = mapOf()
     ): List<T> {
         return defaultJdbcHandler!!.forList(this.wrapper(), sql, paramMap, T::class) as List<T>
     }
 
     inline fun <reified T> Jdbi.queryForObject(
         sql: String,
-        paramMap: Map<String, Any?>
+        paramMap: Map<String, Any?> = mapOf()
     ): T {
         return defaultJdbcHandler!!.forObject(this.wrapper(), sql, paramMap, false, T::class) as T
     }
 
     inline fun <reified T> Jdbi.queryForObjectOrNull(
         sql: String,
-        paramMap: Map<String, Any?>
+        paramMap: Map<String, Any?> = mapOf()
     ): T? {
         return defaultJdbcHandler!!.forObjectOrNull(this.wrapper(), sql, paramMap, T::class) as T?
     }

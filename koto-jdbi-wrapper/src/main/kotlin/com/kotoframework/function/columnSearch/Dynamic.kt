@@ -34,6 +34,6 @@ fun Jdbi.columnSearch(
     wrapper: KotoJdbcWrapper? = null
 ): KotoResultSet<String> {
     return columnSearch(
-        tableName, fields, queryFields, suffix, limit, this.wrapper()
+        tableName, fields, queryFields, suffix, limit, wrapper ?: this.wrapper()
     )
 }

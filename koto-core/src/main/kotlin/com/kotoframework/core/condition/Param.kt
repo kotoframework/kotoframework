@@ -146,12 +146,16 @@ infix fun Criteria?.and(condition: Criteria?): Criteria {
 }
 
 infix fun Criteria?.and(condition: String?): Criteria? {
-    if (condition == null) return this
+    if (condition == null) {
+        return this
+    }
     return this and condition.declareSql()
 }
 
 infix fun String?.and(condition: Criteria?): Criteria? {
-    if (this == null) return condition
+    if (this == null) {
+        return condition
+    }
     return declareSql() and condition
 }
 
@@ -177,18 +181,26 @@ infix fun Criteria?.or(condition: Criteria?): Criteria? {
 }
 
 infix fun Criteria?.or(condition: String?): Criteria? {
-    if (condition == null) return this
+    if (condition == null) {
+        return this
+    }
     return this or condition.declareSql()
 }
 
 infix fun String?.or(condition: Criteria?): Criteria? {
-    if (this == null) return condition
+    if (this == null) {
+        return condition
+    }
     return declareSql() or condition
 }
 
 infix fun String?.or(condition: String?): Criteria? {
-    if (this == null) return condition?.declareSql()
-    if (condition == null) return declareSql()
+    if (this == null) {
+        return condition?.declareSql()
+    }
+    if (condition == null) {
+        return declareSql()
+    }
     return declareSql() or condition.declareSql()
 }
 

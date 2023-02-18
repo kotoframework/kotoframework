@@ -1,6 +1,6 @@
 package com.kotoframework.function.remove
 
-import com.kotoframework.KotoApp
+import com.kotoframework.beans.Config
 import com.kotoframework.beans.TableMeta
 import com.kotoframework.beans.Unknown
 import com.kotoframework.interfaces.KPojo
@@ -28,10 +28,10 @@ fun remove(tableName: String, jdbcWrapper: KotoJdbcWrapper? = null): RemoveActio
     Jdbc.initMetaData(
         TableMeta(
             tableName,
-            KotoApp.Config.softDeleteConfig,
-            KotoApp.Config.createTimeConfig,
-            KotoApp.Config.updateTimeConfig,
-            KotoApp.Config.deleteTimeConfig
+            Config.softDeleteConfig,
+            Config.createTimeConfig,
+            Config.updateTimeConfig,
+            Config.deleteTimeConfig
         ), jdbcWrapper
     )
     return RemoveAction(tableName, Unknown(), jdbcWrapper)

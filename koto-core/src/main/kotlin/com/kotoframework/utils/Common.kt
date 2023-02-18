@@ -1,7 +1,7 @@
 package com.kotoframework.utils
 
 import com.kotoframework.*
-import com.kotoframework.KotoApp.Config.Companion.softDeleteConfig
+import com.kotoframework.beans.Config.Companion.softDeleteConfig
 import com.kotoframework.definition.Field
 import com.kotoframework.definition.columnName
 import com.kotoframework.interfaces.KotoJdbcWrapper
