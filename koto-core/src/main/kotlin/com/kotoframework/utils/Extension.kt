@@ -227,4 +227,15 @@ object Extension {
     fun <T, K> List<Map<T, K>>.asMutable(): MutableList<MutableMap<T, K>> {
         return this.map { it.toMutableMap() }.toMutableList()
     }
+
+    fun Map<String, Any>.lineToHump(enabled: Boolean = true): Map<String, Any> {
+        if (!enabled || !KotoApp.hump2line) return this
+        val result = toMutableMap()
+        forEach { (k, v) ->
+            if (k.contains("_") && this[k.lineToHump()] == null) {
+                result[k.lineToHump()] = v
+            }
+        }
+        return result
+    }
 }

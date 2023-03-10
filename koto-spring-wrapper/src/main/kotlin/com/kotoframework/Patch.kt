@@ -1,5 +1,7 @@
 package com.kotoframework
 
+import com.kotoframework.utils.Extension.asMutable
+import com.kotoframework.utils.Extension.lineToHump
 import com.kotoframework.utils.Jdbc
 import com.kotoframework.utils.Jdbc.defaultJdbcHandler
 
@@ -9,9 +11,10 @@ import com.kotoframework.utils.Jdbc.defaultJdbcHandler
 object Patch {
     fun SpringDataWrapper.query(
         sql: String,
-        paramMap: Map<String, Any?> = mapOf()
+        paramMap: Map<String, Any?> = mapOf(),
+        lineToHump: Boolean = false
     ): List<Map<String, Any>> {
-        return Jdbc.query(this, sql, paramMap)
+        return Jdbc.query(this, sql, paramMap).map { it.lineToHump(lineToHump) }
     }
 
     @Suppress("UNCHECKED_CAST")

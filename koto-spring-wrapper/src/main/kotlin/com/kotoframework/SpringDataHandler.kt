@@ -30,15 +30,7 @@ class SpringDataHandler : KotoQueryHandler() {
         val namedJdbc = wrapper.getNamedJdbc()
         Log.log(wrapper, sql, listOf(paramMap), "query")
         return if (kClass isAssignableFrom KPojo::class) {
-            Jdbc.queryKotoJdbcData(wrapper, sql, paramMap).asMutable().onEach {
-                for ((key, value) in it) {
-                    if (key.contains("_")) {
-                        if (it[key.lineToHump()] == null) {
-                            it[key.lineToHump()] = value
-                        }
-                    }
-                }
-            }.map { it.toKPojo(kClass) }
+            Jdbc.queryKotoJdbcData(wrapper, sql, paramMap).map { it.lineToHump().toKPojo(kClass) }
         } else {
             namedJdbc.query(sql, paramMap, SingleColumnRowMapper(kClass.java)) as List<Any>
         }
@@ -57,15 +49,7 @@ class SpringDataHandler : KotoQueryHandler() {
         Log.log(wrapper, sql, listOf(paramMap), "query")
         try {
             return if (kClass isAssignableFrom KPojo::class) {
-                Jdbc.queryKotoJdbcData(wrapper, sql, paramMap).first().toMutableMap().apply {
-                    for ((key, value) in this) {
-                        if (key.contains("_")) {
-                            if (this[key.lineToHump()] == null) {
-                                this[key.lineToHump()] = value
-                            }
-                        }
-                    }
-                }.toKPojo(kClass)
+                Jdbc.queryKotoJdbcData(wrapper, sql, paramMap).first().lineToHump().toKPojo(kClass)
             } else {
                 namedJdbc.queryForObject(
                     sql, paramMap, SingleColumnRowMapper(kClass.java)

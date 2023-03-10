@@ -1,6 +1,7 @@
 package com.kotoframework
 
 import com.kotoframework.BasicJdbcWrapper.Companion.wrapper
+import com.kotoframework.utils.Extension.lineToHump
 import com.kotoframework.utils.Jdbc
 import com.kotoframework.utils.Jdbc.defaultJdbcHandler
 import javax.sql.DataSource
@@ -11,9 +12,10 @@ import javax.sql.DataSource
 object Patch {
     fun DataSource.query(
         sql: String,
-        paramMap: Map<String, Any?> = mapOf()
+        paramMap: Map<String, Any?> = mapOf(),
+        lineToHump: Boolean = false
     ): List<Map<String, Any>> {
-        return Jdbc.query(this.wrapper(), sql, paramMap)
+        return Jdbc.query(this.wrapper(), sql, paramMap).map { it.lineToHump(lineToHump) }
     }
 
     @Suppress("UNCHECKED_CAST")

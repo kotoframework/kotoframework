@@ -37,7 +37,7 @@ fun Collection<KotoOperationSet<*, *>?>.batchExecute(jdbcWrapper: KotoJdbcWrappe
         builds.map { it.paramMap }.toTypedArray(),
     ) else 0
 
-    if (builds.first().then != null) {
+    if (builds.firstOrNull()?.then != null) {
         builds.map { it.then }.batchExecute()
     }
 
