@@ -32,6 +32,10 @@ open class Where<T : KPojo>(
     internal var suffix: String = ""
     internal var distinct: Boolean = false
     internal var limitOne: Boolean = false
+    internal var limit: Int? = null
+    internal var offset: Int? = null
+    internal var pageIndex: Int? = null
+    internal var pageSize: Int? = null
     internal var groupBy: String = ""
     internal var orderBy: String = ""
 
@@ -48,8 +52,8 @@ open class Where<T : KPojo>(
      * @return Nothing.
      */
     fun page(pageIndex: Int, pageSize: Int): SelectWhere<T> {
-        finalMap["pageIndex"] = pageIndex
-        finalMap["pageSize"] = pageSize
+        this.pageIndex = pageIndex
+        this.pageSize = pageSize
         return SelectWhere(KPojo, kotoJdbcWrapper, kClass = this.kClass).where(this)
     }
 
@@ -159,9 +163,22 @@ open class Where<T : KPojo>(
 
         if (distinct && prefix.isNotBlank()) prefix = prefix.replaceFirst("select", "select distinct")
 
-        var (paginatedPrefix, paginatedSuffix) = smartPagination(prefix, suffix, paramMap)
+        var (paginatedPrefix, paginatedSuffix, paginatedLimit, paginatedOffset) = smartPagination(
+            prefix,
+            suffix,
+            pageIndex,
+            pageSize
+        )
+
+        limit = paginatedLimit ?: limit
+
+        offset = paginatedOffset ?: offset
 
         if (limitOne) paginatedSuffix = "$paginatedSuffix limit 1"
+
+        if (limit != null) paginatedSuffix = "$paginatedSuffix limit $limit"
+
+        if (offset != null) paginatedSuffix = "$paginatedSuffix offset $offset"
 
         val sql = " ${
             listOf(Common.deleted(deleted, kotoJdbcWrapper, tableName), finalSql).filter { it.isNotBlank() }

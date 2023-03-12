@@ -117,32 +117,47 @@ object Common {
     val currentTime: String get() = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
     val currentTimeM: String get() = SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS").format(Date())
 
-    fun smartPagination(prefix: String, suffix: String, paramMap: MutableMap<String, Any?>): Pair<String, String> {
-        if (paramMap["pageSize"] != null && paramMap["pageIndex"] != null) {
+    data class KotoPagination(
+        val prefix: String,
+        val suffix: String,
+        val limit: Int? = null,
+        val offset: Int? = null
+    )
+
+    fun smartPagination(
+        prefix: String,
+        suffix: String,
+        pageIndex: Int?,
+        pageSize: Int?
+    ): KotoPagination {
+        if (pageIndex != null && pageSize != null) {
             when (KotoApp.dbType) {
                 MySql, PostgreSQL, SQLite -> {
-                    paramMap["limit"] = paramMap["pageSize"] as Int
-                    paramMap["offset"] = (paramMap["pageIndex"] as Int - 1) * paramMap["pageSize"] as Int
-                    return Pair(prefix, "$suffix limit :limit offset :offset")
+                    return KotoPagination(
+                        prefix,
+                        suffix,
+                        pageSize,
+                        (pageIndex - 1) * pageSize
+                    )
                 }
 
                 Oracle -> {
-                    paramMap["rowNumMin"] = (paramMap["pageIndex"] as Int - 1) * paramMap["pageSize"] as Int + 1
-                    paramMap["rowNumMax"] = paramMap["pageIndex"] as Int * paramMap["pageSize"] as Int
-                    return Pair(
+                    val rowNumMin = (pageIndex - 1) * pageSize + 1
+                    val rowNumMax = pageIndex * pageSize
+                    return KotoPagination(
                         prefix.replaceFirst("select", "select * from (select rownum rn, t.* from (select"),
-                        "$suffix ) t ) where :rowNumMin < RN <= :rowNumMax"
+                        "$suffix ) t ) where $rowNumMin < RN <= $rowNumMax",
                     )
                 }
 
                 MSSql -> {
-                    paramMap["offset"] = (paramMap["pageIndex"] as Int - 1) * paramMap["pageSize"] as Int
-                    paramMap["next"] = paramMap["pageIndex"] as Int * paramMap["pageSize"] as Int
-                    return Pair(prefix, "$suffix offset :offset rows fetch next :next rows only")
+                    val offset = (pageIndex - 1) * pageSize
+                    val next = pageIndex * pageSize
+                    return KotoPagination(prefix, "$suffix offset $offset rows fetch next $next rows only")
                 }
 
                 else -> throw UnsupportedOperationException("Unsupported database type")
             }
-        } else return Pair(prefix, suffix)
+        } else return KotoPagination(prefix, suffix)
     }
 }

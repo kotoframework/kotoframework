@@ -53,7 +53,13 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
     private var paramMaps: MutableMap<String, MutableMap<String, Any?>> = mutableMapOf()
     private var groupBy = ""
     private var orderBy = ""
+    private var limit: Int? = null
+    private var offset: Int? = null
+    private var pageIndex: Int? = null
+    private var pageSize: Int? = null
+    private var limitOne: Boolean = false
     private var kPojos = listOf<KPojo>()
+
 
     init {
         kPojos = listOfNotNull(
@@ -141,8 +147,22 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
         pageIndex: Int,
         pageSize: Int
     ): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> {
-        finalMap["pageIndex"] = pageIndex
-        finalMap["pageSize"] = pageSize
+        this.pageIndex = pageIndex
+        this.pageSize = pageSize
+        return this
+    }
+
+    fun limit(
+        limit: Int,
+        offset: Int? = null
+    ): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> {
+        this.limit = limit
+        this.offset = offset
+        return this
+    }
+
+    fun first(): AssociateWhere<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> {
+        this.limitOne = true
         return this
     }
 
@@ -283,7 +303,10 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
                     columnName = getSql(
                         "",
                         field,
-                        tableMap[tableMetaKey(kotoJdbcWrapper, tableName)]!!.fields.find { it.name == it.columnName }!!.type,
+                        tableMap[tableMetaKey(
+                            kotoJdbcWrapper,
+                            tableName
+                        )]!!.fields.find { it.name == it.columnName }!!.type,
                         tableAlias,
                         complex
                     )
@@ -953,7 +976,23 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
             }
         }
 
-        val (paginatedSql, paginatedSuffix) = smartPagination(sql, suffix, finalMap)
+        var (paginatedSql, paginatedSuffix, paginatedLimit, paginatedOffset) = smartPagination(
+            sql,
+            suffix,
+            pageIndex,
+            pageSize
+        )
+
+        limit = paginatedLimit ?: limit
+
+        offset = paginatedOffset ?: offset
+
+        if (limitOne) paginatedSuffix = "$paginatedSuffix limit 1"
+
+        if (limit != null) paginatedSuffix = "$paginatedSuffix limit $limit"
+
+        if (offset != null) paginatedSuffix = "$paginatedSuffix offset $offset"
+
 
         return if (whereConditions == null) {
             whereParamMap.putAll(onParamMap)

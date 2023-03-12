@@ -29,16 +29,6 @@ class SelectWhere<T : KPojo>(
     }
 
     /**
-     * > If the prefix of the sql does not contain the word "select" (case insensitive), throw a runtime exception
-     */
-    fun validate() {
-        if (!this.prefix.contains("select", true)
-        ) {
-            throw InvalidSqlException("The prefix of the sql is not correct.")
-        }
-    }
-
-    /**
      * This function returns a Where object with the suffix set to the given sql
      *
      * @param sql The SQL statement to be appended to the end of the generated SQL statement.
@@ -56,6 +46,12 @@ class SelectWhere<T : KPojo>(
 
     override fun distinct(): SelectWhere<T> {
         this.distinct = true
+        return this
+    }
+
+    fun limit(limit: Int, offset: Int? = null): SelectWhere<T> {
+        this.limit = limit
+        this.offset = offset
         return this
     }
 
@@ -105,35 +101,29 @@ class SelectWhere<T : KPojo>(
      * @return A ConditionResult object.
      */
     override fun build(): KotoResultSet<T> {
-        validate()
         val result = super.build()
         return KotoResultSet(result.sql, result.paramMap, kotoJdbcWrapper, kClass)
     }
 
     fun query(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): List<Map<String, Any>> {
-        validate()
         return build().query(jdbcWrapper)
     }
 
     inline fun <reified K> queryForList(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): List<K> {
-        validate()
         return build().queryForList<K>(jdbcWrapper)
     }
 
     inline fun <reified K> queryForObject(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): K {
-        validate()
         return build().queryForObject<K>(jdbcWrapper)
     }
 
     inline fun <reified K> queryForObjectOrNull(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): K? {
-        validate()
         return build().queryForObjectOrNull<K>(jdbcWrapper)
     }
 
     @JvmName("queryForList1")
     @Suppress("UNCHECKED_CAST")
     fun queryForList(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): List<T> {
-        validate()
         build().let {
             return defaultJdbcHandler!!.forList(
                 jdbcWrapper,
@@ -146,7 +136,6 @@ class SelectWhere<T : KPojo>(
 
     @Suppress("UNCHECKED_CAST")
     fun queryForObject(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): T {
-        validate()
         build().let {
             return defaultJdbcHandler!!.forObject(jdbcWrapper, it.sql, it.paramMap, false, kClass) as T
         }
@@ -154,7 +143,6 @@ class SelectWhere<T : KPojo>(
 
     @Suppress("UNCHECKED_CAST")
     fun queryForObjectOrNull(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): T? {
-        validate()
         build().let {
             return defaultJdbcHandler!!.forObjectOrNull(jdbcWrapper, it.sql, it.paramMap, kClass) as T?
         }
