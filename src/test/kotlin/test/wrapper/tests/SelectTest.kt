@@ -51,7 +51,7 @@ class SelectTest {
         )
         val koto = select(searchDto).where().distinct().page(1, 20).suffix("order by update_time desc").build()
         assertEquals(
-            "select distinct `age`, `avatar`, DATE_FORMAT(`birthday`, '%Y-%m-%d') as `birthday`, `email_address` as `emailAddress`, `id`, `nickname`, `password`, `sex`, `phone_number` as `phoneNumber`, `user_name` as `userName` from tb_user where ${deleted()} and `user_name` = :userName and `age` = :age order by update_time desc limit :limit offset :offset",
+            "select distinct `age`, `avatar`, DATE_FORMAT(`birthday`, '%Y-%m-%d') as `birthday`, `email_address` as `emailAddress`, `id`, `nickname`, `password`, `sex`, `phone_number` as `phoneNumber`, `user_name` as `userName` from tb_user where ${deleted()} and `user_name` = :userName and `age` = :age order by update_time desc limit 20 offset 0",
             koto.sql
         )
 
@@ -70,11 +70,7 @@ class SelectTest {
             "password" to null,
             "sex" to null,
             "telephone" to null,
-            "userName" to "ousc",
-            "pageIndex" to 1,
-            "pageSize" to 20,
-            "limit" to 20,
-            "offset" to 0,
+            "userName" to "ousc"
         )
         assertEquals(
             expectedMap,

@@ -46,16 +46,12 @@ class AssociateTest {
 
         }.build()
         assertEquals(
-            "select `tbUser`.`age` as `age` , `tbUser`.`avatar` as `avatar` , DATE_FORMAT(`tbUser`.`birthday`, '%Y-%m-%d %H:%i:%s') as `birthday` , `tbUser`.`email_address` as `emailAddress` , `tbUser`.`id` as `id` , `tbUser`.`nickname` as `nickname` , `tbUser`.`password` as `password` , `tbUser`.`sex` as `sex` , `tbUser`.`phone_number` as `phoneNumber` , `tbUser`.`user_name` as `userName` , `tbGood`.`name` as `name` , `tbGood`.`update_time` as `updateTime` , `tbGoodCategory`.`name` as `name@` , `tbGoodCategory`.`update_time` as `updateTime@` , `tbShoppingCart`.`qty` as `qty` , `tbShoppingCart`.`update_time` as `ut` from tb_user as tbUser left join tb_good_category as tbGoodCategory on tbGood.category_id = tbGoodCategory.id and `tbGoodCategory`.${deleted()} left join tb_good as tbGood on `tbGood`.${deleted()} left join tb_shopping_cart as tbShoppingCart on tbUser.id = tbShoppingCart.user_id and tbGood.id = tbShoppingCart.good_id and `tbShoppingCart`.${deleted()} where tbUser.`user_name` = :userName and `tbUser`.${deleted()} group by `tbUser`.`age` order by `tbUser`.`age` DESC limit :limit offset :offset",
+            "select `tbUser`.`age` as `age` , `tbUser`.`avatar` as `avatar` , DATE_FORMAT(`tbUser`.`birthday`, '%Y-%m-%d %H:%i:%s') as `birthday` , `tbUser`.`email_address` as `emailAddress` , `tbUser`.`id` as `id` , `tbUser`.`nickname` as `nickname` , `tbUser`.`password` as `password` , `tbUser`.`sex` as `sex` , `tbUser`.`phone_number` as `phoneNumber` , `tbUser`.`user_name` as `userName` , `tbGood`.`name` as `name` , `tbGood`.`update_time` as `updateTime` , `tbGoodCategory`.`name` as `name@` , `tbGoodCategory`.`update_time` as `updateTime@` , `tbShoppingCart`.`qty` as `qty` , `tbShoppingCart`.`update_time` as `ut` from tb_user as tbUser left join tb_good_category as tbGoodCategory on tbGood.category_id = tbGoodCategory.id and `tbGoodCategory`.${deleted()} left join tb_good as tbGood on `tbGood`.${deleted()} left join tb_shopping_cart as tbShoppingCart on tbUser.id = tbShoppingCart.user_id and tbGood.id = tbShoppingCart.good_id and `tbShoppingCart`.${deleted()} where tbUser.`user_name` = :userName and `tbUser`.${deleted()} group by `tbUser`.`age` order by `tbUser`.`age` DESC limit 10 offset 0",
             koto.sql
         )
         assertEquals(
             mapOf(
                 "userName" to "ousc",
-                "pageIndex" to 1,
-                "pageSize" to 10,
-                "limit" to 10,
-                "offset" to 0,
                 "age" to null,
                 "avatar" to null,
                 "birthday" to null,

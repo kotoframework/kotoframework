@@ -1,6 +1,6 @@
 package com.kotoframework
 
-import com.kotoframework.beans.InvalidParameterExpection
+import com.kotoframework.beans.InvalidParameterException
 
 /**
  * Created by sundaiyue on 2022/11/4 11:32
@@ -81,13 +81,13 @@ object NamedParameterUtils {
                     while (statement[j] != '}') {
                         j++
                         if (j >= statement.size) {
-                            throw InvalidParameterExpection(
+                            throw InvalidParameterException(
                                 "Non-terminated named parameter declaration " +
                                         "at position " + i + " in statement: " + sql
                             )
                         }
                         if (statement[j] == ':' || statement[j] == '{') {
-                            throw InvalidParameterExpection(
+                            throw InvalidParameterException(
                                 ("Parameter name contains invalid character '" +
                                         statement[j] + "' at position " + i + " in statement: " + sql)
                             )

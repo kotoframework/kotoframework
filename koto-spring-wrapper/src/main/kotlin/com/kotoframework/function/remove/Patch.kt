@@ -9,7 +9,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
  */
 object Patch {
     fun RemoveAction<*>.execute(): KotoExecuteResult {
-        val koto = where().build()
-        return koto.execute()
+        return where().build().execute()
     }
 }
