@@ -16,15 +16,15 @@ class UpdateWhere<T : KPojo>(
     KPojo: T,
     kotoJdbcWrapper: KotoJdbcWrapper? = null,
     addCondition: AddCondition<T>? = null
-) : OperateWhere<T>(KPojo, kotoJdbcWrapper, addCondition){
+) : OperateWhere<T>(KPojo, kotoJdbcWrapper, addCondition) {
     override fun where(where: Where<T>): UpdateWhere<T> {
         super.where(where)
         return this
     }
 
     override fun build(): KotoOperationSet<UpdateWhere<T>, T> {
-        val result = super.build()
-        return KotoOperationSet(kotoJdbcWrapper, result.sql, result.paramMap)
+        val prepared = super.build()
+        return KotoOperationSet(prepared.sql, prepared.paramMap, jdbcWrapper = kotoJdbcWrapper)
     }
 
     fun execute(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): KotoExecuteResult {

@@ -101,24 +101,26 @@ class SelectWhere<T : KPojo>(
      * @return A ConditionResult object.
      */
     override fun build(): KotoResultSet<T> {
-        val result = super.build()
-        return KotoResultSet(result.sql, result.paramMap, kotoJdbcWrapper, kClass)
+        val prepared = super.build()
+        return KotoResultSet(prepared.sql, prepared.paramMap, kotoJdbcWrapper, kClass)
     }
 
+    val prepared: KotoResultSet<T> get() = build()
+
     fun query(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): List<Map<String, Any>> {
-        return build().query(jdbcWrapper)
+        return prepared.query(jdbcWrapper)
     }
 
     inline fun <reified K> queryForList(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): List<K> {
-        return build().queryForList<K>(jdbcWrapper)
+        return prepared.queryForList<K>(jdbcWrapper)
     }
 
     inline fun <reified K> queryForObject(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): K {
-        return build().queryForObject<K>(jdbcWrapper)
+        return prepared.queryForObject<K>(jdbcWrapper)
     }
 
     inline fun <reified K> queryForObjectOrNull(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): K? {
-        return build().queryForObjectOrNull<K>(jdbcWrapper)
+        return prepared.queryForObjectOrNull<K>(jdbcWrapper)
     }
 
     @JvmName("queryForList1")

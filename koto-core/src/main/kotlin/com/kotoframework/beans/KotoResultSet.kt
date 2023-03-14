@@ -12,7 +12,17 @@ import kotlin.reflect.KClass
  * Created by ousc on 2022/4/18 10:32
  */
 
-
+/**
+ * Koto result set
+ *
+ * @param T
+ * @property sql
+ * @property paramMap
+ * @property kotoJdbcWrapper
+ * @property kClass
+ * @constructor Create empty Koto result set
+ * @author ousc
+ */
 class KotoResultSet<T>(
     override var sql: String,
     override val paramMap: Map<String, Any?>,

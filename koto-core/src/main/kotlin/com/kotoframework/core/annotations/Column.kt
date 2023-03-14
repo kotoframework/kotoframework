@@ -9,6 +9,7 @@ package com.kotoframework.core.annotations
  *
  * @property name
  * @constructor Create empty ColumnMeta
+ * @author ousc
  */
 @Target(AnnotationTarget.FIELD, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.RUNTIME)

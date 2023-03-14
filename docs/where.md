@@ -41,14 +41,14 @@ val user = User(
 If no value is passed, the condition will be automatically generated based on the incoming KPojo:
 
 ```kotlin
-val koto = xxx(user).where().build()
+val (sql, params) = xxx(user).where()
 ````
 result:
 ```kotlin
-//koto.sql
+//sql
 "userName = :userName and active = :active and sex = :sex and age = :age and deleted = 0"
 
-//koto:paramMap
+//params
 mapOf(
     "userName" to "ousc",
     "active" to true,
@@ -60,7 +60,7 @@ mapOf(
 ### 2. Complex query usage:
 
 ```kotlin
-val koto = xxx(user).where { // it: User
+val (sql, params) = xxx(user).where { // it: User
     it::userName.eq() and // koto automatically obtains the property name through Kotlin's reflection mechanism
     it::active.eq() and
     it::nickName.like(pos = Left) and
@@ -76,10 +76,10 @@ val koto = xxx(user).where { // it: User
 ````
 result:
 ```kotlin
-//koto.sql
+//sql
 "deleted = 0 and `user_name` = :userName and `active` = :active and `nick_name` like :nickName and `telephone` != :telephone and `roles` in (:roles) and `email_address` is null and ` habit` is not null and DATE_FORMAT(`birthday`, '%Y-%m-%d') = :birthday and `habit` = "basketball" and `sex` is not null and `age` < 50"
 
-//koto:paramMap
+//params
 mapOf(
     "userName" to "ousc",
     "nickName" to "%daiyue",

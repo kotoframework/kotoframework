@@ -149,15 +149,15 @@ class CreateWhere<T : KPojo>(kPojo: T, kotoJdbcWrapper: KotoJdbcWrapper?) : Wher
         }
 
         if (replaceInto) {
-            return KotoOperationSet(kotoJdbcWrapper,
+            return KotoOperationSet(
                 "replace into $tableName (`${paramNames.joinToString("`,`")}`) values (${
                     reNames.joinToString(
                         ","
                     ) { ":$it" }
                 }) ".rmRedundantBlk(),
-                paramMap)
+                paramMap, jdbcWrapper = kotoJdbcWrapper)
         } else if (duplicateUpdate) {
-            return KotoOperationSet(kotoJdbcWrapper,
+            return KotoOperationSet(
                 "insert into $tableName (`${paramNames.joinToString("`,`")}`) values (${
                     reNames.joinToString(
                         ","
@@ -167,11 +167,10 @@ class CreateWhere<T : KPojo>(kPojo: T, kotoJdbcWrapper: KotoJdbcWrapper?) : Wher
                         "`${it.columnName}` = :${it.propertyName}"
                     }
                 } ".rmRedundantBlk(),
-                paramMap)
+                paramMap, jdbcWrapper = kotoJdbcWrapper)
         } else if (onFields.isNotEmpty()) {
             return when (dbType) {
                 MySql -> KotoOperationSet(
-                    kotoJdbcWrapper,
                     "insert into $tableName (`${paramNames.joinToString("`,`")}`) select ${
                         reNames.joinToString(
                             ","
@@ -192,10 +191,10 @@ class CreateWhere<T : KPojo>(kPojo: T, kotoJdbcWrapper: KotoJdbcWrapper?) : Wher
                             onFields
                                 .map { it.columnName.lineToHump().eq().alias(it.propertyName) }
                                 .arbitrary()
-                        ).build()
+                        ).build(), jdbcWrapper = kotoJdbcWrapper
                 )
 
-                SQLite -> KotoOperationSet(kotoJdbcWrapper,
+                SQLite -> KotoOperationSet(
                     "insert into $tableName (`${paramNames.joinToString("`,`")}`) values (${
                         reNames.joinToString(
                             ","
@@ -205,20 +204,21 @@ class CreateWhere<T : KPojo>(kPojo: T, kotoJdbcWrapper: KotoJdbcWrapper?) : Wher
                             "`${it.columnName}` = :${it.propertyName}"
                         }
                     } ".rmRedundantBlk(),
-                    paramMap)
+                    paramMap, jdbcWrapper = kotoJdbcWrapper)
 
                 else -> throw UnsupportedOperationException("Unsupported database type")
             }
         } else {
             return KotoOperationSet(
-                kotoJdbcWrapper,
                 "insert into $tableName (`${paramNames.joinToString("`,`")}`) values (${
                     reNames.joinToString(
                         ","
                     ) { ":$it" }
-                }) ".rmRedundantBlk(), paramMap)
+                }) ".rmRedundantBlk(), paramMap, jdbcWrapper = kotoJdbcWrapper)
         }
     }
+
+    override operator fun component1() = build()
 
     companion object {
         @OptIn(NeedTableIndexes::class)

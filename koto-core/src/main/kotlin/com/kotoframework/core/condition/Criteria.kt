@@ -7,6 +7,24 @@ import kotlin.reflect.KCallable
 /**
  * Created by ousc on 2022/4/18 10:55
  **/
+
+/**
+ * Criteria
+ *
+ * @property parameterName
+ * @property not
+ * @property type
+ * @property pos
+ * @property reName
+ * @property sql
+ * @property noValueStrategy
+ * @property value
+ * @property tableName
+ * @property kCallable
+ * @property collections
+ * @constructor Create empty Criteria
+ * @author ousc
+ */
 @Suppress("LeakingThis")
 open class Criteria(
     internal open val parameterName: String = "", // original parameter name

@@ -2,15 +2,16 @@ package com.kotoframework.function.create
 
 import com.kotoframework.beans.KotoExecuteResult
 import com.kotoframework.interfaces.Patch.execute
+
 /**
  * Created by ousc on 2022/9/20 11:31
  */
 object Patch {
     fun CreateWhere<*>.execute(): KotoExecuteResult {
-        val koto = this.build()
-        koto.then?.let {
-            koto.execute()
+        val (prepared) = this
+        prepared.then?.let {
+            prepared.execute()
         }
-        return koto.execute()
+        return prepared.execute()
     }
 }

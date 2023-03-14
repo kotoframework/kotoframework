@@ -21,5 +21,12 @@ import com.kotoframework.interfaces.KotoJdbcWrapper
  * @author ousc
  */
 class KotoOperationSet<T : BaseWhere<K>, K : KPojo>(
-    val jdbcWrapper: KotoJdbcWrapper?, override val sql: String, override val paramMap: Map<String, Any?>, val then: KotoOperationSet<*, *>? = null
-) : KotoDataSet
+    override val sql: String,
+    override val paramMap: Map<String, Any?>,
+    val then: KotoOperationSet<*, *>? = null,
+    val jdbcWrapper: KotoJdbcWrapper? = null
+) : KotoDataSet {
+    override operator fun component1() = sql
+    override operator fun component2() = paramMap
+    operator fun component3() = then
+}

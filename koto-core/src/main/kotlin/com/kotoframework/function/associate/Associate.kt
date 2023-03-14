@@ -274,5 +274,5 @@ internal fun getSql(
 
 @Suppress("UNCHECKED_CAST")
 fun <T> KClass<*>.javaInstance(): T {
-    return this.java.newInstance() as T
+    return java.newInstance() as T
 }

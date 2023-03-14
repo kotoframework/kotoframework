@@ -10,10 +10,10 @@ import javax.sql.DataSource
  */
 object Patch {
     fun CreateWhere<*>.execute(): KotoExecuteResult {
-        val koto = this.build()
-        koto.then?.let {
-            koto.execute()
+        val (prepared) = this
+        prepared.then?.let {
+            prepared.execute()
         }
-        return koto.execute()
+        return prepared.execute()
     }
 }

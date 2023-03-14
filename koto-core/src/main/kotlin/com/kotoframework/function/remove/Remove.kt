@@ -12,9 +12,15 @@ import com.kotoframework.utils.Jdbc
 /**
  * Created by ousc on 2022/5/30 17:17
  */
-inline fun <reified T : KPojo> remove(KPojo: T, jdbcWrapper: KotoJdbcWrapper? = null): RemoveAction<T> {
-    val meta = KPojo.tableMeta
-    Jdbc.initMetaData(meta, jdbcWrapper, KPojo)
+
+@JvmName("removeUseExpand")
+fun <T : KPojo> T.remove(jdbcWrapper: KotoJdbcWrapper? = null): RemoveAction<T> {
+    Jdbc.initMetaData(tableMeta, jdbcWrapper, this)
+    return RemoveAction(tableName, this, jdbcWrapper)
+}
+
+fun <T : KPojo> remove(KPojo: T, jdbcWrapper: KotoJdbcWrapper? = null): RemoveAction<T> {
+    Jdbc.initMetaData(KPojo.tableMeta, jdbcWrapper, KPojo)
     return RemoveAction(KPojo.tableName, KPojo, jdbcWrapper)
 }
 

@@ -23,7 +23,7 @@ class WhereTest : KPojo {
 
     @Test
     fun testBasicWhere() {
-        val koto = Where(searchData).build()
+        val (prepared) = Where(searchData)
         val expectedParamMap = mutableMapOf(
             "id" to null,
             "userName" to "ousc",
@@ -39,17 +39,17 @@ class WhereTest : KPojo {
         )
         assertEquals(
             "${deleted()} and `sex` = :sex and `active` = :active and `user_name` = :userName and `age` = :age",
-            koto.sql.trim()
+            prepared.sql.trim()
         )
         assertEquals(
-            expectedParamMap, koto.paramMap
+            expectedParamMap, prepared.paramMap
         )
     }
 
 
     @Test
     fun testMapFunc() { // 测试覆盖参数功能
-        val koto = Where(searchData).map("active" to false).build()
+        val (prepared) = Where(searchData).map("active" to false)
         val expectedParamMap = mutableMapOf(
             "id" to null,
             "userName" to "ousc",
@@ -65,17 +65,17 @@ class WhereTest : KPojo {
         )
         assertEquals(
             "${deleted()} and `sex` = :sex and `active` = :active and `user_name` = :userName and `age` = :age",
-            koto.sql.trim()
+            prepared.sql.trim()
         )
         assertEquals(
-            expectedParamMap, koto.paramMap
+            expectedParamMap, prepared.paramMap
         )
     }
 
 
     @Test
     fun testDeletedFunc() { // 测试查询已删除功能
-        val koto = Where(searchData).deleted().build()
+        val (prepared) = Where(searchData).deleted()
         val expectedParamMap = mutableMapOf(
             "id" to null,
             "userName" to "ousc",
@@ -91,16 +91,16 @@ class WhereTest : KPojo {
         )
         assertEquals(
             "${deleted(1)} and `sex` = :sex and `active` = :active and `user_name` = :userName and `age` = :age",
-            koto.sql.trim()
+            prepared.sql.trim()
         )
         assertEquals(
-            expectedParamMap, koto.paramMap
+            expectedParamMap, prepared.paramMap
         )
     }
 
     @Test
     fun testSuffixFunc() { // 测试后缀功能
-        val koto = Where(searchData).suffix("group by sex").build()
+        val (prepared) = Where(searchData).suffix("group by sex")
         val expectedParamMap = mutableMapOf(
             "id" to null,
             "userName" to "ousc",
@@ -116,16 +116,16 @@ class WhereTest : KPojo {
         )
         assertEquals(
             "${deleted()} and `sex` = :sex and `active` = :active and `user_name` = :userName and `age` = :age group by sex",
-            koto.sql.trim()
+            prepared.sql.trim()
         )
         assertEquals(
-            expectedParamMap, koto.paramMap
+            expectedParamMap, prepared.paramMap
         )
     }
 
-    @Test
-    fun testSuger() { // 测试复杂查询情况
-        val searchData = UserInfo(
+    @Test //测试复杂功能
+    fun testComplexFunc() {
+        val user = UserInfo(
             userName = "ousc",
             nickName = "daiyue",
             telephone = "13800138000",
@@ -137,7 +137,7 @@ class WhereTest : KPojo {
             sex = "male",
             age = 99
         )
-        val koto = Where(searchData) {
+        val (prepared) = Where(user) {
             it::userName.eq() and
                     it::active.eq() and
                     it::nickName.like().matchLeft() and
@@ -160,7 +160,7 @@ class WhereTest : KPojo {
                     } and
                     "`sex` is not null" and
                     "`age` < 50"
-        }.build()
+        }
 
         val expectedParamMap = mutableMapOf(
             "active" to true,
@@ -185,16 +185,16 @@ class WhereTest : KPojo {
         )
         assertEquals(
             "${deleted()} and `user_name` = :userName and `active` = :active and `nick_name` like :nickName and `telephone` != :telephone and `age` between :ageMin and :ageMax and `qty` > :qtyMin and `weight` < :weightMax and `height` >= :heightMin and `length` <= :lengthMax and `depth` between :depthMin and :depthMax and `birthday` between :birthdayMin and :birthdayMax and `roles` in (:roles) and `email_address` is null and `habit` is not null and DATE_FORMAT(`birthday`, '%Y-%m-%d') = :birthday and `height` > 175 and `sex` is not null and `age` < 50",
-            koto.sql.trim()
+            prepared.sql.trim()
         )
         assertEquals(
-            expectedParamMap, koto.paramMap
+            expectedParamMap, prepared.paramMap
         )
     }
 
     @Test
     fun testUsageForOr() {
-        val searchData = UserInfo(
+        val user = UserInfo(
             userName = "ousc",
             nickName = "daiyue",
             telephone = "13800138000",
@@ -221,21 +221,21 @@ class WhereTest : KPojo {
             "age" to 99,
             "ageMax" to 99
         )
-        val koto = Where(searchData) {
+        val (prepared) = Where(user) {
             ("userName".eq() or "nickName".eq()) and
                     ("telephone".eq() or "emailAddress".eq()) and
                     ("emailAddress".eq() or "roles".isIn(listOf("admin", "user"))) and
                     ("habit".eq() or "active".eq()) and
                     ("birthday".eq() or "age".lt()) and
                     "srq is not null"
-        }.build()
+        }
 
         assertEquals(
             "${deleted()} and (`user_name` = :userName or `nick_name` = :nickName) and (`telephone` = :telephone or `email_address` = :emailAddress) and (`email_address` = :emailAddress or `roles` in (:roles)) and (`habit` = :habit or `active` = :active) and (`birthday` = :birthday or `age` < :ageMax) and srq is not null",
-            koto.sql.trim()
+            prepared.sql.trim()
         )
         assertEquals(
-            expectedParamMap, koto.paramMap
+            expectedParamMap, prepared.paramMap
         )
     }
 }

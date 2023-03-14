@@ -6,4 +6,6 @@ package com.kotoframework.interfaces
 interface KotoDataSet {
     val sql: String
     val paramMap: Map<String, Any?>
+    operator fun component1() = sql
+    operator fun component2() = paramMap
 }

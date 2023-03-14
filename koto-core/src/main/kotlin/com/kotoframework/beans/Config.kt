@@ -10,6 +10,16 @@ import kotlin.reflect.KClass
 /**
  * Created by sundaiyue on 2023/1/28 18:21
  */
+
+/**
+ * Koto config
+ *
+ * @param type annotation type
+ * @param enabled whether to enable this annotation
+ * @param column column name
+ * @constructor Create empty Koto config
+ * @author ousc
+ */
 class Config(
     val type: KClass<*>,
     var enabled: Boolean,

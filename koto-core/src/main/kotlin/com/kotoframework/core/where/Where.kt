@@ -193,4 +193,5 @@ open class Where<T : KPojo>(
         )
     }
 
+    open operator fun component1() = build()
 }

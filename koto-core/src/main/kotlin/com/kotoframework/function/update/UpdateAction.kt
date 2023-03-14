@@ -3,7 +3,6 @@ package com.kotoframework.function.update
 import com.kotoframework.beans.KotoOperationSet
 import com.kotoframework.core.where.Where
 import com.kotoframework.definition.*
-import com.kotoframework.*
 import com.kotoframework.core.condition.*
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoJdbcWrapper
@@ -65,9 +64,9 @@ class UpdateAction<T : KPojo>(
     fun byId(id: Number = paramMap["id@New"] as Number): KotoOperationSet<UpdateSetClause<T>, T> {
         paramMap["id"] = id
         return KotoOperationSet(
-            jdbcWrapper,
             "$sql where id = :id".rmRedundantBlk(),
-            paramMap
+            paramMap,
+            jdbcWrapper = jdbcWrapper
         )
     }
 
@@ -81,9 +80,9 @@ class UpdateAction<T : KPojo>(
         paramMap["ids"] = ids
         paramMap["updateTime"] = currentTime
         return KotoOperationSet(
-            jdbcWrapper,
             "$sql where ids in (:ids)".rmRedundantBlk(),
-            paramMap
+            paramMap,
+            jdbcWrapper = jdbcWrapper
         )
     }
 
@@ -114,6 +113,6 @@ class UpdateAction<T : KPojo>(
             )
             .build()
         paramMap.putAll(koto.paramMap)
-        return KotoOperationSet(jdbcWrapper, koto.sql, paramMap)
+        return KotoOperationSet(koto.sql, paramMap, jdbcWrapper = jdbcWrapper)
     }
 }

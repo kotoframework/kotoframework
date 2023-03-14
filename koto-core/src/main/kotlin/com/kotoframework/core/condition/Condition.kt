@@ -6,8 +6,24 @@ import kotlin.reflect.KCallable
 /**
  * Created by sundaiyue on 2022/3/25 09:30
  */
+
+/**
+ * Condition
+ *
+ * @property parameterName
+ * @property kCallable
+ * @constructor Create empty Condition
+ * @author ousc
+ */
 class Condition(private var parameterName: String = "Unknown", private val kCallable: KCallable<*>? = null) {
 
+    /**
+     * `getReName` is a function that returns a string.
+     *
+     * @param suffix
+     * @return String
+     * @author ousc
+     */
     private fun getReName(suffix: String = ""): String {
         return parameterName + suffix
     }
@@ -27,6 +43,7 @@ class Condition(private var parameterName: String = "Unknown", private val kCall
      * @param not Boolean = false,
      * @param tableName The table name to be used in the query.
      * @return LikeCriteria
+     * @author ousc
      */
     fun like(
         expression: String?,
@@ -49,6 +66,7 @@ class Condition(private var parameterName: String = "Unknown", private val kCall
      * @param expression The expression to be used in the LIKE clause.
      * @param tableName The name of the table to use in the query.
      * @return LikeCriteria
+     * @author ousc
      */
     fun notLike(
         expression: String?,
@@ -64,6 +82,7 @@ class Condition(private var parameterName: String = "Unknown", private val kCall
      * @param not Whether to use the not equal operator
      * @param tableName The table name to be queried.
      * @return Criteria
+     * @author ousc
      */
     fun eq(
         value: Any?,
@@ -87,6 +106,7 @@ class Condition(private var parameterName: String = "Unknown", private val kCall
      * @param value The value to compare against.
      * @param tableName The name of the table to use in the query.
      * @return Criteria
+     * @author ousc
      */
     fun notEq(
         value: Any?,
@@ -102,6 +122,7 @@ class Condition(private var parameterName: String = "Unknown", private val kCall
      * @param tableName The table name of the field, which is used to distinguish the field name when the field name is the
      * same.
      * @return Criteria
+     * @author ousc
      */
     fun gt(
         value: Any?,
@@ -123,6 +144,7 @@ class Condition(private var parameterName: String = "Unknown", private val kCall
      * @param value The value of the condition
      * @param tableName The table name to be queried.
      * @return Criteria
+     * @author ousc
      */
     fun ge(
         value: Any?,
@@ -144,6 +166,7 @@ class Condition(private var parameterName: String = "Unknown", private val kCall
      * @param value The value of the condition
      * @param tableName The table name to be queried.
      * @return Criteria
+     * @author ousc
      */
     fun lt(
         value: Any?,
@@ -165,6 +188,7 @@ class Condition(private var parameterName: String = "Unknown", private val kCall
      * @param value The value of the condition
      * @param tableName The table name to be queried.
      * @return Criteria
+     * @author ousc
      */
     fun le(
         value: Any?,
@@ -188,6 +212,7 @@ class Condition(private var parameterName: String = "Unknown", private val kCall
      * @param tableName The table name of the field, which is used to distinguish the field name when the field name is the
      * same.
      * @return A Criteria object
+     * @author ousc
      */
     fun between(
         range: ClosedRange<*>?,
@@ -205,7 +230,14 @@ class Condition(private var parameterName: String = "Unknown", private val kCall
         )
     }
 
-    /* A function that takes a `ClosedRange<T>?` and a `String?` and returns a `Criteria` */
+   /**
+     * `notBetween` is a function that takes a range and a table name and returns a `Criteria` object.
+     *
+     * @param range The range of values to be queried.
+     * @param tableName The name of the table to use in the query.
+     * @return Criteria
+     * @author ousc
+     */
     inline fun <reified T : Comparable<T>> notBetween(
         range: ClosedRange<T>?,
         tableName: String? = null
@@ -222,6 +254,7 @@ class Condition(private var parameterName: String = "Unknown", private val kCall
      * @param not Whether to use not in
      * @param tableName The table name, which is used to distinguish the same field name in different tables.
      * @return Criteria
+     * @author ousc
      */
     fun isIn(
         list: Collection<*>?,
@@ -246,6 +279,7 @@ class Condition(private var parameterName: String = "Unknown", private val kCall
      * @param list The list of values to check against.
      * @param tableName The name of the table to use in the query.
      * @return Criteria
+     * @author ousc
      */
     fun notIn(
         list: Collection<*>?,
@@ -265,6 +299,7 @@ class Condition(private var parameterName: String = "Unknown", private val kCall
      * @param not Whether to use the NOT operator
      * @param tableName The table name to be queried.
      * @return Criteria
+     * @author ousc
      */
     fun isNull(
         not: Boolean = false,
@@ -287,6 +322,7 @@ class Condition(private var parameterName: String = "Unknown", private val kCall
      *
      * @param tableName The name of the table to use. If null, the default table will be used.
      * @return Criteria
+     * @author ousc
      */
     fun notNull(
         tableName: String? = null

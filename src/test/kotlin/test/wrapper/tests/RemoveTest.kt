@@ -18,7 +18,7 @@ class RemoveTest {
 
     @Test
     fun testBasicRemove() { // 测试基础删除功能
-        val koto = remove(TbUser()).byId(1)
+        val (sql, paramMap) = remove(TbUser()).byId(1)
         assertEquals(
             mapOf(
                 "id" to 1,
@@ -31,16 +31,17 @@ class RemoveTest {
                 "userName" to null,
                 "age" to null,
                 "email" to null
-            ), koto.paramMap
+            ), paramMap
         )
+
         assertEquals(
-            "delete from tb_user where id = :id", koto.sql
+            "delete from tb_user where id = :id", sql
         )
     }
 
     @Test
     fun testDeleteByIds() { //测试通过id列表删除
-        val koto = remove(TbUser()).byIds(listOf(1, 2, 3, 4))
+        val (sql, paramMap) = remove(TbUser()).byIds(listOf(1, 2, 3, 4))
         assertEquals(
             mapOf(
                 "ids" to listOf(1, 2, 3, 4),
@@ -55,16 +56,16 @@ class RemoveTest {
                 "age" to null,
                 "email" to null
             ),
-            koto.paramMap
+            paramMap
         )
         assertEquals(
-            "delete from tb_user where id in (:ids)", koto.sql
+            "delete from tb_user where id in (:ids)", sql
         )
     }
 
     @Test
     fun testDeleteByMultiplePairs() { //测试通过多个键值对删除
-        val koto = remove(TbUser()).by(
+        val (sql, paramMap) = remove(TbUser()).by(
             "userName" to "ousc",
             "sex" to "男",
             "city" to "hangzhou"
@@ -82,20 +83,20 @@ class RemoveTest {
                 "id" to null,
                 "age" to null,
                 "email" to null
-            ), koto.paramMap
+            ), paramMap
         )
         assertEquals(
             "delete from tb_user where ${deleted()} and `user_name` = :userName and `sex` = :sex and `city` = :city",
-            koto.sql.trim()
+            sql
         )
     }
 
     @Test
     fun testDeleteByDto() { // 测试通过Dto删除
-        val deleteDto = TbUser(
+        val user = TbUser(
             userName = "XiaoQi"
         )
-        val koto = remove(deleteDto).where().build()
+        val (prepared) = remove(user).where()
         assertEquals(
             mapOf(
                 "age" to null,
@@ -108,21 +109,21 @@ class RemoveTest {
                 "sex" to null,
                 "telephone" to null,
                 "userName" to "XiaoQi",
-            ), koto.paramMap
+            ), prepared.paramMap
         )
         assertEquals(
             "delete from tb_user where ${deleted()} and birthday is null and password is null and sex is null and nickname is null and telephone is null and avatar is null and id is null and `user_name` = :userName and age is null and email is null",
-            koto.sql.trim()
+            prepared.sql
         )
     }
 
     @Test
     fun testSoftDelete() { // 测试逻辑删除
-        val koto = remove(TbUser()).soft().byId(1)
+        val (sql, paramMap) = remove(TbUser()).soft().byId(1)
         assertEquals(
             mapOf(
                 "id" to 1,
-                "deleteTime" to koto.paramMap["deleteTime"],
+                "deleteTime" to paramMap["deleteTime"],
                 "birthday" to null,
                 "password" to null,
                 "sex" to null,
@@ -132,21 +133,21 @@ class RemoveTest {
                 "userName" to null,
                 "age" to null,
                 "email" to null
-            ), koto.paramMap
+            ), paramMap
         )
         assertEquals(
-            "update tb_user set ${deleted(1)}, `delete_time` = :deleteTime where id = :id", koto.sql
+            "update tb_user set ${deleted(1)}, `delete_time` = :deleteTime where id = :id", sql
         )
     }
 
     @Test
     fun removeWhereWithLambda() {
-        val deleteDto = TbUser(
+        val user = TbUser(
             userName = "XiaoQi"
         )
-        val koto = remove(deleteDto).where {
+        val (prepared) = remove(user).where {
             it::userName.eq("XiaoLiu")
-        }.build()
+        }
 
         assertEquals(
             mapOf(
@@ -160,11 +161,11 @@ class RemoveTest {
                 "sex" to null,
                 "telephone" to null,
                 "userName" to "XiaoLiu",
-            ), koto.paramMap
+            ), prepared.paramMap
         )
         assertEquals(
             "delete from tb_user where ${deleted()} and `user_name` = :userName",
-            koto.sql.trim()
+            prepared.sql.trim()
         )
     }
 }

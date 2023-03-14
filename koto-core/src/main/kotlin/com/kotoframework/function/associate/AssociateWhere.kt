@@ -1016,6 +1016,8 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
         }
     }
 
+    operator fun component1() = build()
+
 
     inline fun <reified T> queryForList(jdbcWrapper: KotoJdbcWrapper? = kotoJdbcWrapper): List<T> {
         return this.build().queryForList<T>(jdbcWrapper)

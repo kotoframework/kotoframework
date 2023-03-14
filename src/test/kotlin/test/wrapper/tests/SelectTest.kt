@@ -6,10 +6,12 @@ import com.kotoframework.definition.asc
 import com.kotoframework.definition.desc
 import com.kotoframework.function.select.select
 import com.kotoframework.core.condition.*
+import com.kotoframework.core.future.find
+import com.kotoframework.core.future.findOne
 import com.kotoframework.core.future.from
 import com.kotoframework.core.future.table
-import test.wrapper.beans.TbUser
 import com.kotoframework.utils.Common.deleted
+import test.wrapper.beans.TbUser
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -22,42 +24,43 @@ class SelectTest {
     }
 
     @Test
-    fun testMultipleSelect() { // 测试复杂的查询情况
-        //以下9种写法实际是等价的
-        print(select(TbUser(1)).where().build().sql)
-        print(TbUser(1).select().where().build().sql)
-        print(from<TbUser> { it.select().by(it::id to 1) }.build().sql)
-        print(from<TbUser> { it.select().where(it::id.eq(1)) }.build().sql)
+    fun testSelect() { // test select
+        //In fact, the following ways are equivalent
+        // select(TbUser(1)).where.query()
+        // select(TbUser(1)).where().query()
+        // select(TbUser(1)).by(TbUser::id).query()
+        // select(TbUser(1)).by("id").query()
+        // select<TbUser>().by(TbUser::id to 1).query()
+        // select<TbUser>().by("id" to 1).query()
+        // select<TbUser>().where(TbUser::id.eq(1)).query()
+        // select<TbUser>().where{ it::id.eq(1) }.query()
+        // TbUser(1).select.where.query()
+        // TbUser(1).select().where.query()
+        // TbUser(1).select().where().query()
+        // from<TbUser> { user -> user.select.by(user::id to 1) }.query()
+        // from<TbUser> { user -> user.select.where(user::id.eq(1)) }.query()
+        // from(TbUser(1)) { user -> user.select.by(user::id) }.query()
+        // from(TbUser(1)) { user -> user.select.by("id") }.query()
+        // from(TbUser(1)) { user -> user.select.where }.query()
+        // from(TbUser(1)) { user -> user.select.where() }.query()
+        // from(TbUser(1)) { user -> user.select.where(user::id.eq) }.query()
+        // from(TbUser(1)) { user -> user.select.where(user::id.eq()) }.query()
 
-        table<TbUser> {
-            println(it.select().by("id" to 1).build().sql)
-            println(it.select().by(TbUser::id to 1).build().sql)
-        }
 
-        table(TbUser(1)) {
-            println(it.select().where().build().sql)
-            println(it.select().by("id").build().sql)
-            println(it.select().by(TbUser::id).build().sql)
-            println(it.select().where { "id".eq() }.build().sql)
-            println(it.select().where { it::id.eq() }.build().sql)
-        }
-
-        println(select<TbUser>().where { "id".eq(1) }.build().sql)
-        println(select<TbUser>().where { it::id.eq(1) }.build().sql)
-
-        val searchDto = TbUser(
+        val user = TbUser(
             userName = "ousc",
             age = 15
         )
-        val koto = select(searchDto).where().distinct().page(1, 20).suffix("order by update_time desc").build()
+        val (prepared) = user.select().where().distinct().page(1, 20).orderBy(user::updateTime.desc())
+
         assertEquals(
-            "select distinct `age`, `avatar`, DATE_FORMAT(`birthday`, '%Y-%m-%d') as `birthday`, `email_address` as `emailAddress`, `id`, `nickname`, `password`, `sex`, `phone_number` as `phoneNumber`, `user_name` as `userName` from tb_user where ${deleted()} and `user_name` = :userName and `age` = :age order by update_time desc limit 20 offset 0",
-            koto.sql
+            "select distinct `age`, `avatar`, DATE_FORMAT(`birthday`, '%Y-%m-%d') as `birthday`, `email_address` as `emailAddress`, `id`, `nickname`, `password`, `sex`, `phone_number` as `phoneNumber`, `user_name` as `userName` from tb_user where ${deleted()} and `user_name` = :userName and `age` = :age order by `update_time` DESC limit 20 offset 0",
+            prepared.sql
         )
 
         assertEquals(
-            "select count(*) from (select 1 from tb_user where ${deleted()} and `user_name` = :userName and `age` = :age order by update_time desc ) as t",
-            convertCountSql(koto.sql)
+            "select count(*) from (select 1 from tb_user where ${deleted()} and `user_name` = :userName and `age` = :age order by `update_time` DESC ) as t",
+            convertCountSql(prepared.sql)
         )
 
         val expectedMap = mapOf<String, Any?>(
@@ -74,14 +77,13 @@ class SelectTest {
         )
         assertEquals(
             expectedMap,
-            koto.paramMap
+            prepared.paramMap
         )
     }
 
     @Test
     fun testSelectBy() {
-//        val koto = select(TbUser::updateTime, TbUser::birthday).by("id" to 1).build()
-        val koto = from<TbUser> { it.select(it::userName, it::birthday).by(it::id to 1) }.build()
+        val (prepared) = from<TbUser> { user -> user.select(user::userName, user::birthday).by(user::id to 1) }
         val expectedMap = mapOf<String, Any?>(
             "age" to null,
             "avatar" to null,
@@ -96,24 +98,24 @@ class SelectTest {
         )
         assertEquals(
             "select `user_name` as `userName`, DATE_FORMAT(`birthday`, '%Y-%m-%d') as `birthday` from tb_user where ${deleted()} and `id` = :id",
-            koto.sql.trim()
+            prepared.sql.trim()
         )
         assertEquals(
             expectedMap,
-            koto.paramMap
+            prepared.paramMap
         )
     }
 
     @Test
     fun testLimitOne() { // 测试只要第一条数据的情况
-        val searchDto = TbUser(
+        val user = TbUser(
             userName = "ousc",
             age = 15
         )
-        val koto = select(searchDto).where().first().build()
+        val (prepared) = user.select().where().first()
         assertEquals(
             "select `age`, `avatar`, DATE_FORMAT(`birthday`, '%Y-%m-%d') as `birthday`, `email_address` as `emailAddress`, `id`, `nickname`, `password`, `sex`, `phone_number` as `phoneNumber`, `user_name` as `userName` from tb_user where ${deleted()} and `user_name` = :userName and `age` = :age limit 1",
-            koto.sql.trim()
+            prepared.sql.trim()
         )
 
         val expectedMap = mapOf<String, Any?>(
@@ -130,22 +132,22 @@ class SelectTest {
         )
         assertEquals(
             expectedMap,
-            koto.paramMap
+            prepared.paramMap
         )
     }
 
 
     @Test
     fun testOnlySelectPartOfFields() {
-        val searchDto = TbUser(
+        val user = TbUser(
             userName = "ousc",
             age = 15
         )
-        val koto = select(searchDto, "userName", "age" to "AGE").where().first().build()
+        val (prepared) = select(user, "userName", "age" to "AGE").where().first()
 
         assertEquals(
             "select `user_name` as `userName`, `age` as `AGE` from tb_user where ${deleted()} and `user_name` = :userName and `age` = :age limit 1",
-            koto.sql.trim()
+            prepared.sql.trim()
         )
 
         val expectedMap = mapOf<String, Any?>(
@@ -162,29 +164,28 @@ class SelectTest {
         )
         assertEquals(
             expectedMap,
-            koto.paramMap
+            prepared.paramMap
         )
     }
 
     @Test
     fun testFuture() {
-        val userInfo = TbUser(
+        val user = TbUser(
             userName = "ousc",
             age = 15
         )
 
-        table(userInfo) {
-            val koto =
+        table(user) {
+            val (prepared) =
                 select(it, it::id)
-                .where(it::userName.eq and it::age.eq.alias("aage"))
-                .distinct()
-                .orderBy(it::id.desc(), it::updateTime.asc())
-                .groupBy(it::sex)
-                .build()
+                    .where(it::userName.eq and it::age.eq.alias("aage"))
+                    .distinct()
+                    .orderBy(it::id.desc(), it::updateTime.asc())
+                    .groupBy(it::sex)
 
             assertEquals(
                 "select distinct `id` from tb_user where ${deleted()} and `user_name` = :userName and `age` = :aage group by `sex` order by `id` DESC,`update_time` ASC",
-                koto.sql.trim()
+                prepared.sql.trim()
             )
 
             val expectedMap = mapOf<String, Any?>(
@@ -203,7 +204,7 @@ class SelectTest {
 
             assertEquals(
                 expectedMap,
-                koto.paramMap
+                prepared.paramMap
             )
         }
     }

@@ -16,6 +16,13 @@ import kotlin.reflect.jvm.javaMethod
  *
  * */
 
+/**
+ * Eq
+ *
+ * @param value
+ * @return Criteria
+ * @author ousc
+ */
 fun String.eq(
     value: Any? = null
 ): Criteria {
@@ -24,6 +31,13 @@ fun String.eq(
 
 val String.eq: Criteria get() = eq()
 
+/**
+ * NotEq
+ *
+ * @param value
+ * @return Criteria
+ * @author ousc
+ */
 fun String.notEq(
     value: Any? = null
 ): Criteria {
@@ -47,6 +61,30 @@ fun String.notLike(
 }
 
 val String.notLike: Criteria get() = notLike()
+
+fun String.matchLeft(
+    value: String? = null
+): LikeCriteria {
+    return Condition(this).like(value).apply { pos = LikePosition.Left }
+}
+
+val String.matchLeft: Criteria get() = matchLeft()
+
+fun String.matchRight(
+    value: String? = null
+): LikeCriteria {
+    return Condition(this).like(value).apply { pos = LikePosition.Right }
+}
+
+val String.matchRight: Criteria get() = matchRight()
+
+fun String.matchBoth(
+    value: String? = null
+): LikeCriteria {
+    return Condition(this).like(value).apply { pos = LikePosition.Both }
+}
+
+val String.matchBoth: Criteria get() = matchBoth()
 
 fun String.gt(
     value: Any? = null
@@ -261,6 +299,30 @@ fun KCallable<*>.notLike(
 
 val KCallable<*>.notLike get() = notLike()
 
+fun KCallable<*>.matchLeft(
+    value: String? = null
+): LikeCriteria {
+    return Condition(name, this).like(value).apply { pos = LikePosition.Left }
+}
+
+val KCallable<*>.matchLeft: Criteria get() = matchLeft()
+
+fun KCallable<*>.matchRight(
+    value: String? = null
+): LikeCriteria {
+    return Condition(name, this).like(value).apply { pos = LikePosition.Right }
+}
+
+val KCallable<*>.matchRight: Criteria get() = matchRight()
+
+fun KCallable<*>.matchBoth(
+    value: String? = null
+): LikeCriteria {
+    return Condition(name, this).like(value).apply { pos = LikePosition.Both }
+}
+
+val KCallable<*>.matchBoth: Criteria get() = matchBoth()
+
 fun KCallable<*>.gt(
     value: Any? = null
 ): Criteria {
@@ -349,6 +411,7 @@ fun KCallable<*>.notIn(
 ): Criteria {
     return Condition(name, this).notIn(value, receiver.tableName)
 }
+
 fun KCallable<*>.isIn(
     vararg value: Any?
 ): Criteria {
@@ -384,24 +447,6 @@ fun List<Criteria?>.arbitrary(): Criteria {
 fun Criteria?.ifNoValue(strategy: (Criteria) -> NoValueStrategy): Criteria? {
     return this?.apply {
         this.noValueStrategy = strategy(this)
-    }
-}
-
-fun LikeCriteria?.matchLeft(): Criteria? {
-    return this?.apply {
-        pos = Left
-    }
-}
-
-fun LikeCriteria?.matchRight(): Criteria? {
-    return this?.apply {
-        pos = Right
-    }
-}
-
-fun LikeCriteria?.matchBoth(): Criteria? {
-    return this?.apply {
-        pos = Both
     }
 }
 

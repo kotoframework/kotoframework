@@ -32,88 +32,123 @@ class CreateTest {
 
 
     @Test
-    fun testBasicCreate() {
-        val koto = create(user).build()
+    fun testBasicCreate() { // test basic create
+        val (prepared) = create(user)
         val expectedParamMap =
-            user.toMutableMap("updateTime" to koto.paramMap["updateTime"], "createTime" to koto.paramMap["createTime"])
+            user.toMutableMap(
+                "updateTime" to prepared.paramMap["updateTime"],
+                "createTime" to prepared.paramMap["createTime"]
+            )
         assertEquals(
             "insert into tb_user (`age`,`avatar`,`birthday`,`email_address`,`id`,`nickname`,`password`,`sex`,`phone_number`,`user_name`,`update_time`,`create_time`) values (:age,:avatar,:birthday,:email,:id,:nickname,:password,:sex,:telephone,:userName,:updateTime,:createTime)",
-            koto.sql.trim()
+            prepared.sql.trim()
         )
         assertEquals(
-            expectedParamMap, koto.paramMap
+            expectedParamMap, prepared.paramMap
         )
     }
 
     @Test
-    fun testOnId() { // 测试当id相同时update，id需建立索引
-        val koto = create(user).onId().build()
+    fun testOnId() { // test on id
+        val (prepared) = create(user).onId()
         val expectedParamMap =
-            user.toMutableMap("updateTime" to koto.paramMap["updateTime"], "createTime" to koto.paramMap["createTime"])
+            user.toMutableMap(
+                "updateTime" to prepared.paramMap["updateTime"],
+                "createTime" to prepared.paramMap["createTime"]
+            )
         assertEquals(
             "replace into tb_user (`age`,`avatar`,`birthday`,`email_address`,`id`,`nickname`,`password`,`sex`,`phone_number`,`user_name`,`update_time`,`create_time`) values (:age,:avatar,:birthday,:email,:id,:nickname,:password,:sex,:telephone,:userName,:updateTime,:createTime)",
-            koto.sql.trim()
+            prepared.sql.trim()
         )
         assertEquals(
-            expectedParamMap, koto.paramMap
+            expectedParamMap, prepared.paramMap
         )
     }
 
     @Test
-    fun testOnFields() { // 测试当满足多个条件时更新记录，要先查，速度慢
-        val koto = create(user).on("userName", "birthday", "sex").update("userName").build()
+    fun testOnFields() { // test on fields
+        val (prepared) = create(user).on("userName", "birthday", "sex").update("userName")
         val expectedParamMap =
-            user.toMutableMap("updateTime" to koto.paramMap["updateTime"], "createTime" to koto.paramMap["createTime"])
+            user.toMutableMap(
+                "updateTime" to prepared.paramMap["updateTime"],
+                "createTime" to prepared.paramMap["createTime"]
+            )
 
         assertEquals(
             "insert into tb_user (`age`,`avatar`,`birthday`,`email_address`,`id`,`nickname`,`password`,`sex`,`phone_number`,`user_name`,`update_time`,`create_time`) select :age,:avatar,:birthday,:email,:id,:nickname,:password,:sex,:telephone,:userName,:updateTime,:createTime from dual where not exists (select 1 from tb_user where ${deleted()} and `birthday` = :birthday and `sex` = :sex and `user_name` = :userName)",
-            koto.sql.trim()
+            prepared.sql.trim()
         )
 
         assertEquals(
-            expectedParamMap, koto.paramMap
+            expectedParamMap, prepared.paramMap
         )
 
         assertEquals(
             "update tb_user set `user_name` = :userName@New, `update_time` = :updateTime@New where ${deleted()} and `birthday` = :birthday and `sex` = :sex and `user_name` = :userName",
-            koto.then?.sql?.trim()
+            prepared.then?.sql?.trim()
         )
     }
 
     @Test
-    fun testCreateExpect() {
-        val koto = create(user).on("userName", "birthday", "sex").except("id").build()
+    fun testCreateExpect() { // test create except
+        val (prepared) = create(user).on("userName", "birthday", "sex").except("id")
         assertEquals(
             "insert into tb_user (`age`,`avatar`,`birthday`,`email_address`,`id`,`nickname`,`password`,`sex`,`phone_number`,`user_name`,`update_time`,`create_time`) select :age,:avatar,:birthday,:email,:id,:nickname,:password,:sex,:telephone,:userName,:updateTime,:createTime from dual where not exists (select 1 from tb_user where ${deleted()} and `birthday` = :birthday and `sex` = :sex and `user_name` = :userName)",
-            koto.sql.trim()
+            prepared.sql.trim()
         )
         val expectedParamMap =
-            user.toMutableMap("updateTime" to koto.paramMap["updateTime"], "createTime" to koto.paramMap["createTime"])
+            user.toMutableMap(
+                "updateTime" to prepared.paramMap["updateTime"],
+                "createTime" to prepared.paramMap["createTime"]
+            )
 
         assertEquals(
-            expectedParamMap, koto.paramMap
+            expectedParamMap, prepared.paramMap
         )
 
         assertEquals(
             "update tb_user set `age` = :age@New, `avatar` = :avatar@New, `birthday` = :birthday@New, `email_address` = :email@New, `nickname` = :nickname@New, `password` = :password@New, `sex` = :sex@New, `phone_number` = :telephone@New, `user_name` = :userName@New, `update_time` = :updateTime@New where ${deleted()} and `birthday` = :birthday and `sex` = :sex and `user_name` = :userName",
-            koto.then?.sql?.trim()
+            prepared.then?.sql?.trim()
         )
     }
 
     @OptIn(NeedTableIndexes::class)
     @Test
-    fun testOnDuplicateUpdate() { // 测试当id相同时update
-        val koto = create(user).onDuplicateUpdate().update("userName").build()
+    fun testOnDuplicateUpdate() { // test on duplicate update
+        val (prepared) = create(user).onDuplicateUpdate().update("userName")
         val expectedParamMap =
-            user.toMutableMap("updateTime" to koto.paramMap["updateTime"], "createTime" to koto.paramMap["createTime"])
+            user.toMutableMap(
+                "updateTime" to prepared.paramMap["updateTime"],
+                "createTime" to prepared.paramMap["createTime"]
+            )
 
         assertEquals(
             "insert into tb_user (`age`,`avatar`,`birthday`,`email_address`,`id`,`nickname`,`password`,`sex`,`phone_number`,`user_name`,`update_time`,`create_time`) values (:age,:avatar,:birthday,:email,:id,:nickname,:password,:sex,:telephone,:userName,:updateTime,:createTime) on duplicate key update `user_name` = :userName",
-            koto.sql.trim()
+            prepared.sql.trim()
         )
 
         assertEquals(
-            expectedParamMap, koto.paramMap
+            expectedParamMap, prepared.paramMap
         )
+    }
+
+    @Test
+    fun testCreateUseExpand() { // test create use expand
+        val (prepared) = user.create()
+        val expectedParamMap =
+            user.toMutableMap(
+                "updateTime" to prepared.paramMap["updateTime"],
+                "createTime" to prepared.paramMap["createTime"]
+            )
+
+        assertEquals(
+            "insert into tb_user (`age`,`avatar`,`birthday`,`email_address`,`id`,`nickname`,`password`,`sex`,`phone_number`,`user_name`,`update_time`,`create_time`) values (:age,:avatar,:birthday,:email,:id,:nickname,:password,:sex,:telephone,:userName,:updateTime,:createTime)",
+            prepared.sql.trim()
+        )
+
+        assertEquals(
+            expectedParamMap, prepared.paramMap
+        )
+
     }
 }

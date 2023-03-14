@@ -21,7 +21,7 @@ import kotlin.reflect.full.findAnnotation
 const val ALL_FIELDS = "*"
 
 
-@JvmName("generic")
+@JvmName("selectUseExpand")
 inline fun <reified T : KPojo> T.select(vararg fields: Field, jdbcWrapper: KotoJdbcWrapper? = null): SelectAction<T> {
     return com.kotoframework.function.select.select(this, *fields, jdbcWrapper = jdbcWrapper)
 }
@@ -104,10 +104,24 @@ internal fun getSql(
     sql: String, field: Field, type: String, dateTimeFormat: Map<String, String>
 ): String {
     return when {
-        type == "date" -> "$sql ${dateFormatFunc(field.columnName, toSqlDate(dateTimeFormat[field.aliasName]) ?: "%Y-%m-%d", field.aliasName)}"
-        type == "datetime" -> "$sql ${dateFormatFunc(field.columnName, toSqlDate(dateTimeFormat[field.aliasName]) ?: "%Y-%m-%d %H:%i:%s", field.aliasName)}"
+        type == "date" -> "$sql ${
+            dateFormatFunc(
+                field.columnName,
+                toSqlDate(dateTimeFormat[field.aliasName]) ?: "%Y-%m-%d",
+                field.aliasName
+            )
+        }"
+
+        type == "datetime" -> "$sql ${
+            dateFormatFunc(
+                field.columnName,
+                toSqlDate(dateTimeFormat[field.aliasName]) ?: "%Y-%m-%d %H:%i:%s",
+                field.aliasName
+            )
+        }"
+
         field.columnName.contains("(") || field.columnName.lowercase().contains(" as ") -> "$sql ${field.columnName}"
-        field.columnName == field.aliasName ->  "$sql `${field.aliasName}`"
+        field.columnName == field.aliasName -> "$sql `${field.aliasName}`"
         else -> "$sql `${field.columnName}` as `${field.aliasName}`"
     }
 }

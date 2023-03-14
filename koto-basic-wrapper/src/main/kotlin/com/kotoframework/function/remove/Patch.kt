@@ -9,7 +9,7 @@ import javax.sql.DataSource
  */
 object Patch {
     fun RemoveAction<*>.execute(): KotoExecuteResult {
-        val koto = where().build()
-        return koto.execute()
+        val (prepared) = this.where()
+        return prepared.execute()
     }
 }

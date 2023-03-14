@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
  */
 object Patch {
     fun RemoveAction<*>.execute(): KotoExecuteResult {
-        return where().build().execute()
+        val (prepared) = this.where()
+        return prepared.execute()
     }
 }

@@ -11,7 +11,6 @@ import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.core.condition.isNull
 import com.kotoframework.utils.Common.currentTime
 import com.kotoframework.utils.Common.deleted
-import com.kotoframework.utils.Extension.lineToHump
 import com.kotoframework.utils.Extension.rmRedundantBlk
 import com.kotoframework.utils.Extension.tableMeta
 import com.kotoframework.utils.Extension.toMap
@@ -47,18 +46,18 @@ class RemoveAction<T : KPojo>(
     fun byId(id: Number = paramMap["id"] as Number): KotoOperationSet<RemoveWhere<T>, T> {
         paramMap["id"] = id
         return KotoOperationSet(
-            jdbcWrapper,
             sql = "$sql where id = :id".rmRedundantBlk(),
-            paramMap = paramMap
+            paramMap = paramMap,
+            jdbcWrapper = jdbcWrapper
         )
     }
 
     fun byIds(ids: List<Number>): KotoOperationSet<RemoveWhere<T>, T> {
         paramMap["ids"] = ids
         return KotoOperationSet(
-            jdbcWrapper,
             sql = "$sql where id in (:ids)".rmRedundantBlk(),
-            paramMap = paramMap
+            paramMap = paramMap,
+            jdbcWrapper = jdbcWrapper
         )
     }
 
@@ -69,7 +68,7 @@ class RemoveAction<T : KPojo>(
             paramMap[field.first] = field.second
         }
         val columns = fields.map { it.first }
-        val koto = Where(
+        val (sql) = Where(
             kPojo, jdbcWrapper
         ) {
             columns.map { if (paramMap[it] == null) it.isNull() else it.eq() }.arbitrary()
@@ -77,7 +76,7 @@ class RemoveAction<T : KPojo>(
             .map(*fields)
             .prefixOW("$sql where ")
             .build()
-        return KotoOperationSet(jdbcWrapper, koto.sql, koto.paramMap)
+        return KotoOperationSet(sql, paramMap, jdbcWrapper = jdbcWrapper)
     }
 
     fun where(addCondition: AddCondition<T>? = null): RemoveWhere<T> {
