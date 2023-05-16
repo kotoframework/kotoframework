@@ -1,14 +1,14 @@
 package com.kotoframework
 
 import com.kotoframework.beans.NoDataSourceSpecifiedException
-import com.kotoframework.interfaces.KotoJdbcWrapper
+import com.kotoframework.interfaces.KJdbcWrapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import javax.sql.DataSource
 
 /**
  * Created by ousc on 2022/9/19 23:24
  */
-class SpringDataWrapper : KotoJdbcWrapper() {
+class SpringDataWrapper : KJdbcWrapper() {
     var namedJdbc: NamedParameterJdbcTemplate? = null
     var dynamic: (() -> NamedParameterJdbcTemplate)? = null
     fun getNamedJdbc(jdbc: NamedParameterJdbcTemplate? = null): NamedParameterJdbcTemplate {

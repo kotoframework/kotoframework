@@ -19,5 +19,5 @@ data class UserInfo(
     val sex: String? = null,
     val habit: String? = null,
     val age: Int? = null,
-    val roles: List<String>? = null
+    val roles: String? = null
 ) : KPojo

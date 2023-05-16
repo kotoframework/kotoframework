@@ -3,8 +3,10 @@ package com.kotoframework.core.condition
 import com.kotoframework.*
 import com.kotoframework.definition.Field
 import com.kotoframework.definition.columnName
-import com.kotoframework.utils.Extension.tableAlias
-import com.kotoframework.utils.Extension.tableName
+import com.kotoframework.enums.ConditionType
+import com.kotoframework.enums.NoValueStrategy
+import com.kotoframework.utils.tableAlias
+import com.kotoframework.utils.tableName
 import com.kotoframework.utils.SqlGenerator
 import kotlin.reflect.*
 import kotlin.reflect.jvm.javaField
@@ -45,46 +47,6 @@ fun String.notEq(
 }
 
 val String.notEq: Criteria get() = notEq()
-
-fun String.like(
-    value: String? = null
-): LikeCriteria {
-    return Condition(this).like(value)
-}
-
-val String.like: LikeCriteria get() = like()
-
-fun String.notLike(
-    value: String? = null
-): LikeCriteria {
-    return Condition(this).notLike(value)
-}
-
-val String.notLike: Criteria get() = notLike()
-
-fun String.matchLeft(
-    value: String? = null
-): LikeCriteria {
-    return Condition(this).like(value).apply { pos = LikePosition.Left }
-}
-
-val String.matchLeft: Criteria get() = matchLeft()
-
-fun String.matchRight(
-    value: String? = null
-): LikeCriteria {
-    return Condition(this).like(value).apply { pos = LikePosition.Right }
-}
-
-val String.matchRight: Criteria get() = matchRight()
-
-fun String.matchBoth(
-    value: String? = null
-): LikeCriteria {
-    return Condition(this).like(value).apply { pos = LikePosition.Both }
-}
-
-val String.matchBoth: Criteria get() = matchBoth()
 
 fun String.gt(
     value: Any? = null
@@ -160,7 +122,7 @@ val String.notNull: Criteria get() = notNull()
 
 fun String.declareSql(): Criteria {
     return Criteria(
-        type = SQL, reName = this, sql = this
+        type = SQL, aliasName = this, sql = this
     )
 }
 
@@ -168,19 +130,19 @@ fun String.declareSql(): Criteria {
 
 // Field Extension Functions Start
 infix fun Criteria?.and(condition: Criteria?): Criteria {
-    val collections = mutableListOf<Criteria?>()
+    val children = mutableListOf<Criteria?>()
     listOf(this, condition).forEach {
         if (it != null) {
             if (it.type == AND) {
-                collections.addAll(it.collections)
+                children.addAll(it.children)
             } else {
-                collections.add(it)
+                children.add(it)
             }
         }
     }
     return Criteria(
-        type = ConditionType.AND, collections = collections
-    )
+        type = ConditionType.AND
+    ).apply {  this.children = children }
 }
 
 infix fun Criteria?.and(condition: String?): Criteria? {
@@ -205,17 +167,19 @@ infix fun String?.and(condition: String?): Criteria? {
 
 infix fun Criteria?.or(condition: Criteria?): Criteria? {
     if (this == null && condition == null) return null
-    val collections = mutableListOf<Criteria?>()
+    val children = mutableListOf<Criteria?>()
     listOfNotNull(this, condition).forEach {
         if (it.type == OR) {
-            collections.addAll(it.collections)
+            children.addAll(it.children)
         } else {
-            collections.add(it)
+            children.add(it)
         }
     }
     return Criteria(
-        type = ConditionType.OR, collections = collections
-    )
+        type = ConditionType.OR
+    ).apply {
+        this.children = children
+    }
 }
 
 infix fun Criteria?.or(condition: String?): Criteria? {
@@ -266,7 +230,7 @@ fun KCallable<*>.eq(
             tableName = value.receiver.tableName
         )
     }
-    return Condition(name, this).eq(value, false, receiver.tableName)
+    return Condition(name).eq(value, false, receiver.tableName)
 }
 
 val KCallable<*>.eq get() = eq()
@@ -274,59 +238,14 @@ val KCallable<*>.eq get() = eq()
 fun KCallable<*>.notEq(
     value: Any? = null
 ): Criteria {
-    return Condition(name, this).notEq(value, receiver.tableName)
+    return Condition(name).notEq(value, receiver.tableName)
 }
 
 val KCallable<*>.notEq get() = notEq()
-
-fun KCallable<*>.like(
-    expression: String? = null,
-): LikeCriteria {
-    return Condition(name, this).like(
-        expression,
-        false,
-        receiver.tableName
-    )
-}
-
-val KCallable<*>.like get() = like()
-
-fun KCallable<*>.notLike(
-    expression: String? = null,
-): LikeCriteria {
-    return Condition(name, this).notLike(expression, receiver.tableName)
-}
-
-val KCallable<*>.notLike get() = notLike()
-
-fun KCallable<*>.matchLeft(
-    value: String? = null
-): LikeCriteria {
-    return Condition(name, this).like(value).apply { pos = LikePosition.Left }
-}
-
-val KCallable<*>.matchLeft: Criteria get() = matchLeft()
-
-fun KCallable<*>.matchRight(
-    value: String? = null
-): LikeCriteria {
-    return Condition(name, this).like(value).apply { pos = LikePosition.Right }
-}
-
-val KCallable<*>.matchRight: Criteria get() = matchRight()
-
-fun KCallable<*>.matchBoth(
-    value: String? = null
-): LikeCriteria {
-    return Condition(name, this).like(value).apply { pos = LikePosition.Both }
-}
-
-val KCallable<*>.matchBoth: Criteria get() = matchBoth()
-
 fun KCallable<*>.gt(
     value: Any? = null
 ): Criteria {
-    return Condition(name, this).gt(value, receiver.tableName)
+    return Condition(name).gt(value, receiver.tableName)
 }
 
 val KCallable<*>.gt get() = gt()
@@ -334,7 +253,7 @@ val KCallable<*>.gt get() = gt()
 fun KCallable<*>.ge(
     value: Any? = null
 ): Criteria {
-    return Condition(name, this).ge(value, receiver.tableName)
+    return Condition(name).ge(value, receiver.tableName)
 }
 
 val KCallable<*>.ge get() = ge()
@@ -342,7 +261,7 @@ val KCallable<*>.ge get() = ge()
 fun KCallable<*>.lt(
     value: Any? = null
 ): Criteria {
-    return Condition(name, this).lt(value, receiver.tableName)
+    return Condition(name).lt(value, receiver.tableName)
 }
 
 val KCallable<*>.lt get() = lt()
@@ -350,7 +269,7 @@ val KCallable<*>.lt get() = lt()
 fun KCallable<*>.le(
     value: Any? = null
 ): Criteria {
-    return Condition(name, this).le(value, receiver.tableName)
+    return Condition(name).le(value, receiver.tableName)
 }
 
 val KCallable<*>.le get() = le()
@@ -358,19 +277,19 @@ val KCallable<*>.le get() = le()
 fun KCallable<*>.between(
     value: ClosedRange<*>?,
 ): Criteria {
-    return Condition(name, this).between(value, false, receiver.tableName)
+    return Condition(name).between(value, false, receiver.tableName)
 }
 
 fun KCallable<*>.notBetween(
     value: ClosedRange<*>?
 ): Criteria {
-    return Condition(name, this).notBetween(value, receiver.tableName)
+    return Condition(name).notBetween(value, receiver.tableName)
 }
 
 fun KCallable<*>.before(
     value: Any? = null
 ): Criteria {
-    return Condition(name, this).lt(value, receiver.tableName)
+    return Condition(name).lt(value, receiver.tableName)
 }
 
 val KCallable<*>.before get() = before()
@@ -378,7 +297,7 @@ val KCallable<*>.before get() = before()
 fun KCallable<*>.after(
     value: Any? = null
 ): Criteria {
-    return Condition(name, this).gt(value, receiver.tableName)
+    return Condition(name).gt(value, receiver.tableName)
 }
 
 val KCallable<*>.after get() = after()
@@ -387,7 +306,7 @@ val KCallable<*>.after get() = after()
 fun KCallable<*>.notBefore(
     value: Any? = null
 ): Criteria {
-    return Condition(name, this).ge(value, receiver.tableName)
+    return Condition(name).ge(value, receiver.tableName)
 }
 
 val KCallable<*>.notBefore get() = notBefore()
@@ -395,7 +314,7 @@ val KCallable<*>.notBefore get() = notBefore()
 fun KCallable<*>.notAfter(
     value: Any? = null
 ): Criteria {
-    return Condition(name, this).le(value, receiver.tableName)
+    return Condition(name).le(value, receiver.tableName)
 }
 
 val KCallable<*>.notAfter get() = notAfter()
@@ -403,45 +322,47 @@ val KCallable<*>.notAfter get() = notAfter()
 fun KCallable<*>.isIn(
     value: Collection<*>?
 ): Criteria {
-    return Condition(name, this).isIn(value, false, receiver.tableName)
+    return Condition(name).isIn(value, false, receiver.tableName)
 }
 
 fun KCallable<*>.notIn(
     value: Collection<*>?
 ): Criteria {
-    return Condition(name, this).notIn(value, receiver.tableName)
+    return Condition(name).notIn(value, receiver.tableName)
 }
 
 fun KCallable<*>.isIn(
     vararg value: Any?
 ): Criteria {
-    return Condition(name, this).isIn(value.toList(), false, receiver.tableName)
+    return Condition(name).isIn(value.toList(), false, receiver.tableName)
 }
 
 fun KCallable<*>.notIn(
     vararg value: Any?
 ): Criteria {
-    return Condition(name, this).notIn(value.toList(), receiver.tableName)
+    return Condition(name).notIn(value.toList(), receiver.tableName)
 }
 
 @JvmName("getIsNull")
 fun KCallable<*>.isNull(): Criteria {
-    return Condition(name, this).isNull(false, receiver.tableName)
+    return Condition(name).isNull(false, receiver.tableName)
 }
 
 val KCallable<*>.isNull get() = isNull()
 
 fun KCallable<*>.notNull(): Criteria {
-    return Condition(name, this).notNull(this.receiver.tableName)
+    return Condition(name).notNull(this.receiver.tableName)
 }
 
 val KCallable<*>.notNull get() = notNull()
 
 fun List<Criteria?>.arbitrary(): Criteria {
+    val children = this.toMutableList()
     return Criteria(
-        type = AND,
-        collections = this
-    )
+        type = AND
+    ).apply {
+        this. children = children
+    }
 }
 
 fun Criteria?.ifNoValue(strategy: (Criteria) -> NoValueStrategy): Criteria? {
@@ -452,7 +373,7 @@ fun Criteria?.ifNoValue(strategy: (Criteria) -> NoValueStrategy): Criteria? {
 
 fun Criteria.alias(newName: String): Criteria {
     return this.apply {
-        reName = newName.takeIf { it.isNotBlank() } ?: reName
+        aliasName = newName.takeIf { it.isNotBlank() } ?: aliasName
         sql = SqlGenerator.generate(this)
     }
 }
@@ -472,6 +393,6 @@ fun Criteria?.iif(expression: Boolean): Criteria? {
 )
 fun Criteria?.reName(newName: String): Criteria? {
     return this?.apply {
-        reName = newName
+        aliasName = newName
     }
 }

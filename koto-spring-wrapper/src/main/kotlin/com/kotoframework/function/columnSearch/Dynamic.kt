@@ -1,12 +1,12 @@
 package com.kotoframework.function.columnSearch
 
 import com.kotoframework.SpringDataWrapper.Companion.wrapper
-import com.kotoframework.beans.KotoResultSet
-import com.kotoframework.core.condition.receiver
+import com.kotoframework.beans.KResultSet
+import com.kotoframework.utils.receiver
 import com.kotoframework.definition.Field
 import com.kotoframework.interfaces.KPojo
-import com.kotoframework.interfaces.KotoJdbcWrapper
-import com.kotoframework.utils.Extension.tableName
+import com.kotoframework.interfaces.KJdbcWrapper
+import com.kotoframework.utils.tableName
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import kotlin.reflect.KProperty1
 
@@ -19,7 +19,7 @@ fun <T : KPojo> NamedParameterJdbcTemplate.columnSearch(
     queryFields: Collection<Field>? = null,
     suffix: String? = "order by `id` desc",
     limit: Int = 200
-): KotoResultSet<String> {
+): KResultSet<String> {
     return columnSearch(
         field.first.receiver.tableName, Pair(field.first.name, field.second), queryFields, suffix, limit, this.wrapper()
     )
@@ -31,8 +31,8 @@ fun NamedParameterJdbcTemplate.columnSearch(
     queryFields: Collection<Field>? = null,
     suffix: String? = "order by `id` desc",
     limit: Int = 200,
-    wrapper: KotoJdbcWrapper? = null
-): KotoResultSet<String> {
+    wrapper: KJdbcWrapper? = null
+): KResultSet<String> {
     return columnSearch(
         tableName, fields, queryFields, suffix, limit, wrapper ?: this.wrapper()
     )

@@ -1,19 +1,18 @@
 package com.kotoframework.utils
 
-import com.kotoframework.core.condition.Criteria
 import com.kotoframework.*
+import com.kotoframework.core.condition.Criteria
 import com.kotoframework.KotoApp.dbType
 import com.kotoframework.beans.*
 import com.kotoframework.core.annotations.Column
 import com.kotoframework.core.annotations.DateTimeFormat
+import com.kotoframework.definition.NoValueField
+import com.kotoframework.definition.noValueField
+import com.kotoframework.enums.NoValueStrategy
 import com.kotoframework.interfaces.KPojo
-import com.kotoframework.interfaces.KotoJdbcWrapper
-import com.kotoframework.interfaces.KotoQueryHandler
-import com.kotoframework.utils.Extension.humpToLine
-import com.kotoframework.utils.Extension.isNullOrEmpty
-import com.kotoframework.utils.Extension.lineToHump
+import com.kotoframework.interfaces.KJdbcWrapper
+import com.kotoframework.interfaces.KQueryHandler
 import com.kotoframework.utils.Log.log
-import java.util.*
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
 
@@ -25,8 +24,8 @@ object Jdbc {
 
     var tableMap = mutableMapOf<String, TableObject>() // 存储表名和字段名的映射关系
 
-    var defaultJdbcHandler: KotoQueryHandler? = null
-    var defaultJdbcWrapper: KotoJdbcWrapper? = null
+    var defaultJdbcHandler: KQueryHandler? = null
+    var defaultJdbcWrapper: KJdbcWrapper? = null
 
     /**
      * If the namedJdbc parameter is not null, return it. Otherwise, if the defaultNamedJdbc is not null, return it.
@@ -36,16 +35,16 @@ object Jdbc {
      * @return The namedJdbc parameter if it is not null, otherwise the defaultNamedJdbc if it is not null, otherwise an
      * exception is thrown.
      */
-    private fun getJdbcWrapper(jdbcWrapper: KotoJdbcWrapper?): KotoJdbcWrapper {
+    private fun getJdbcWrapper(jdbcWrapper: KJdbcWrapper?): KJdbcWrapper {
         return jdbcWrapper ?: defaultJdbcWrapper ?: throw NullPointerException("JdbcWrapper is null")
     }
 
-    val KotoJdbcWrapper.dbName
+    val KJdbcWrapper.dbName
         get() = getDBNameFromUrl(url)
 
     fun getDBNameFromUrl(url: String): String {
         return when (dbType) {
-            MySql -> url.split("?").first().split("//")[1]
+            MySql, OceanBase -> url.split("?").first().split("//")[1]
             SQLite -> url.split("//").last()
             Oracle -> url.split("@").last()
             MSSql -> url.split("//").last().split(";").first()
@@ -54,7 +53,7 @@ object Jdbc {
         }
     }
 
-    fun tableMetaKey(jdbcWrapper: KotoJdbcWrapper?, tableName: String): String {
+    fun tableMetaKey(jdbcWrapper: KJdbcWrapper?, tableName: String): String {
         return try {
             "${getJdbcWrapper(jdbcWrapper).dbName}_$tableName"
         } catch (npe: NullPointerException) {
@@ -65,13 +64,14 @@ object Jdbc {
     /**
      * It gets the table structure from the database and stores it in a map.
      *
-     * @param tableName The name of the table to be queried
-     * @param namedJdbc NamedParameterJdbcTemplate? = null
+     * @param meta TableMeta
+     * @param jdbcWrapper KotoJdbcWrapper? = null
+     * @param kPojo KPojo? = null
      * @return A TableObject
      */
     fun initMetaData(
         meta: TableMeta,
-        jdbcWrapper: KotoJdbcWrapper? = null,
+        jdbcWrapper: KJdbcWrapper? = null,
         kPojo: KPojo? = null
     ): TableObject {
         val key = tableMetaKey(jdbcWrapper, meta.tableName)
@@ -127,7 +127,7 @@ object Jdbc {
             val list =
                 wrapper.forList(
                     when (dbType) {
-                        MySql -> "show full fields from ${meta.tableName}"
+                        MySql, OceanBase -> "show full fields from ${meta.tableName}"
                         SQLite -> "PRAGMA table_info(${meta.tableName})"
                         Oracle -> "SELECT COLUMN_NAME as Field, DATA_TYPE as Type FROM USER_TAB_COLUMNS WHERE TABLE_NAME = '${meta.tableName}'"
                         MSSql -> "SELECT COLUMN_NAME as Field, DATA_TYPE as Type FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '${meta.tableName}'"
@@ -164,12 +164,12 @@ object Jdbc {
      * @return A string of SQL
      */
     fun joinSqlStatement(
-        conditions: List<Criteria?>,
-        paramMap: MutableMap<String, Any?>,
-        ifNoValueStrategy: (Criteria) -> NoValueStrategy = { KotoApp.defaultNoValueStrategy },
-        join: String = "and",
-        brackets: Boolean = false,
-        showAlias: Boolean = false
+            conditions: List<Criteria?>,
+            paramMap: MutableMap<String, Any?>,
+            ifNoValueStrategy: NoValueField.(Criteria) -> NoValueStrategy = { KotoApp.defaultNoValueStrategy },
+            join: String = "and",
+            brackets: Boolean = false,
+            showAlias: Boolean = false
     ): String {
         val sqls = mutableListOf<String>()
         conditions.filterNotNull().forEach {
@@ -184,7 +184,7 @@ object Jdbc {
             }
 
             val realName = when {
-                !it.reName.isNullOrBlank() -> it.reName
+                !it.aliasName.isNullOrBlank() -> it.aliasName
                 else -> it.parameterName
             }!!
 
@@ -196,10 +196,10 @@ object Jdbc {
                     paramMap[realName] = it.value ?: paramMap[realName]
             }
 
-            if (paramMap[realName].isNullOrEmpty() && ifNoValueStrategy(it).ignore() && it.noValueStrategy.ignore() && it.valueAcceptable) return@forEach
+            if (paramMap[realName].isNullOrEmpty() && noValueField.ifNoValueStrategy(it).ignore() && it.noValueStrategy.ignore() && it.valueAcceptable) return@forEach
 
             val defaultIfNoValue: String? = if (paramMap[realName].isNullOrEmpty() && it.valueAcceptable) {
-                it.noValueStrategy.dealWithNoValue(alias, realName, it, ifNoValueStrategy(it))
+                it.noValueStrategy.dealWithNoValue(alias, realName, it, noValueField.ifNoValueStrategy(it))
             } else null
 
             if (defaultIfNoValue != null) {
@@ -255,7 +255,7 @@ object Jdbc {
                 AND -> {
                     sqls.add(
                         joinSqlStatement(
-                            it.collections,
+                            it.children,
                             paramMap,
                             ifNoValueStrategy,
                             "and",
@@ -267,7 +267,7 @@ object Jdbc {
 
                 OR -> sqls.add(
                     joinSqlStatement(
-                        it.collections,
+                        it.children,
                         paramMap,
                         ifNoValueStrategy,
                         "or",
@@ -287,7 +287,7 @@ object Jdbc {
     }
 
     fun queryKotoJdbcData(
-        jdbcWrapper: KotoJdbcWrapper,
+        jdbcWrapper: KJdbcWrapper,
         sql: String,
         paramMap: Map<String, Any?>,
     ): List<Map<String, Any>> {
@@ -295,7 +295,7 @@ object Jdbc {
     }
 
     fun query(
-        jdbcWrapper: KotoJdbcWrapper? = null,
+        jdbcWrapper: KJdbcWrapper? = null,
         sql: String,
         paramMap: Map<String, Any?>
     ): List<Map<String, Any>> {
@@ -321,8 +321,8 @@ object Jdbc {
      * @return The number of rows affected by the SQL statement.
      */
     fun execute(
-        jdbcWrapper: KotoJdbcWrapper? = null, sql: String, paramMap: Map<String, Any?>
-    ): KotoExecuteResult {
+        jdbcWrapper: KJdbcWrapper? = null, sql: String, paramMap: Map<String, Any?>
+    ): KExecuteResult {
         val wrapper = getJdbcWrapper(jdbcWrapper)
 
         var lastInsertId: Int? = null
@@ -332,7 +332,7 @@ object Jdbc {
             lastInsertId =
                 wrapper.forObject(
                     when (dbType) {
-                        MySql -> "select last_insert_id()"
+                        MySql, OceanBase -> "select last_insert_id()"
                         SQLite -> "select last_insert_rowid()"
                         Oracle -> "select last_insert_id() from dual"
                         MSSql -> "select @@identity"
@@ -346,7 +346,7 @@ object Jdbc {
             }
         }
         log(wrapper, sql, listOf(paramMap), getSqlType(sql), "影响行数：$affectLineNum 最后插入ID：$lastInsertId")
-        return KotoExecuteResult(affectLineNum, lastInsertId)
+        return KExecuteResult(affectLineNum, lastInsertId)
     }
 
     /**
@@ -359,7 +359,7 @@ object Jdbc {
      * @return A KotoExecuteResult object.
      */
     fun batchExecute(
-        jdbcWrapper: KotoJdbcWrapper? = null,
+        jdbcWrapper: KJdbcWrapper? = null,
         sql: String,
         paramMap: Array<Map<String, Any?>>
     ): Int {

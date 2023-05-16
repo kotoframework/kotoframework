@@ -1,9 +1,8 @@
 package com.kotoframework.utils
 
 import com.kotoframework.*
-import com.kotoframework.KotoApp.dbType
 import com.kotoframework.beans.LogLine
-import com.kotoframework.interfaces.KotoJdbcWrapper
+import com.kotoframework.interfaces.KJdbcWrapper
 import com.kotoframework.utils.Printer.BLACK
 import com.kotoframework.utils.Printer.BLUE
 import com.kotoframework.utils.Printer.BOLD
@@ -12,7 +11,7 @@ import com.kotoframework.utils.Printer.GREEN
 import com.kotoframework.utils.Printer.GREY
 import com.kotoframework.utils.Printer.MAGENTA
 import com.kotoframework.utils.Printer.RED
-import com.kotoframework.utils.Common.currentTimeM
+import com.kotoframework.utils.currentTimeM
 import com.kotoframework.utils.Jdbc.getDBNameFromUrl
 import com.kotoframework.utils.Printer.YELLOW
 import java.lang.Integer.min
@@ -61,7 +60,7 @@ object Log {
      * @return The table name from the SQL statement.
      */
     fun log(
-        jdbcWrapper: KotoJdbcWrapper? = Jdbc.defaultJdbcWrapper,
+        jdbcWrapper: KJdbcWrapper? = Jdbc.defaultJdbcWrapper,
         sql: String,
         paramMaps: List<Map<String, Any?>>,
         type: String,
@@ -75,7 +74,7 @@ object Log {
             tasks.add(logLines)
         } else {
             tasks.add(logLines)
-            printLogLines(outs)
+            printLogLines(outs!!)
         }
     }
 
@@ -104,7 +103,7 @@ object Log {
     }
 
     private fun createLog(
-        jdbcWrapper: KotoJdbcWrapper,
+        jdbcWrapper: KJdbcWrapper,
         sql: String,
         paramMaps: List<Map<String, Any?>>,
         type: String,

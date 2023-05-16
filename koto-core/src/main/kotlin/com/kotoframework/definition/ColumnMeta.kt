@@ -1,12 +1,11 @@
 package com.kotoframework.definition
 
-import com.kotoframework.SortType
 import com.kotoframework.beans.TableColumn
 import com.kotoframework.core.annotations.Column
 import com.kotoframework.core.condition.Criteria
-import com.kotoframework.core.condition.eq
-import com.kotoframework.utils.Extension.humpToLine
-import com.kotoframework.utils.Extension.lineToHump
+import com.kotoframework.enums.SortType
+import com.kotoframework.utils.humpToLine
+import com.kotoframework.utils.lineToHump
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
@@ -15,12 +14,12 @@ import kotlin.reflect.full.findAnnotation
  * Created by ousc on 2022/8/2 16:50
  */
 class ColumnMeta(
-    var columnName: String, // 通过注解或者驼峰转下划线获取的数据表列名
-    var propertyName: String, // 通过反射获取的属性名称或者columnName的驼峰形式
-    var aliasName: String, // 通过pair获取的别名名称，默认为columnName的驼峰形式
-    var type: KClass<*>, // 属性类型
-    var value: Any // 属性值
-){
+        var columnName: String, // 通过注解或者驼峰转下划线获取的数据表列名
+        var propertyName: String, // 通过反射获取的属性名称或者columnName的驼峰形式
+        var aliasName: String, // 通过pair获取的别名名称，默认为columnName的驼峰形式
+        var type: KClass<*>, // 属性类型
+        var value: Any // 属性值
+) {
     operator fun component1() = columnName
 }
 
@@ -29,43 +28,52 @@ internal val KCallable<*>.column: String?
         return findAnnotation<Column>()?.name
     }
 
-internal val Field.columnName: String
-    get() = when (this) {
-        is Pair<*, *> -> (first!!.columnName)
-        is KCallable<*> -> column ?: name.humpToLine()
-        is TableColumn -> name
-        is ColumnMeta -> columnName
-        is String -> if (lowercase().contains(" as ") || this.contains("(")) {
-            this
+fun getFieldColumnName(field: Field): String {
+    return when (field) {
+        is Pair<*, *> -> getFieldColumnName(field.first!!)
+        is KCallable<*> -> field.column ?: field.name.humpToLine()
+        is TableColumn -> field.name
+        is ColumnMeta -> field.columnName
+        is String -> if (field.lowercase().contains(" as ") || field.contains("(")) {
+            field
         } else {
-            humpToLine()
+            field.humpToLine()
         }
 
-        else -> throw IllegalArgumentException("Field $this is not a valid field")
+        else -> throw IllegalArgumentException("Field $field is not a valid field")
     }
+}
+
+internal val Field.columnName: String
+    get() = getFieldColumnName(this)
+
+fun getFieldPropertyName(field: Field): String {
+    return when (field) {
+        is Pair<*, *> -> getFieldPropertyName(field.first!!)
+        is KCallable<*> -> field.name
+        is String -> field
+        is TableColumn -> field.name.lineToHump()
+        is ColumnMeta -> field.propertyName
+        else -> throw IllegalArgumentException("Field $field is not a valid field")
+    }
+}
 
 internal val Field.propertyName: String
-    get() = when (this) {
-        is Pair<*, *> -> first!!.propertyName
-        is KCallable<*> -> name
-        is String -> this
-        is TableColumn -> name.lineToHump()
-        is ColumnMeta -> propertyName
-        else -> throw IllegalArgumentException("Field $this is not a valid field")
+    get() = getFieldPropertyName(this)
+
+fun getFieldAliasName(field: Field): String {
+    return when (field) {
+        is Pair<*, *> -> getFieldAliasName(field.second!!)
+        is KCallable<*> -> field.name
+        is String -> field
+        is TableColumn -> field.name.lineToHump()
+        is ColumnMeta -> field.aliasName
+        else -> field.toString()
     }
+}
 
 internal val Field.aliasName: String
-    get() = when (this) {
-        is Pair<*, *> -> second!!.aliasName
-        is KCallable<*> -> name
-        is String -> this
-        is TableColumn -> name.lineToHump()
-        is ColumnMeta -> aliasName
-        else -> this.toString()
-    }
-
-internal val Field.selectBy: Criteria
-    get() = this.propertyName.eq(if (this is Pair<*, *>) second else null)
+    get() = getFieldAliasName(this)
 
 internal val Field.direction: String
     get() =
@@ -78,16 +86,13 @@ internal val Field.direction: String
             ""
         }
 
-fun Field.desc(): Pair<Field, SortType> = this to SortType.DESC
-fun Field.asc(): Pair<Field, SortType> = this to SortType.ASC
-
 
 internal fun Field.toColumn(): ColumnMeta {
     return ColumnMeta(
-        columnName,
-        propertyName,
-        aliasName,
-        this::class,
-        this
+            columnName,
+            propertyName,
+            aliasName,
+            this::class,
+            this
     )
 }

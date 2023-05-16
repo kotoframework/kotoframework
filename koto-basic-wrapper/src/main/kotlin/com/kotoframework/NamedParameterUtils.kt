@@ -3,7 +3,8 @@ package com.kotoframework
 import com.kotoframework.beans.InvalidParameterException
 
 /**
- * Created by sundaiyue on 2022/11/4 11:32
+ * FROM SPRING FRAMEWORK
+ * modified by sundaiyue on 2022/11/4 14:09
  */
 object NamedParameterUtils {
     private val START_SKIP = arrayOf("'", "\"", "--", "/*")

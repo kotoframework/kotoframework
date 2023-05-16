@@ -1,14 +1,13 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.net.URL
 
 plugins {
-    kotlin("jvm") version "1.7.20"
+    kotlin("jvm")
     id("signing")
     id("maven-publish")
 }
 
-group = "com.kotoframework"
-version = file("../koto.version").readText().trim()
+group = rootProject.group
+version = rootProject.version
 
 repositories {
     mavenCentral()

@@ -54,7 +54,7 @@ update(movie)
 update(movie)
 		.by(
         movie::movieName to "Titanic",
-        "movieType" to 'action movie',
+        "movieType" to 'actions movie',
         movie::publishDate,
         "directorName"
     )

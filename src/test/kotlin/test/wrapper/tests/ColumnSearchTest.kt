@@ -2,7 +2,7 @@ package test.wrapper.tests
 
 import com.kotoframework.KotoApp
 import com.kotoframework.function.columnSearch.columnSearch
-import com.kotoframework.utils.Common.deleted
+import com.kotoframework.utils.deleted
 import org.junit.jupiter.api.Test
 import test.wrapper.beans.TbUser
 import kotlin.test.assertEquals

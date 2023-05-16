@@ -3,12 +3,7 @@ package test.wrapper.tests
 import com.kotoframework.KotoApp
 import test.wrapper.beans.TbUser
 import com.kotoframework.function.update.update
-import com.kotoframework.interfaces.KPojo
-import com.kotoframework.core.condition.and
-import com.kotoframework.core.condition.eq
-import com.kotoframework.core.condition.like
-import com.kotoframework.core.condition.matchRight
-import com.kotoframework.utils.Common.deleted
+import com.kotoframework.utils.deleted
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -167,7 +162,7 @@ class UpdateTest {
     @Test
     fun updateByConditions() { // 测试根据Where条件更新
         val (prepared) = update(user).where {
-            it::userName.eq() and it::birthday.like().matchRight()
+            it::userName.eq() and it::birthday.matchRight
         }
 
         val expectedParamMap = mapOf(

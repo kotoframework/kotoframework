@@ -1,7 +1,7 @@
 package com.kotoframework
 
 import com.kotoframework.BasicJdbcWrapper.Companion.wrapper
-import com.kotoframework.utils.Extension.lineToHump
+import com.kotoframework.utils.lineToHump
 import com.kotoframework.utils.Jdbc
 import com.kotoframework.utils.Jdbc.defaultJdbcHandler
 import javax.sql.DataSource

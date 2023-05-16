@@ -4,15 +4,15 @@ import com.kotoframework.NamedParameterUtils.parseSqlStatement
 import com.kotoframework.beans.NoDataSourceSpecifiedException
 import com.kotoframework.beans.UnsupportedTypeException
 import com.kotoframework.interfaces.KPojo
-import com.kotoframework.interfaces.KotoJdbcWrapper
-import com.kotoframework.utils.Extension.toKPojo
+import com.kotoframework.interfaces.KJdbcWrapper
+import com.kotoframework.utils.toKPojo
 import javax.sql.DataSource
 
 
 /**
  * Created by ousc on 2022/9/19 23:24
  */
-class BasicJdbcWrapper : KotoJdbcWrapper() {
+class BasicJdbcWrapper : KJdbcWrapper() {
     var ds: DataSource? = null
     var dynamic: (() -> DataSource)? = null
     fun getDataSource(ds: DataSource? = null): DataSource {

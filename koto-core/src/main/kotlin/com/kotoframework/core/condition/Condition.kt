@@ -1,7 +1,6 @@
 package com.kotoframework.core.condition
 
 import com.kotoframework.*
-import kotlin.reflect.KCallable
 
 /**
  * Created by sundaiyue on 2022/3/25 09:30
@@ -15,7 +14,7 @@ import kotlin.reflect.KCallable
  * @constructor Create empty Condition
  * @author ousc
  */
-class Condition(private var parameterName: String = "Unknown", private val kCallable: KCallable<*>? = null) {
+class Condition(private var parameterName: String = "Unknown") {
 
     /**
      * `getReName` is a function that returns a string.
@@ -26,53 +25,6 @@ class Condition(private var parameterName: String = "Unknown", private val kCall
      */
     private fun getReName(suffix: String = ""): String {
         return parameterName + suffix
-    }
-
-    /**
-     * `fun like(expression: String?, not: Boolean = false, tableName: String? = null): LikeCriteria`
-     *
-     * The function is named `like` and it takes three parameters:
-     *
-     * 1. `expression` is a `String?`
-     * 2. `not` is a `Boolean` with a default value of `false`
-     * 3. `tableName` is a `String?` with a default value of `null`
-     *
-     * The function returns a `LikeCriteria` object
-     *
-     * @param expression The expression to be used in the LIKE clause.
-     * @param not Boolean = false,
-     * @param tableName The table name to be used in the query.
-     * @return LikeCriteria
-     * @author ousc
-     */
-    fun like(
-        expression: String?,
-        not: Boolean = false,
-        tableName: String? = null
-    ): LikeCriteria {
-        return LikeCriteria(
-            parameterName = parameterName,
-            value = expression,
-            reName = getReName(),
-            not = not,
-            tableName = tableName,
-            kCallable = kCallable
-        )
-    }
-
-    /**
-     * `notLike` is a function that takes an expression and a table name and returns a `LikeCriteria` object.
-     *
-     * @param expression The expression to be used in the LIKE clause.
-     * @param tableName The name of the table to use in the query.
-     * @return LikeCriteria
-     * @author ousc
-     */
-    fun notLike(
-        expression: String?,
-        tableName: String? = null
-    ): LikeCriteria {
-        return like(expression, true, tableName)
     }
 
     /**
@@ -92,11 +44,10 @@ class Condition(private var parameterName: String = "Unknown", private val kCall
         return Criteria(
             parameterName = parameterName,
             type = EQUAL,
-            reName = getReName(),
+            aliasName = getReName(),
             value = value,
             not = not,
             tableName = tableName,
-            kCallable = kCallable
         )
     }
 
@@ -131,10 +82,9 @@ class Condition(private var parameterName: String = "Unknown", private val kCall
         return Criteria(
             parameterName = parameterName,
             type = GT,
-            reName = getReName("Min"),
+            aliasName = getReName("Min"),
             value = value,
             tableName = tableName,
-            kCallable = kCallable
         )
     }
 
@@ -153,10 +103,9 @@ class Condition(private var parameterName: String = "Unknown", private val kCall
         return Criteria(
             parameterName = parameterName,
             type = GE,
-            reName = getReName("Min"),
+            aliasName = getReName("Min"),
             value = value,
             tableName = tableName,
-            kCallable = kCallable
         )
     }
 
@@ -175,10 +124,9 @@ class Condition(private var parameterName: String = "Unknown", private val kCall
         return Criteria(
             parameterName = parameterName,
             type = LT,
-            reName = getReName("Max"),
+            aliasName = getReName("Max"),
             value = value,
             tableName = tableName,
-            kCallable = kCallable
         )
     }
 
@@ -197,10 +145,9 @@ class Condition(private var parameterName: String = "Unknown", private val kCall
         return Criteria(
             parameterName = parameterName,
             type = LE,
-            reName = getReName("Max"),
+            aliasName = getReName("Max"),
             value = value,
             tableName = tableName,
-            kCallable = kCallable
         )
     }
 
@@ -222,11 +169,10 @@ class Condition(private var parameterName: String = "Unknown", private val kCall
         return Criteria(
             parameterName = parameterName,
             type = BETWEEN,
-            reName = getReName(),
+            aliasName = getReName(),
             value = range,
             not = not,
             tableName = tableName,
-            kCallable = kCallable
         )
     }
 
@@ -264,11 +210,10 @@ class Condition(private var parameterName: String = "Unknown", private val kCall
         return Criteria(
             parameterName = parameterName,
             type = IN,
-            reName = getReName(),
+            aliasName = getReName(),
             value = list,
             not = not,
             tableName = tableName,
-            kCallable = kCallable
         )
     }
 
@@ -308,10 +253,9 @@ class Condition(private var parameterName: String = "Unknown", private val kCall
         return Criteria(
             parameterName = parameterName,
             type = ISNULL,
-            reName = parameterName,
+            aliasName = parameterName,
             not = not,
             tableName = tableName,
-            kCallable = kCallable
         )
     }
     /**

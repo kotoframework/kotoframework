@@ -1,14 +1,14 @@
 package com.kotoframework
 
 import com.kotoframework.beans.NoDataSourceSpecifiedException
-import com.kotoframework.interfaces.KotoJdbcWrapper
+import com.kotoframework.interfaces.KJdbcWrapper
 import org.jdbi.v3.core.Jdbi
 import javax.sql.DataSource
 
 /**
  * Created by ousc on 2022/9/19 23:24
  */
-class JdbiWrapper : KotoJdbcWrapper() {
+class JdbiWrapper : KJdbcWrapper() {
     var jdbi: Jdbi? = null
     var dynamic: (() -> Jdbi)? = null
     fun getJdbi(jdbi: Jdbi? = null): Jdbi {

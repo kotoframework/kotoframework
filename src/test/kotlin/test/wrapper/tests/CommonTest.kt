@@ -1,8 +1,8 @@
 package test.wrapper.tests
 
 import com.kotoframework.KotoApp
-import com.kotoframework.utils.Extension.toKPojo
-import com.kotoframework.utils.Extension.toMap
+import com.kotoframework.utils.toKPojo
+import com.kotoframework.utils.toMap
 import org.junit.jupiter.api.Test
 import test.wrapper.beans.TbUser
 import kotlin.test.assertEquals

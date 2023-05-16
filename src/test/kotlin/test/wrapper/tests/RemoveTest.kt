@@ -2,9 +2,8 @@ package test.wrapper.tests
 
 import com.kotoframework.KotoApp
 import com.kotoframework.function.remove.remove
-import com.kotoframework.core.condition.eq
 import test.wrapper.beans.TbUser
-import com.kotoframework.utils.Common.deleted
+import com.kotoframework.utils.deleted
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -146,7 +145,7 @@ class RemoveTest {
             userName = "XiaoQi"
         )
         val (prepared) = remove(user).where {
-            it::userName.eq("XiaoLiu")
+            it.userName == "XiaoLiu"
         }
 
         assertEquals(

@@ -1,13 +1,12 @@
 package com.kotoframework
 
 import com.kotoframework.interfaces.KPojo
-import com.kotoframework.interfaces.KotoJdbcWrapper
-import com.kotoframework.interfaces.KotoQueryHandler
-import com.kotoframework.utils.Extension.asMutable
+import com.kotoframework.interfaces.KJdbcWrapper
+import com.kotoframework.interfaces.KQueryHandler
 import com.kotoframework.utils.Printer
-import com.kotoframework.utils.Extension.isAssignableFrom
-import com.kotoframework.utils.Extension.lineToHump
-import com.kotoframework.utils.Extension.toKPojo
+import com.kotoframework.utils.isAssignableFrom
+import com.kotoframework.utils.lineToHump
+import com.kotoframework.utils.toKPojo
 import com.kotoframework.utils.Log
 import com.kotoframework.utils.Jdbc
 import javax.sql.DataSource
@@ -16,9 +15,9 @@ import kotlin.reflect.KClass
 /**
  * Created by ousc on 2022/7/20 09:31
  */
-class BasicJdbcHandler : KotoQueryHandler() {
+class BasicJdbcHandler : KQueryHandler() {
     override fun forList(
-        jdbc: KotoJdbcWrapper?,
+        jdbc: KJdbcWrapper?,
         sql: String,
         paramMap: Map<String, Any?>,
         kClass: KClass<*>
@@ -35,7 +34,7 @@ class BasicJdbcHandler : KotoQueryHandler() {
     }
 
     override fun forObject(
-        jdbc: KotoJdbcWrapper?,
+        jdbc: KJdbcWrapper?,
         sql: String,
         paramMap: Map<String, Any?>,
         withoutErrorPrintln: Boolean,
@@ -62,7 +61,7 @@ class BasicJdbcHandler : KotoQueryHandler() {
     }
 
     override fun forObjectOrNull(
-        jdbc: KotoJdbcWrapper?,
+        jdbc: KJdbcWrapper?,
         sql: String,
         paramMap: Map<String, Any?>,
         kClass: KClass<*>

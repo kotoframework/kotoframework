@@ -3,13 +3,13 @@ import java.net.URL
 
 plugins {
     id("java")
-    kotlin("jvm") version "1.7.20"
+    kotlin("jvm") version "1.8.0"
     id("signing")
     id("maven-publish")
 }
 
-group = "com.kotoframework"
-version = file("../koto.version").readText().trim()
+group = rootProject.group
+version = rootProject.version
 
 repositories {
     mavenCentral()

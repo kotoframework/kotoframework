@@ -1,7 +1,7 @@
 package com.kotoframework
 
-import com.kotoframework.utils.Extension.asMutable
-import com.kotoframework.utils.Extension.lineToHump
+import com.kotoframework.utils.asMutable
+import com.kotoframework.utils.lineToHump
 import com.kotoframework.utils.Jdbc
 import com.kotoframework.utils.Jdbc.defaultJdbcHandler
 

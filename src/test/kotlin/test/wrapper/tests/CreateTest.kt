@@ -4,8 +4,8 @@ import com.kotoframework.KotoApp
 import test.wrapper.beans.TbUser
 import com.kotoframework.function.create.create
 import com.kotoframework.core.annotations.NeedTableIndexes
-import com.kotoframework.utils.Common.deleted
-import com.kotoframework.utils.Extension.toMutableMap
+import com.kotoframework.utils.deleted
+import com.kotoframework.utils.toMutableMap
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 

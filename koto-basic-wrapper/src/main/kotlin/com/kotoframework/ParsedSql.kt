@@ -1,7 +1,8 @@
 package com.kotoframework
 
 /**
- * Created by sundaiyue on 2022/11/4 14:09
+ * FROM SPRING FRAMEWORK
+ * modified by sundaiyue on 2022/11/4 14:09
  */
 class ParsedSql(var originalSql: String = "") {
 

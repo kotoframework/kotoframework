@@ -2,6 +2,7 @@ package test.wrapper.beans
 
 import com.kotoframework.core.annotations.*
 import com.kotoframework.interfaces.KPojo
+import java.util.*
 
 /**
  * Created by ousc on 2022/4/18 17:54
@@ -21,5 +22,6 @@ data class TbUser(
     @Column("birthday") @DateTimeFormat("%Y-%m-%d") val birthday: String? = null,
     @Default("male") val sex: String? = null,
     val age: Int? = null,
-    val avatar: String? = null
+    val avatar: String? = null,
+    val updateTime: Date? = null,
 ) : KPojo

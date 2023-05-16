@@ -2,7 +2,6 @@ package com.kotoframework.utils
 
 import com.kotoframework.core.condition.Criteria
 import com.kotoframework.*
-import com.kotoframework.utils.Common.getColumnName
 
 
 /**
@@ -17,7 +16,7 @@ object SqlGenerator {
      */
     fun generate(condition: Criteria): String {
         val realName = when {
-            !condition.reName.isNullOrBlank() -> condition.reName
+            !condition.aliasName.isNullOrBlank() -> condition.aliasName
             condition.parameterName.isNotBlank() -> condition.parameterName
             else -> ""
         }

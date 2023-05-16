@@ -2,20 +2,21 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.*
 
 plugins {
-    kotlin("jvm") version "1.7.20"
+    kotlin("jvm") version "1.8.0"
     id("signing")
     id("maven-publish")
 }
 
-group = "com.kotoframework"
-version = file("../koto.version").readText().trim()
+
+group = rootProject.group
+version = rootProject.version
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.20")
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
 }
 
 tasks.getByName<Test>("test") {
@@ -42,7 +43,6 @@ val jarSources by tasks.registering(Jar::class) {
 val jarJavadoc by tasks.registering(Jar::class) {
     archiveClassifier.set("javadoc")
 }
-
 publishing {
     publications {
         create<MavenPublication>("dist") {

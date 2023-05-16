@@ -1,20 +1,21 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.7.20"
+    kotlin("jvm") version "1.8.0"
+//    id("criteria-parser-plugin")
 }
 
 group = "com.kotoframework"
-version = file("koto.version").readText().trim()
+version = "2.0.0"
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation(kotlin("stdlib-jdk8"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.7.20")
-    testImplementation("org.jetbrains.kotlin:kotlin-reflect:1.7.20")
+    implementation(kotlin("stdlib"))
+    implementation("org.jetbrains.kotlin:kotlin-stdlib")
+    testImplementation("org.jetbrains.kotlin:kotlin-reflect")
     testImplementation(kotlin("test"))
     testImplementation(project(":koto-core"))
     testImplementation(project(":koto-spring-wrapper"))

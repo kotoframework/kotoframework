@@ -5,7 +5,8 @@ import test.wrapper.beans.UserInfo
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.core.condition.*
 import com.kotoframework.core.where.Where
-import com.kotoframework.utils.Common.deleted
+import com.kotoframework.definition._l
+import com.kotoframework.utils.deleted
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -38,7 +39,7 @@ class WhereTest : KPojo {
             "roles" to null
         )
         assertEquals(
-            "${deleted()} and `sex` = :sex and `active` = :active and `user_name` = :userName and `age` = :age",
+            "${deleted()} && `sex` = :sex && `active` = :active && `user_name` = :userName && `age` = :age",
             prepared.sql.trim()
         )
         assertEquals(
@@ -64,7 +65,7 @@ class WhereTest : KPojo {
             "roles" to null
         )
         assertEquals(
-            "${deleted()} and `sex` = :sex and `active` = :active and `user_name` = :userName and `age` = :age",
+            "${deleted()} && `sex` = :sex && `active` = :active && `user_name` = :userName && `age` = :age",
             prepared.sql.trim()
         )
         assertEquals(
@@ -90,7 +91,7 @@ class WhereTest : KPojo {
             "roles" to null
         )
         assertEquals(
-            "${deleted(1)} and `sex` = :sex and `active` = :active and `user_name` = :userName and `age` = :age",
+            "${deleted(1)} && `sex` = :sex && `active` = :active && `user_name` = :userName && `age` = :age",
             prepared.sql.trim()
         )
         assertEquals(
@@ -115,7 +116,7 @@ class WhereTest : KPojo {
             "roles" to null
         )
         assertEquals(
-            "${deleted()} and `sex` = :sex and `active` = :active and `user_name` = :userName and `age` = :age group by sex",
+            "${deleted()} && `sex` = :sex && `active` = :active && `user_name` = :userName && `age` = :age group by sex",
             prepared.sql.trim()
         )
         assertEquals(
@@ -130,7 +131,7 @@ class WhereTest : KPojo {
             nickName = "daiyue",
             telephone = "13800138000",
             emailAddress = "hangzhou@qq.com",
-            roles = listOf("admin", "user"),
+            roles = "admin, user",
             habit = "eat",
             birthday = "2020-01-01",
             active = true,
@@ -138,28 +139,25 @@ class WhereTest : KPojo {
             age = 99
         )
         val (prepared) = Where(user) {
-            it::userName.eq() and
-                    it::active.eq() and
-                    it::nickName.like().matchLeft() and
-                    "telephone".notEq() and
-                    it::age.between(10..20) and
-                    "qty".gt(10) and
-                    "weight".lt(100) and
-                    "height".ge(175) and
-                    "length".le(175) and
-                    "depth".between(10.5..20.3) and
-                    "birthday".between("2020-01-01".."2020-01-02") and
-                    "roles".isIn(listOf("admin", "user")) and
-                    "emailAddress".isNull() and
-                    it::habit.notNull() and
-                    "DATE_FORMAT(`birthday`, '%Y-%m-%d') = :birthday" and
+            it.userName.eq &&
+                    it.active.eq &&
+                    it.nickName.matchLeft &&
+                    it.telephone.neq &&
+                    "length" > 123 &&
+                    it.age between 10..20 &&
+                    it.age > 10 &&
+                    it.birthday between "2020-01-01".."2020-01-02" &&
+                    it.roles in _l["admin", "user"] &&
+                    it.emailAddress.isNull &&
+                    it.habit.notNull &&
+                    "DATE_FORMAT(`birthday`, '%Y-%m-%d') = :birthday".asSql() &&
                     when (searchData.sex) {
-                        "male" -> "`height` > 175"
-                        "female" -> "`height` > 165"
-                        else -> null
-                    } and
-                    "`sex` is not null" and
-                    "`age` < 50"
+                        "male" -> it.habit == "basketball"
+                        "female" -> it.habit == "soccer"
+                        else -> true
+                    } &&
+                    "`sex` is not null".asSql() &&
+                    "`age` < 50".asSql()
         }
 
         val expectedParamMap = mutableMapOf(
@@ -184,7 +182,7 @@ class WhereTest : KPojo {
             "birthdayMax" to "2020-01-02"
         )
         assertEquals(
-            "${deleted()} and `user_name` = :userName and `active` = :active and `nick_name` like :nickName and `telephone` != :telephone and `age` between :ageMin and :ageMax and `qty` > :qtyMin and `weight` < :weightMax and `height` >= :heightMin and `length` <= :lengthMax and `depth` between :depthMin and :depthMax and `birthday` between :birthdayMin and :birthdayMax and `roles` in (:roles) and `email_address` is null and `habit` is not null and DATE_FORMAT(`birthday`, '%Y-%m-%d') = :birthday and `height` > 175 and `sex` is not null and `age` < 50",
+            "${deleted()} && `user_name` = :userName && `active` = :active && `nick_name` like :nickName && `telephone` != :telephone && `age` between :ageMin && :ageMax && `qty` > :qtyMin && `weight` < :weightMax && `height` >= :heightMin && `length` <= :lengthMax && `depth` between :depthMin && :depthMax && `birthday` between :birthdayMin && :birthdayMax && `roles` in (:roles) && `email_address` is null && `habit` is not null && DATE_FORMAT(`birthday`, '%Y-%m-%d') = :birthday && `height` > 175 && `sex` is not null && `age` < 50",
             prepared.sql.trim()
         )
         assertEquals(
@@ -199,7 +197,7 @@ class WhereTest : KPojo {
             nickName = "daiyue",
             telephone = "13800138000",
             emailAddress = "hangzhou@qq.com",
-            roles = listOf("admin", "user"),
+            roles = "admin,user",
             habit = "eat",
             birthday = "2020-01-01",
             active = true,
@@ -222,16 +220,16 @@ class WhereTest : KPojo {
             "ageMax" to 99
         )
         val (prepared) = Where(user) {
-            ("userName".eq() or "nickName".eq()) and
-                    ("telephone".eq() or "emailAddress".eq()) and
-                    ("emailAddress".eq() or "roles".isIn(listOf("admin", "user"))) and
-                    ("habit".eq() or "active".eq()) and
-                    ("birthday".eq() or "age".lt()) and
-                    "srq is not null"
+            ("userName".eq || "nickName".eq) &&
+                    ("telephone".eq || "emailAddress".eq) &&
+                    ("emailAddress".eq || "roles" in listOf("admin", "user")) &&
+                    ("habit".eq || "active".eq) &&
+                    ("birthday".eq || "age".lt) &&
+                    "srq is not null".asSql()
         }
 
         assertEquals(
-            "${deleted()} and (`user_name` = :userName or `nick_name` = :nickName) and (`telephone` = :telephone or `email_address` = :emailAddress) and (`email_address` = :emailAddress or `roles` in (:roles)) and (`habit` = :habit or `active` = :active) and (`birthday` = :birthday or `age` < :ageMax) and srq is not null",
+            "${deleted()} && (`user_name` = :userName || `nick_name` = :nickName) && (`telephone` = :telephone || `email_address` = :emailAddress) && (`email_address` = :emailAddress || `roles` in (:roles)) && (`habit` = :habit || `active` = :active) && (`birthday` = :birthday || `age` < :ageMax) && srq is not null",
             prepared.sql.trim()
         )
         assertEquals(

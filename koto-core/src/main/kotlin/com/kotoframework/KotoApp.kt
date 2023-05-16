@@ -6,6 +6,8 @@ import com.kotoframework.beans.Config.Companion.createTimeConfig
 import com.kotoframework.beans.Config.Companion.deleteTimeConfig
 import com.kotoframework.beans.Config.Companion.softDeleteConfig
 import com.kotoframework.beans.Config.Companion.updateTimeConfig
+import com.kotoframework.enums.DBType
+import com.kotoframework.enums.NoValueStrategy
 
 /**
  * Created by ousc on 2022/4/18 21:06

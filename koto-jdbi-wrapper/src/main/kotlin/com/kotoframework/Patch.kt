@@ -1,7 +1,7 @@
 package com.kotoframework
 
 import com.kotoframework.JdbiWrapper.Companion.wrapper
-import com.kotoframework.utils.Extension.lineToHump
+import com.kotoframework.utils.lineToHump
 import com.kotoframework.utils.Jdbc
 import com.kotoframework.utils.Jdbc.defaultJdbcHandler
 import org.jdbi.v3.core.Jdbi

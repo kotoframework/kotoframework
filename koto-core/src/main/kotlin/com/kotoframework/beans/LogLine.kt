@@ -1,6 +1,6 @@
 package com.kotoframework.beans
 
-import com.kotoframework.utils.Common.currentDate
+import com.kotoframework.utils.currentDate
 import com.kotoframework.utils.Printer
 import java.io.File
 import java.io.FileWriter
@@ -20,7 +20,7 @@ import java.io.FileWriter
 class LogLine(
     private val text: String,
     private val codes: Array<Printer.PrintCode> = arrayOf(),
-    var endLine: Boolean = false,
+    private var endLine: Boolean = false,
 ) {
 
     /**

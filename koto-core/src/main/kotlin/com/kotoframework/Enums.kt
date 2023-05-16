@@ -1,66 +1,14 @@
 package com.kotoframework
 
-import com.kotoframework.core.condition.Criteria
+import com.kotoframework.enums.*
 
 /**
  * Created by ousc on 2022/4/18 10:49
  */
 
-enum class SortType {
-    ASC, DESC
-}
-
-enum class ConditionType {
-    LIKE, EQUAL, IN, ISNULL, SQL, GT, GE, LT, LE, BETWEEN, AND, OR
-}
-
-enum class LikePosition {
-    Left, Right, Both, Never
-}
-
-enum class DBType {
-    MySql, Oracle, MSSql, PostgreSQL, SQLite
-}
-
-enum class NoValueStrategy {
-    Ignore, False, True, IsNull, NotNull, Smart;
-
-    fun ignore(): Boolean {
-        return this == Ignore
-    }
-
-    fun dealWithNoValue(
-        alias: String,
-        realName: String,
-        criteria: Criteria,
-        noValueStrategy: NoValueStrategy,
-        counter: Int = 0
-    ): String? {
-        if(counter > 1) return null
-        val defaultIgnore: String? = dealWithNoValue(alias, realName, criteria, noValueStrategy, counter + 1)
-        return when (if (counter == 0) this else noValueStrategy) {
-            IsNull -> "${alias}${realName} is null"
-            NotNull -> "${alias}${realName} is not null"
-            True -> "true"
-            False -> "false"
-            Smart -> when {
-                criteria.type == EQUAL && !criteria.not -> "${alias}${realName} is null"
-                criteria.type == EQUAL && criteria.not -> "${alias}${realName} is not null"
-                criteria.type == LIKE && !criteria.not -> "true"
-                criteria.type == LIKE && criteria.not -> "false"
-                criteria.type == IN && !criteria.not -> "false"
-                criteria.type == IN && criteria.not -> "true"
-                criteria.type == BETWEEN && !criteria.not -> "false"
-                criteria.type == BETWEEN && criteria.not -> "true"
-                criteria.type == GT || criteria.type == GE || criteria.type == LT || criteria.type == LE -> "false"
-                else -> null
-            }
-
-            Ignore -> defaultIgnore
-        }
-    }
-}
-
+/*
+* when use like, you can use this to set the position of the like
+* */
 val Left = LikePosition.Left
 val Right = LikePosition.Right
 val Both = LikePosition.Both
@@ -87,6 +35,7 @@ val Oracle = DBType.Oracle
 val MSSql = DBType.MSSql
 val PostgreSQL = DBType.PostgreSQL
 val SQLite = DBType.SQLite
+val OceanBase = DBType.OceanBase
 
 val Ignore = NoValueStrategy.Ignore
 val False = NoValueStrategy.False
@@ -94,5 +43,10 @@ val True = NoValueStrategy.True
 val IsNull = NoValueStrategy.IsNull
 val NotNull = NoValueStrategy.NotNull
 val Smart = NoValueStrategy.Smart
+
+val INNER_JOIN = JoinType.INNER_JOIN
+val LEFT_JOIN = JoinType.LEFT_JOIN
+val RIGHT_JOIN = JoinType.RIGHT_JOIN
+val FULL_JOIN = JoinType.FULL_JOIN
 
 
