@@ -173,26 +173,27 @@ object Extension {
         if (constructors[clazz.java] == null) {
             constructors[clazz.java] = constructor
         }
+        val booleanNames =
+            constructor.parameters.filter { it.type.javaType.typeName == "java.lang.Boolean" }.map { it.name }
+        val paramMap = constructor.parameters.associateWith {
+            if (booleanNames.contains(it.name)) {
+                if (this[it.name] is Int)
+                    (this[it.name] == 1)
+                else
+                    (this[it.name] != null)
+            } else {
+                this[it.name] ?: this[it.name?.lineToHump()]
+            }
+        }
         return try {
-            val booleanNames =
-                constructor.parameters.filter { it.type.javaType.typeName == "java.lang.Boolean" }.map { it.name }
-            constructor.callBy(constructor.parameters.associateWith {
-                if (booleanNames.contains(it.name)) {
-                    if (this[it.name] is Int)
-                        (this[it.name] == 1)
-                    else
-                        (this[it.name] != null)
-                } else {
-                    this[it.name] ?: this[it.name?.lineToHump()]
-                }
-            })!!
+            constructor.callBy(paramMap)!!
         } catch (e: IllegalArgumentException) {
             // compare the argument type of constructor and the given value, print which argument is mismatched
             val mismatchedArgument = constructor.parameters.first {
-                if (this[it.name] == null) {
+                if (paramMap[it] == null) {
                     !it.isOptional
                 } else {
-                    it.type.javaType.typeName != this[it.name]!!.javaClass.typeName
+                    it.type.javaType.typeName != paramMap[it]!!.javaClass.typeName
                 }
             }
             if (this[mismatchedArgument.name] == null) {

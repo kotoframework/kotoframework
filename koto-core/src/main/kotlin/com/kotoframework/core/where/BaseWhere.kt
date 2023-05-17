@@ -41,5 +41,5 @@ abstract class BaseWhere<T : KPojo>(
         return this
     }
 
-    internal abstract fun build(): KotoDataSet
+    abstract fun build(): KotoDataSet
 }

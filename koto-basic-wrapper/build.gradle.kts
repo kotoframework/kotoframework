@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.net.URL
+import java.io.FileInputStream
+import java.util.Properties
 
 plugins {
     id("java")
@@ -31,8 +32,10 @@ compileTestKotlin.kotlinOptions {
     jvmTarget = "1.8"
 }
 
-val config: java.util.Properties =
-    groovy.util.ConfigSlurper().parse(File("${rootProject.projectDir.path}/gradle.properties").toURI().toURL()).toProperties()
+val config = Properties()
+val fileInputStream = FileInputStream("${rootProject.projectDir.path}/gradle.properties")
+config.load(fileInputStream)
+fileInputStream.close()
 
 config.entries.joinToString(separator = ";") { it.toString() }.let {
     println("config path:${rootProject.projectDir.path}")

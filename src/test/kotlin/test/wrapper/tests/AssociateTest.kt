@@ -27,8 +27,8 @@ class AssociateTest {
     @Test
     fun testAssociate() {
         val (prepared) =
-            from<TbUser, TbGoodCategory, TbGood, TbShoppingCart> { user, goodCategory, good, shoppingCart, join ->
-                join.on(
+            from<TbUser, TbGoodCategory, TbGood, TbShoppingCart> { user, goodCategory, good, shoppingCart ->
+                associate(user, goodCategory, good, shoppingCart).on(
                     user::id.eq(shoppingCart::userId) and
                             good::categoryId.eq(goodCategory::id) and
                             good::id.eq(shoppingCart::goodId)
