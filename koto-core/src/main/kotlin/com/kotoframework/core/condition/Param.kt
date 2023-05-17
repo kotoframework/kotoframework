@@ -65,7 +65,7 @@ val String.notLike: Criteria get() = notLike()
 fun String.matchLeft(
     value: String? = null
 ): LikeCriteria {
-    return Condition(this).like(value).apply { pos = LikePosition.Left }
+    return like(value).apply { pos = LikePosition.Left }
 }
 
 val String.matchLeft: Criteria get() = matchLeft()
@@ -73,7 +73,7 @@ val String.matchLeft: Criteria get() = matchLeft()
 fun String.matchRight(
     value: String? = null
 ): LikeCriteria {
-    return Condition(this).like(value).apply { pos = LikePosition.Right }
+    return like(value).apply { pos = LikePosition.Right }
 }
 
 val String.matchRight: Criteria get() = matchRight()
@@ -81,7 +81,7 @@ val String.matchRight: Criteria get() = matchRight()
 fun String.matchBoth(
     value: String? = null
 ): LikeCriteria {
-    return Condition(this).like(value).apply { pos = LikePosition.Both }
+    return like(value).apply { pos = LikePosition.Both }
 }
 
 val String.matchBoth: Criteria get() = matchBoth()
@@ -302,7 +302,7 @@ val KCallable<*>.notLike get() = notLike()
 fun KCallable<*>.matchLeft(
     value: String? = null
 ): LikeCriteria {
-    return Condition(name, this).like(value).apply { pos = LikePosition.Left }
+    return like(value).apply { pos = LikePosition.Left }
 }
 
 val KCallable<*>.matchLeft: Criteria get() = matchLeft()
@@ -310,7 +310,7 @@ val KCallable<*>.matchLeft: Criteria get() = matchLeft()
 fun KCallable<*>.matchRight(
     value: String? = null
 ): LikeCriteria {
-    return Condition(name, this).like(value).apply { pos = LikePosition.Right }
+    return like(value).apply { pos = LikePosition.Right }
 }
 
 val KCallable<*>.matchRight: Criteria get() = matchRight()
@@ -318,7 +318,7 @@ val KCallable<*>.matchRight: Criteria get() = matchRight()
 fun KCallable<*>.matchBoth(
     value: String? = null
 ): LikeCriteria {
-    return Condition(name, this).like(value).apply { pos = LikePosition.Both }
+    return like(value).apply { pos = LikePosition.Both }
 }
 
 val KCallable<*>.matchBoth: Criteria get() = matchBoth()
