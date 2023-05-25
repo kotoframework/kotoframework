@@ -6,8 +6,6 @@ import com.kotoframework.definition.asc
 import com.kotoframework.definition.desc
 import com.kotoframework.function.select.select
 import com.kotoframework.core.condition.*
-import com.kotoframework.core.future.find
-import com.kotoframework.core.future.findOne
 import com.kotoframework.core.future.from
 import com.kotoframework.core.future.table
 import com.kotoframework.utils.Common.deleted

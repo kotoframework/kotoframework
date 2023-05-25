@@ -140,7 +140,7 @@ class WhereTest : KPojo {
         val (prepared) = Where(user) {
             it::userName.eq() and
                     it::active.eq() and
-                    it::nickName.like().matchLeft() and
+                    it::nickName.matchLeft() and
                     "telephone".notEq() and
                     it::age.between(10..20) and
                     "qty".gt(10) and

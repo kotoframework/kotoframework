@@ -112,7 +112,7 @@ class RemoveTest {
             ), prepared.paramMap
         )
         assertEquals(
-            "delete from tb_user where ${deleted()} and birthday is null and password is null and sex is null and nickname is null and telephone is null and avatar is null and id is null and `user_name` = :userName and age is null and email is null",
+            "delete from tb_user where ${deleted()} and `birthday` is null and `password` is null and `sex` is null and `nickname` is null and `telephone` is null and `avatar` is null and `id` is null and `user_name` = :userName and `age` is null and `email` is null",
             prepared.sql
         )
     }

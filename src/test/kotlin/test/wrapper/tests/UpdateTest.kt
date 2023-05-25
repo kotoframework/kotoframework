@@ -167,7 +167,7 @@ class UpdateTest {
     @Test
     fun updateByConditions() { // 测试根据Where条件更新
         val (prepared) = update(user).where {
-            it::userName.eq() and it::birthday.like().matchRight()
+            it::userName.eq() and it::birthday.matchRight()
         }
 
         val expectedParamMap = mapOf(

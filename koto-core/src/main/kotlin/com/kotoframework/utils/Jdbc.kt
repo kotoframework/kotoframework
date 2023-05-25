@@ -173,7 +173,7 @@ object Jdbc {
     ): String {
         val sqls = mutableListOf<String>()
         conditions.filterNotNull().forEach {
-            val alias = if (showAlias) "${it.tableName!!.lineToHump()}." else ""
+            val alias = if (showAlias) "`${it.tableName!!.lineToHump()}`." else ""
 
             if (paramMap[it.parameterName] is Collection<*> && it.type != IN) {
                 it.type = IN
@@ -199,7 +199,7 @@ object Jdbc {
             if (paramMap[realName].isNullOrEmpty() && ifNoValueStrategy(it).ignore() && it.noValueStrategy.ignore() && it.valueAcceptable) return@forEach
 
             val defaultIfNoValue: String? = if (paramMap[realName].isNullOrEmpty() && it.valueAcceptable) {
-                it.noValueStrategy.dealWithNoValue(alias, realName, it, ifNoValueStrategy(it))
+                it.noValueStrategy.dealWithNoValue(alias, it, ifNoValueStrategy(it))
             } else null
 
             if (defaultIfNoValue != null) {
