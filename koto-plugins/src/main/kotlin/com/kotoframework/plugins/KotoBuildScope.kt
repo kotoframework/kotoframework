@@ -1,6 +1,6 @@
 package com.kotoframework.plugins
 
-import com.kotoframework.plugins.utils.createSimpleCriteria
+import com.kotoframework.plugins.utils.createCriteria
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.builders.IrBlockBuilder
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
@@ -14,7 +14,7 @@ class KotoBuildScope {
     lateinit var function: IrFunction
     lateinit var pluginContext: IrPluginContext
 
-    class SimpleCriteriaIR(
+    class CriteriaIR(
         var parameterName: IrExpression,
         var type: String,
         var not: Boolean,
@@ -23,7 +23,7 @@ class KotoBuildScope {
         var tableName: IrExpression? = null,
     )
 
-    fun SimpleCriteriaIR.toIrVariable(): IrVariable {
-        return createSimpleCriteria(parameterName, type, not, value, children, tableName)
+    fun CriteriaIR.toIrVariable(): IrVariable {
+        return createCriteria(parameterName, type, not, value, children, tableName)
     }
 }

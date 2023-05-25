@@ -1,9 +1,9 @@
 package com.kotoframework.plugins.transformer
 
 import com.kotoframework.plugins.utils.createBuildScope
-import com.kotoframework.plugins.utils.setSimpleCriteriaIr
+import com.kotoframework.plugins.utils.setOrderByFields
+import com.kotoframework.plugins.utils.setSelectFields
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.ir.builders.irBlock
@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 
-class CriteriaParserReturnTransformer(
+class OrderByFieldsParserReturnTransformer(
     private val pluginContext: IrPluginContext,
     private val irFunction: IrFunction
 ) : IrElementTransformerVoidWithContext() {
@@ -23,15 +23,10 @@ class CriteriaParserReturnTransformer(
             return super.visitReturn(expression)
 
         return DeclarationIrBuilder(pluginContext, irFunction.symbol).irBlock {
-//            if (irFunction.returnType == pluginContext.irBuiltIns.unitType) {
-//                +createBuildScope(this, pluginContext, irFunction)
-//                    .setSimpleCriteriaIr()
-//                return@irBlock
-//            }
-
             val result = irTemporary(expression.value) //保存返回表达式
-            +createBuildScope(this, pluginContext, irFunction)
-                .setSimpleCriteriaIr()
+            createBuildScope(this, pluginContext, irFunction).setOrderByFields().forEach {
+                +it
+            }
             +expression.apply {
                 value = irGet(result)
             }

@@ -5,6 +5,8 @@ import com.kotoframework.enums.ConditionType
 import com.kotoframework.enums.LikePosition
 import com.kotoframework.enums.NoValueStrategy
 import com.kotoframework.utils.SqlGenerator
+import com.kotoframework.utils.humpToLine
+import com.kotoframework.utils.lineToHump
 
 /**
  * Created by ousc on 2022/4/18 10:55
@@ -27,22 +29,18 @@ import com.kotoframework.utils.SqlGenerator
  * @constructor Create empty Criteria
  * @author ousc
  */
-@Suppress("LeakingThis")
-open class Criteria(
-    internal open var parameterName: String = "", // original parameter name
-    var type: ConditionType? = null, // condition type
+@Suppress("leaking_this")
+class Criteria(
+    var parameterName: String = "", // original parameter name
+    var type: ConditionType, // condition type
     var not: Boolean = false, // whether the condition is not
+    var value: Any? = null, // value
+    val tableName: String? = "", // table name
     var pos: LikePosition? = Never, // like position
-    internal var aliasName: String? = null, // rename the parameter name in the sql and the paramMap
-    internal val tableName: String? = "", // table name
-    internal var value: Any? = null, // value
-    internal var sql: String = "", // sql
-    internal var noValueStrategy: NoValueStrategy = KotoApp.defaultNoValueStrategy, // when the value is null, whether to generate sql
+    var sql: String = "", // sql
+    var noValueStrategy: NoValueStrategy = KotoApp.defaultNoValueStrategy, // when the value is null, whether to generate sql
 ) {
     init {
-        //Leaking this can cause memory leaks, because the object is not fully constructed yet, and the object is returned from the constructor.
-        //To fix this, you can use the lateinit modifier, or you can use a factory method.
-        sql = SqlGenerator.generate(this)
         if (type != EQUAL && noValueStrategy == Ignore) {
             noValueStrategy = Smart
         }
@@ -55,4 +53,18 @@ open class Criteria(
     fun addCriteria(criteria: Criteria?) {
         children.add(criteria)
     }
+
+    init {
+        if (type != EQUAL && noValueStrategy == Ignore) {
+            noValueStrategy = Smart
+        }
+    }
+}
+
+fun lineToHump(str: String): String {
+    return str.lineToHump()
+}
+
+fun humpToLine(str: String): String {
+    return str.humpToLine()
 }

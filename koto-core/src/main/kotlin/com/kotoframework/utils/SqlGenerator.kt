@@ -14,12 +14,7 @@ object SqlGenerator {
      * @param condition The condition object
      * @return A string that is the SQL query.
      */
-    fun generate(condition: Criteria): String {
-        val realName = when {
-            !condition.aliasName.isNullOrBlank() -> condition.aliasName
-            condition.parameterName.isNotBlank() -> condition.parameterName
-            else -> ""
-        }
+    fun generate(condition: Criteria, realName: String): String {
         val parameter = getColumnName(condition)
 
         return when (condition.type) {

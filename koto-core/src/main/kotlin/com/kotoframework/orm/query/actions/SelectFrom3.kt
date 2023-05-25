@@ -41,7 +41,7 @@ open class SelectFrom3<T1 : KPojo, T2 : KPojo, T3 : KPojo>(
 ) {
 
     fun on(addCriteria: AddCriteria3<T1, T2, T3>): SelectFrom3<T1, T2, T3> {
-        this.onCriteria[t3!!.tableName] = criteriaField { addCriteria(t1!!, t2!!, t3!!) }.kotlinAST
+        this.onCriteria[t3!!.tableName] = criteriaField { addCriteria(t1!!, t2!!, t3!!) }.criteria
         return this
     }
 
@@ -65,7 +65,7 @@ open class SelectFrom3<T1 : KPojo, T2 : KPojo, T3 : KPojo>(
     }
 
     fun where(addCriteria: AddCriteria3<T1, T2, T3>): SelectFrom3<T1, T2, T3> {
-        whereCriteria.add(criteriaField { addCriteria(t1!!, t2!!, t3!!) }.kotlinAST)
+        whereCriteria.add(criteriaField { addCriteria(t1!!, t2!!, t3!!) }.criteria)
         return this
     }
 

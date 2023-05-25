@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.8.0"
-//    id("criteria-parser-plugin")
+    id("com.kotoframework.koto-criteria-plugin") version "2.0.0"
 }
 
 group = "com.kotoframework"
@@ -10,10 +10,12 @@ version = "2.0.0"
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
     implementation(kotlin("stdlib"))
+    implementation("com.kotoframework:koto-criteria-plugin:${version}")
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
     testImplementation("org.jetbrains.kotlin:kotlin-reflect")
     testImplementation(kotlin("test"))

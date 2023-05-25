@@ -110,7 +110,7 @@ class SqlBuilder(private val qa: QA) : CriteriaField(qa.tables) {
                     listOf(qa.onCriteria[table.tableName]),
                     onParamMap,
                     qa.ifNoValueStrategy,
-                    showAlias = true
+                    multiTable = true
                 )
                 sql += " ${qa.joinTypes[table.tableName]!!.name} `${table.tableName}` as `${table.tableAlias}` on $onStatement"
             }

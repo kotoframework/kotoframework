@@ -58,7 +58,7 @@ open class SelectFrom<T : KPojo>(override var t1: T? = null, val kJdbcWrapper: K
     }
 
     fun where(addCriteria: AddCriteria1<T>): SelectFrom<T> {
-        val simpleCriteria = criteriaField { addCriteria(t1!!) }.criteria
+        whereCriteria.add(criteriaField { addCriteria(t1!!) }.criteria)
         return this
     }
 

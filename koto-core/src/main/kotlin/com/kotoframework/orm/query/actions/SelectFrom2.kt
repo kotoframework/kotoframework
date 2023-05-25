@@ -6,17 +6,12 @@ import com.kotoframework.enums.NoValueStrategy
 import com.kotoframework.core.condition.Criteria
 import com.kotoframework.definition.criteriaField
 import com.kotoframework.definition.*
-import com.kotoframework.definition.propertyName
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KJdbcWrapper
 import com.kotoframework.orm.AddJoin3
 import com.kotoframework.orm.query.*
-import com.kotoframework.utils.humpToLine
-import com.kotoframework.utils.receiver
 import com.kotoframework.utils.tableAlias
 import com.kotoframework.utils.tableName
-import kotlin.reflect.KCallable
-import kotlin.reflect.full.memberProperties
 
 /**
  * Created by sundaiyue on 2023/4/3 02:07
@@ -43,7 +38,7 @@ open class SelectFrom2<T1 : KPojo, T2 : KPojo>(
     kJdbcWrapper
 ) {
     fun on(addCriteria: AddCriteria2<T1, T2>): SelectFrom2<T1, T2> {
-        this.onCriteria[t2!!.tableName] = criteriaField { addCriteria(t1!!, t2!!) }.kotlinAST
+        this.onCriteria[t2!!.tableName] = criteriaField { addCriteria(t1!!, t2!!) }.criteria
         return this
     }
 
@@ -76,7 +71,7 @@ open class SelectFrom2<T1 : KPojo, T2 : KPojo>(
     }
 
     fun where(addCriteria: AddCriteria2<T1, T2>): SelectFrom2<T1, T2> {
-        whereCriteria.add(criteriaField { addCriteria(t1!!, t2!!) }.kotlinAST)
+        whereCriteria.add(criteriaField { addCriteria(t1!!, t2!!) }.criteria)
         return this
     }
 

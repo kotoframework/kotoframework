@@ -7,7 +7,6 @@ import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
-
 @OptIn(ExperimentalCompilerApi::class)
 @AutoService(CommandLineProcessor::class)
 class CriteriaCommandLineProcessor : CommandLineProcessor {
@@ -17,7 +16,7 @@ class CriteriaCommandLineProcessor : CommandLineProcessor {
         val ARG_OPTION_SUPPORT_K2 = CompilerConfigurationKey<Boolean>(OPTION_SUPPORT_K2)
     }
 
-    override val pluginId: String = "com.kotoframework.plugins.criteria-parser-plugin"
+    override val pluginId: String = "com.kotoframework.plugins.koto-plugin"
 
     override val pluginOptions: Collection<AbstractCliOption> = listOf(
         CliOption(

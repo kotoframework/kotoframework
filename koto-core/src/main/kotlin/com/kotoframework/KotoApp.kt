@@ -16,7 +16,7 @@ object KotoApp {
     internal var hump2line: Boolean = true
     internal var kPojoSuffix: String = ""
     internal var dbType: DBType = MySql
-    internal var defaultNoValueStrategy = Ignore
+    internal var defaultNoValueStrategy = Smart
 
     /*
     * 'console' or path to logFile, split with ","

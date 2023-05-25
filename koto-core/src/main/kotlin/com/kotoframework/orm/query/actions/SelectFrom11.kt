@@ -32,7 +32,7 @@ open class SelectFrom11<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPo
 ) {
     fun on(addCriteria: AddCriteria11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>): SelectFrom11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> {
         this.onCriteria[t11!!.tableName] =
-            criteriaField { addCriteria(t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!, t9!!, t10!!, t11!!) }.kotlinAST
+            criteriaField { addCriteria(t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!, t9!!, t10!!, t11!!) }.criteria
         return this
     }
 
@@ -54,7 +54,7 @@ open class SelectFrom11<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPo
 
     fun where(addCriteria: AddCriteria11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>): SelectFrom11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> {
         whereCriteria.add(
-            criteriaField { addCriteria(t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!, t9!!, t10!!, t11!!) }.kotlinAST
+            criteriaField { addCriteria(t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!, t9!!, t10!!, t11!!) }.criteria
         )
         return this
     }

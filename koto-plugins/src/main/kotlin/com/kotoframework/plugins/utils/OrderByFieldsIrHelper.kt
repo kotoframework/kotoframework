@@ -19,15 +19,15 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 
 @OptIn(FirIncompatiblePluginAPI::class)
-fun KotoBuildScope.addFieldSymbol() =
-    pluginContext.referenceFunctions(FqName("com.kotoframework.definition.SelectField.addFields")).first()
+fun KotoBuildScope.addOrderByFieldSymbol() =
+    pluginContext.referenceFunctions(FqName("com.kotoframework.definition.OrderByField.addFields")).first()
 
 
-fun KotoBuildScope.setSelectFields(): List<IrCall> {
+fun KotoBuildScope.setOrderByFields(): List<IrCall> {
     val receiver = function.extensionReceiverParameter!! // this
-    val variables = getFields(function.body!!)
+    val variables = getOrderByFields(function.body!!)
     return variables.map {
-        builder.irCall(addFieldSymbol()).apply {
+        builder.irCall(addOrderByFieldSymbol()).apply {
             dispatchReceiver = builder.irGet(receiver)
             putValueArgument(0, it)
         }
@@ -35,13 +35,13 @@ fun KotoBuildScope.setSelectFields(): List<IrCall> {
 }
 
 
-fun KotoBuildScope.getFields(element: IrElement): List<IrExpression> {
+fun KotoBuildScope.getOrderByFields(element: IrElement): List<IrExpression> {
     val variables = mutableListOf<IrExpression>()
     when (element) {
         is IrBlockBody -> {
             // 处理块体
             element.statements.forEach { statement ->
-                variables.addAll(getFields(statement))
+                variables.addAll(getOrderByFields(statement))
             }
         }
 
@@ -51,13 +51,16 @@ fun KotoBuildScope.getFields(element: IrElement): List<IrExpression> {
                 args.forEach {
                     if (it is IrCall) {
                         if (it.funcName == "plus") {
-                            variables.addAll(getFields(it))
+                            variables.addAll(getOrderByFields(it))
+                        }
+                        if (it.funcName == "desc" || it.funcName == "asc") {
+                            variables.add(getFieldName(it))
                         }
                         if (it.origin.toString() == "GET_PROPERTY") {
                             variables.add(getFieldName(it))
                         }
                     } else {
-                        variables.addAll(getFields(it))
+                        variables.addAll(getOrderByFields(it))
                     }
                 }
             }
@@ -68,30 +71,8 @@ fun KotoBuildScope.getFields(element: IrElement): List<IrExpression> {
         }
 
         is IrReturn -> {
-            return getFields(element.value)
+            return getOrderByFields(element.value)
         }
     }
     return variables
-}
-
-
-// 返回KPojo或字符串的参数名，若有注解，读取注解信息
-@OptIn(ObsoleteDescriptorBasedAPI::class)
-fun KotoBuildScope.getFieldName(expression: IrExpression): IrExpression {
-    return when (expression) {
-        is IrCall -> {
-            val propName = extractGetX(expression.funcName)
-            val annotations =
-                expression.dispatchReceiver!!.type.getClass()!!.properties.first { it.name.asString() == propName }.annotations
-            val columnAnnotation =
-                annotations.firstOrNull { it.symbol.descriptor.containingDeclaration.classId == ClassId.fromString("com/kotoframework/core/annotations/Column") }
-            if (columnAnnotation != null) {
-                columnAnnotation.getValueArgument(0)!!
-            } else {
-                humpToLine(builder.irString(propName))
-            }
-        }
-
-        else -> builder.irString("")
-    }
 }

@@ -122,7 +122,7 @@ val String.notNull: Criteria get() = notNull()
 
 fun String.declareSql(): Criteria {
     return Criteria(
-        type = SQL, aliasName = this, sql = this
+        type = SQL, sql = this
     )
 }
 
@@ -371,28 +371,10 @@ fun Criteria?.ifNoValue(strategy: (Criteria) -> NoValueStrategy): Criteria? {
     }
 }
 
-fun Criteria.alias(newName: String): Criteria {
-    return this.apply {
-        aliasName = newName.takeIf { it.isNotBlank() } ?: aliasName
-        sql = SqlGenerator.generate(this)
-    }
-}
-
-
 @Deprecated(
     "The 'iif(expression)' is deprecated, please use takeIf(expression) instead",
     ReplaceWith("this.takeIf { expression }")
 )
 fun Criteria?.iif(expression: Boolean): Criteria? {
     return this?.takeIf { expression }
-}
-
-@Deprecated(
-    "The 'reName(newName)' is deprecated, please use alias(newName) instead",
-    ReplaceWith("this.alias(newName)")
-)
-fun Criteria?.reName(newName: String): Criteria? {
-    return this?.apply {
-        aliasName = newName
-    }
 }

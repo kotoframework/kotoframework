@@ -1,6 +1,5 @@
 package com.kotoframework.beans
 
-import com.kotoframework.core.where.BaseWhere
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KDataSet
 import com.kotoframework.interfaces.KJdbcWrapper
@@ -20,7 +19,7 @@ import com.kotoframework.interfaces.KJdbcWrapper
  * @constructor Create empty Koto operation set
  * @author ousc
  */
-class KOperationSet<T : BaseWhere<K>, K : KPojo>(
+class KOperationSet<T, K : KPojo>(
     override val sql: String,
     override val paramMap: Map<String, Any?>,
     val then: KOperationSet<*, *>? = null,

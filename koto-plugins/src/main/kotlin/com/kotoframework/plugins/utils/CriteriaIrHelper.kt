@@ -1,5 +1,6 @@
 package com.kotoframework.plugins.utils
 
+import com.kotoframework.definition.CriteriaField
 import com.kotoframework.plugins.KotoBuildScope
 import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
@@ -19,10 +20,11 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import kotlin.reflect.KClass
 
 // kotlin内置函数名转换为koto函数名
 val map = mapOf(
-    "EQEQ" to "eq",
+    "EQEQ" to "equal",
     "ANDAND" to "and",
     "OROR" to "or",
     "greater" to "gt",
@@ -34,13 +36,13 @@ val map = mapOf(
 
 // SimpleCriteria类
 @OptIn(FirIncompatiblePluginAPI::class)
-fun KotoBuildScope.simpleCriteriaClassSymbol() =
-    pluginContext.referenceClass(FqName("com.kotoframework.core.condition.SimpleCriteria"))!!
+fun KotoBuildScope.criteriaClassSymbol() =
+    pluginContext.referenceClass(FqName("com.kotoframework.core.condition.Criteria"))!!
 
 // SimpleCriteria类的setCriteria函数
 @OptIn(FirIncompatiblePluginAPI::class)
-fun KotoBuildScope.simpleCriteriaSetterSymbol() =
-    pluginContext.referenceFunctions(FqName("com.kotoframework.core.condition.SimpleCriteria.addCriteria")).first()
+fun KotoBuildScope.criteriaSetterSymbol() =
+    pluginContext.referenceFunctions(FqName("com.kotoframework.core.condition.Criteria.addCriteria")).first()
 
 //lineToHump函数
 @OptIn(FirIncompatiblePluginAPI::class)
@@ -55,9 +57,9 @@ fun KotoBuildScope.humpToLineSymbol() =
 //criteriaField类的setCriteria函数
 @OptIn(FirIncompatiblePluginAPI::class)
 fun KotoBuildScope.criteriaFieldSetterSymbol() =
-    pluginContext.referenceFunctions(FqName("com.kotoframework.definition.criteriaField.setCriteria")).first()
+    pluginContext.referenceClass(FqName("com.kotoframework.definition.CriteriaField"))!!.getPropertySetter("criteria")!!
 
-//criteriaField类的setCriteria函数
+//ConditionType类的toConditionType(Str)函数
 @OptIn(FirIncompatiblePluginAPI::class)
 fun KotoBuildScope.stringToConditionTypeSymbol() =
     pluginContext.referenceFunctions(FqName("com.kotoframework.enums.toConditionType")).first()
@@ -97,7 +99,7 @@ fun KotoBuildScope.stringToConditionType(str: String): IrGetValueImpl {
 }
 
 // 创建SimpleCriteria语句，形如val tmp = SimpleCriteria(...
-fun KotoBuildScope.createSimpleCriteria(
+fun KotoBuildScope.createCriteria(
     parameterName: IrExpression,
     type: String,
     not: Boolean,
@@ -105,22 +107,21 @@ fun KotoBuildScope.createSimpleCriteria(
     children: List<IrVariable> = listOf(),
     table: IrExpression? = null
 ): IrVariable {
-    val irCall = builder.irCall(simpleCriteriaClassSymbol().constructors.first())
+    val irCall = builder.irCall(criteriaClassSymbol().constructors.first())
     irCall.putValueArgument(0, parameterName)
-    irCall.putValueArgument(1, parameterName)
-    irCall.putValueArgument(2, stringToConditionType(type))
-    irCall.putValueArgument(3, builder.irBoolean(not))
+    irCall.putValueArgument(1, stringToConditionType(type))
+    irCall.putValueArgument(2, builder.irBoolean(not))
     if (value != null) {
-        irCall.putValueArgument(4, value)
+        irCall.putValueArgument(3, value)
     }
     if (table != null) {
-        irCall.putValueArgument(5, table)
+        irCall.putValueArgument(4, table)
     }
     val irVariable = blockBody.irTemporary(irCall)
 
     blockBody.apply {
         children.forEach {
-            +irCall(simpleCriteriaSetterSymbol()).apply {
+            +irCall(criteriaSetterSymbol()).apply {
                 dispatchReceiver = builder.irGet(irVariable)
                 putValueArgument(0, builder.irGet(it))
             }
@@ -135,13 +136,9 @@ fun KotoBuildScope.createSimpleCriteria(
  * @receiver KotoBuildScope instance.
  * @author sundaiyue
  */
-fun KotoBuildScope.addSetSimpleCriteriaIr() {
-    blockBody.apply {
-        builder.irCall(criteriaFieldSetterSymbol()).apply {
-            dispatchReceiver = builder.irGet(function.extensionReceiverParameter!!)
-            putValueArgument(0, blockBody.irGet(buildCriteria(function.body!!)!!))
-        }
-    }
+fun KotoBuildScope.setSimpleCriteriaIr() = builder.irCall(criteriaFieldSetterSymbol()).apply {
+    dispatchReceiver = builder.irGet(function.extensionReceiverParameter!!)
+    putValueArgument(0, blockBody.irGet(buildCriteria(function.body!!)!!))
 }
 
 // 通过递归，分析用户编写的Criteria.()->Boolean lambda语句，解析为SimpleCriteriaIr
@@ -172,7 +169,7 @@ fun KotoBuildScope.buildCriteria(element: IrElement, setNot: Boolean = false): I
         is IrCall -> {
             val funcName = element.funcName
             type = funcName
-            val args = element.argumentsNot("CriteriaField")
+            val args = element.argumentsNot(CriteriaField::class)
             if (funcName == "not") {
                 if (args.size == 1) { // !(a in b) -> a !in b
                     return buildCriteria(args[0], true)
@@ -195,7 +192,7 @@ fun KotoBuildScope.buildCriteria(element: IrElement, setNot: Boolean = false): I
 
                     "lt", "gt", "le", "ge" -> {
                         val compareToIrCall = args[0]
-                        val compareToArgs = (compareToIrCall as IrCallImpl).argumentsNot("CriteriaField")
+                        val compareToArgs = (compareToIrCall as IrCallImpl).argumentsNot(CriteriaField::class)
                         parameterName = getParameterName(compareToArgs[0])
                         value = compareToArgs[1]
                         tableName = getTableName(compareToArgs[0])
@@ -209,7 +206,7 @@ fun KotoBuildScope.buildCriteria(element: IrElement, setNot: Boolean = false): I
                         tableName = getTableName(args[0])
                     }
 
-                    "eq", "like", "between" -> {
+                    "equal", "like", "between" -> {
                         parameterName = getParameterName(args[0])
                         value = args[1]
                         tableName = getTableName(args[0])
@@ -228,7 +225,7 @@ fun KotoBuildScope.buildCriteria(element: IrElement, setNot: Boolean = false): I
         }
     }
 
-    return KotoBuildScope.SimpleCriteriaIR(parameterName, type, not, value, children.filterNotNull(), tableName)
+    return KotoBuildScope.CriteriaIR(parameterName, type, not, value, children.filterNotNull(), tableName)
         .toIrVariable()
 }
 
@@ -283,8 +280,8 @@ val IrCall.funcName
 
 //获取函数参数列表（去除receiver）
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-fun IrCall.argumentsNot(field: String): List<IrExpression> {
-    return getArguments().filter { (_, expression) -> expression.type.toKotlinType().toString() != field }
+fun IrCall.argumentsNot(field: KClass<*>): List<IrExpression> {
+    return getArguments().filter { (_, expression) -> expression.type.toKotlinType().toString() != field.simpleName }
         .map { it.second }
 }
 

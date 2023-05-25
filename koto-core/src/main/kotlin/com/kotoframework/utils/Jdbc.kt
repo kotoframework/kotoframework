@@ -8,6 +8,7 @@ import com.kotoframework.core.annotations.Column
 import com.kotoframework.core.annotations.DateTimeFormat
 import com.kotoframework.definition.NoValueField
 import com.kotoframework.definition.noValueField
+import com.kotoframework.enums.ConditionType
 import com.kotoframework.enums.NoValueStrategy
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KJdbcWrapper
@@ -164,52 +165,50 @@ object Jdbc {
      * @return A string of SQL
      */
     fun joinSqlStatement(
-            conditions: List<Criteria?>,
-            paramMap: MutableMap<String, Any?>,
-            ifNoValueStrategy: NoValueField.(Criteria) -> NoValueStrategy = { KotoApp.defaultNoValueStrategy },
-            join: String = "and",
-            brackets: Boolean = false,
-            showAlias: Boolean = false
+        conditions: List<Criteria?>,
+        paramMap: MutableMap<String, Any?>,
+        ifNoValueStrategy: NoValueField.(Criteria) -> NoValueStrategy = { KotoApp.defaultNoValueStrategy },
+        infix: String = "and",
+        brackets: Boolean = false,
+        multiTable: Boolean = false
     ): String {
-        val sqls = mutableListOf<String>()
+        val listOfSql = mutableListOf<String>()
         conditions.filterNotNull().forEach {
-            val alias = if (showAlias) "${it.tableName!!.lineToHump()}." else ""
-
-            if (paramMap[it.parameterName] is Collection<*> && it.type != IN) {
-                it.type = IN
+            if (it.type == ConditionType.ROOT) {
+                it.type = AND
             }
 
-            if (paramMap[it.parameterName] is ClosedRange<*> && it.type != BETWEEN) {
-                it.type = BETWEEN
-            }
+            val prefix = if (multiTable) "${it.tableName!!.lineToHump()}." else ""
 
-            val realName = when {
-                !it.aliasName.isNullOrBlank() -> it.aliasName
-                else -> it.parameterName
-            }!!
-
-            if (it.valueAcceptable) {
-                if (!paramMap[it.parameterName].isNullOrEmpty() && paramMap[realName].isNullOrEmpty()) {
-                    paramMap[realName] = paramMap[it.parameterName]
+            val realName =
+                if (it.valueAcceptable && it.value != null && paramMap[it.parameterName] != null && paramMap[it.parameterName] != it.value) {
+                    "${it.parameterName}_${it.value}"
+                } else {
+                    it.parameterName
                 }
-                if (!it.value.isNullOrEmpty())
-                    paramMap[realName] = it.value ?: paramMap[realName]
+
+            if(realName.isNotEmpty()) {
+                paramMap[realName] = it.value ?: paramMap[realName]
             }
 
-            if (paramMap[realName].isNullOrEmpty() && noValueField.ifNoValueStrategy(it).ignore() && it.noValueStrategy.ignore() && it.valueAcceptable) return@forEach
+            it.sql = SqlGenerator.generate(it, realName)
+
+            if (paramMap[realName].isNullOrEmpty() && noValueField.ifNoValueStrategy(it)
+                    .ignore() && it.noValueStrategy.ignore() && it.valueAcceptable
+            ) return@forEach
 
             val defaultIfNoValue: String? = if (paramMap[realName].isNullOrEmpty() && it.valueAcceptable) {
-                it.noValueStrategy.dealWithNoValue(alias, realName, it, noValueField.ifNoValueStrategy(it))
+                it.noValueStrategy.dealWithNoValue(prefix, realName, it, noValueField.ifNoValueStrategy(it))
             } else null
 
             if (defaultIfNoValue != null) {
-                sqls.add(defaultIfNoValue)
+                listOfSql.add(defaultIfNoValue)
                 return@forEach
             }
 
             when (it.type) {
                 EQUAL, ISNULL -> {
-                    sqls.add(alias + it.sql)
+                    listOfSql.add(prefix + it.sql)
                 }
 
                 LIKE -> {
@@ -220,14 +219,14 @@ object Jdbc {
                         else -> {
                         }
                     }
-                    sqls.add(alias + it.sql)
+                    listOfSql.add(prefix + it.sql)
                 }
 
                 GT, GE, LT, LE -> {
                     if (it.type == GT || it.type == GE) paramMap[realName] =
                         paramMap[realName.replace("Min", "")] ?: paramMap[realName] ?: it.value
                     else paramMap[realName] = paramMap[realName.replace("Max", "")] ?: paramMap[realName] ?: it.value
-                    sqls.add(alias + it.sql)
+                    listOfSql.add(prefix + it.sql)
                 }
 
                 BETWEEN -> {
@@ -239,51 +238,51 @@ object Jdbc {
                         throw IllegalArgumentException("The type `${paramMap[realName]!!::class.java.simpleName}` of the value of BETWEEN is not supported")
                     }
 
-                    sqls.add(alias + it.sql)
+                    listOfSql.add(prefix + it.sql)
                 }
 
                 IN -> {
                     if (paramMap[realName] is Collection<*>?) {
                         paramMap[realName] = paramMap[realName] ?: listOf<String>()
-                        sqls.add(alias + it.sql)
+                        listOfSql.add(prefix + it.sql)
                     } else {
                         throw IllegalArgumentException("The type `${paramMap[realName]!!::class.java.simpleName}` of the value of IN is not supported")
                     }
                 }
 
-                SQL -> sqls.add(it.sql)
+                SQL -> listOfSql.add(it.sql)
                 AND -> {
-                    sqls.add(
+                    listOfSql.add(
                         joinSqlStatement(
                             it.children,
                             paramMap,
                             ifNoValueStrategy,
                             "and",
-                            (join != "and"),
-                            showAlias
+                            (infix != "and"),
+                            multiTable
                         )
                     )
                 }
 
-                OR -> sqls.add(
+                OR -> listOfSql.add(
                     joinSqlStatement(
                         it.children,
                         paramMap,
                         ifNoValueStrategy,
                         "or",
-                        (join != "or"),
-                        showAlias
+                        (infix != "or"),
+                        multiTable
                     )
                 )
 
                 else -> {}
             }
         }
-        val res = sqls.filter { it.isNotBlank() }
+        val res = listOfSql.filter { it.isNotBlank() }
         if (res.isEmpty()) return ""
         if (brackets && res.size > 1)
-            return "(${res.joinToString(" $join ")})"
-        return res.joinToString(" $join ")
+            return "(${res.joinToString(" $infix ")})"
+        return res.joinToString(" $infix ")
     }
 
     fun queryKotoJdbcData(

@@ -13,9 +13,10 @@ enum class ConditionType {
     BETWEEN,
     AND,
     OR,
-    NOT
+    NOT,
+    ROOT
 }
 
 internal fun toConditionType(str: String): ConditionType {
-    return ConditionType.valueOf(str)
+    return ConditionType.valueOf(str.uppercase())
 }

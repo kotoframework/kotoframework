@@ -1,7 +1,7 @@
 package com.kotoframework.plugins.transformer
 
-import com.kotoframework.plugins.utils.addSelectFields
 import com.kotoframework.plugins.utils.createBuildScope
+import com.kotoframework.plugins.utils.setSelectFields
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
@@ -22,13 +22,10 @@ class FieldsParserReturnTransformer(
             return super.visitReturn(expression)
 
         return DeclarationIrBuilder(pluginContext, irFunction.symbol).irBlock {
-            if (irFunction.returnType == pluginContext.irBuiltIns.unitType) {
-                createBuildScope(this, pluginContext, irFunction).addSelectFields()
-                return@irBlock
-            }
-
             val result = irTemporary(expression.value) //保存返回表达式
-            createBuildScope(this, pluginContext, irFunction).addSelectFields()
+            createBuildScope(this, pluginContext, irFunction).setSelectFields().forEach {
+                +it
+            }
             +expression.apply {
                 value = irGet(result)
             }

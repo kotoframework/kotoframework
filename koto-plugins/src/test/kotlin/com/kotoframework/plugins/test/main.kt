@@ -12,7 +12,11 @@ data class User(
 ) : KPojo
 
 fun main() {
-    from<User>().select {
-        it.id + it.name + "max(id)" + "count(id)" + "age" + "update_time as updateTime" + "create_time as createTime"
-    }
+    val a = from<User>()
+        .select { it.id + it.name + it.age }
+        .where {
+            it.id == 1 && it.age < 10 && (it.name like "%zhang%" || it.name == "lisi")
+        }.prepared
+
+    println(a.sql)
 }

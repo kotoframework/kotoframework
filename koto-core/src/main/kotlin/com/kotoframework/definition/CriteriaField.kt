@@ -2,16 +2,13 @@ package com.kotoframework.definition
 
 import com.kotoframework.core.annotations.UnsafeCriteria
 import com.kotoframework.core.condition.Criteria
-import com.kotoframework.core.condition.SimpleCriteria
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.orm.query.QA
 import java.util.*
 
 open class CriteriaField(internal val listOfKPojo: List<KPojo>) {
-    // NOTICE! _CONDITION cannot be set to "private", otherwise it will be ignored by kotlin compiler
-    val kotlinAST: Criteria? = null
-    internal var criteria: SimpleCriteria? = null
-
+    // NOTICE! criteria cannot be set to "private", otherwise it will be ignored by kotlin compiler
+    public var criteria: Criteria? = null
     operator fun <T> Collection<T>?.contains(
         other: @Suppress(
             "INVISIBLE_MEMBER",

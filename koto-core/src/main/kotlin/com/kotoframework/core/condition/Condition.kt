@@ -17,17 +17,6 @@ import com.kotoframework.*
 class Condition(private var parameterName: String = "Unknown") {
 
     /**
-     * `getReName` is a function that returns a string.
-     *
-     * @param suffix
-     * @return String
-     * @author ousc
-     */
-    private fun getReName(suffix: String = ""): String {
-        return parameterName + suffix
-    }
-
-    /**
      * `eq` is a function that returns a `Criteria` object
      *
      * @param value The value of the field to be queried
@@ -44,7 +33,6 @@ class Condition(private var parameterName: String = "Unknown") {
         return Criteria(
             parameterName = parameterName,
             type = EQUAL,
-            aliasName = getReName(),
             value = value,
             not = not,
             tableName = tableName,
@@ -82,7 +70,6 @@ class Condition(private var parameterName: String = "Unknown") {
         return Criteria(
             parameterName = parameterName,
             type = GT,
-            aliasName = getReName("Min"),
             value = value,
             tableName = tableName,
         )
@@ -103,7 +90,6 @@ class Condition(private var parameterName: String = "Unknown") {
         return Criteria(
             parameterName = parameterName,
             type = GE,
-            aliasName = getReName("Min"),
             value = value,
             tableName = tableName,
         )
@@ -124,7 +110,6 @@ class Condition(private var parameterName: String = "Unknown") {
         return Criteria(
             parameterName = parameterName,
             type = LT,
-            aliasName = getReName("Max"),
             value = value,
             tableName = tableName,
         )
@@ -145,7 +130,6 @@ class Condition(private var parameterName: String = "Unknown") {
         return Criteria(
             parameterName = parameterName,
             type = LE,
-            aliasName = getReName("Max"),
             value = value,
             tableName = tableName,
         )
@@ -169,7 +153,6 @@ class Condition(private var parameterName: String = "Unknown") {
         return Criteria(
             parameterName = parameterName,
             type = BETWEEN,
-            aliasName = getReName(),
             value = range,
             not = not,
             tableName = tableName,
@@ -210,7 +193,6 @@ class Condition(private var parameterName: String = "Unknown") {
         return Criteria(
             parameterName = parameterName,
             type = IN,
-            aliasName = getReName(),
             value = list,
             not = not,
             tableName = tableName,
@@ -253,7 +235,6 @@ class Condition(private var parameterName: String = "Unknown") {
         return Criteria(
             parameterName = parameterName,
             type = ISNULL,
-            aliasName = parameterName,
             not = not,
             tableName = tableName,
         )

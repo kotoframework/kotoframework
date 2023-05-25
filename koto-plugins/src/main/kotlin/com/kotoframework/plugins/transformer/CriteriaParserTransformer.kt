@@ -16,7 +16,7 @@ class CriteriaParserTransformer(
 ) : IrElementTransformerVoidWithContext() {
     private val criteriaFieldClazz = "com.kotoframework.definition.CriteriaField"
     private val selectFieldClazz = "com.kotoframework.definition.SelectField"
-    private val OrderByFieldClazz = "com.kotoframework.definition.OrderByField"
+    private val orderByFieldClazz = "com.kotoframework.definition.OrderByField"
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun visitFunctionNew(declaration: IrFunction): IrStatement {
@@ -26,6 +26,9 @@ class CriteriaParserTransformer(
             }
             selectFieldClazz -> {
                 declaration.body = irSetFields(declaration, declaration.body!!)
+            }
+            orderByFieldClazz -> {
+                declaration.body = irSetOrderByFields(declaration, declaration.body!!)
             }
         }
         return super.visitFunctionNew(declaration)
@@ -55,6 +58,20 @@ class CriteriaParserTransformer(
                     +statement
                 }
             }.transform(FieldsParserReturnTransformer(pluginContext, irFunction), null)
+
+        }
+    }
+
+    private fun irSetOrderByFields(
+        irFunction: IrFunction,
+        irBody: IrBody,
+    ): IrBlockBody {
+        return DeclarationIrBuilder(pluginContext, irFunction.symbol).irBlockBody {
+            +irBlock(resultType = irFunction.returnType) {
+                for (statement in irBody.statements) { //原有方法体中的表达式
+                    +statement
+                }
+            }.transform(OrderByFieldsParserReturnTransformer(pluginContext, irFunction), null)
 
         }
     }
