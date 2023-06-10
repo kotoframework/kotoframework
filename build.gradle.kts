@@ -1,12 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+group = "com.kotoframework"
+version = "2.0.0-snapshot"
+
 plugins {
     kotlin("jvm") version "1.8.0"
-    id("com.kotoframework.koto-criteria-plugin") version "2.0.0"
+//    id("com.kotoframework.koto-criteria-plugin") version "2.0.0"
 }
-
-group = "com.kotoframework"
-version = "2.0.0"
 
 repositories {
     mavenCentral()
@@ -15,7 +15,6 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("com.kotoframework:koto-criteria-plugin:${version}")
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
     testImplementation("org.jetbrains.kotlin:kotlin-reflect")
     testImplementation(kotlin("test"))
@@ -23,6 +22,7 @@ dependencies {
     testImplementation(project(":koto-spring-wrapper"))
     testImplementation(project(":koto-jdbi-wrapper"))
     testImplementation(project(":koto-basic-wrapper"))
+//    testImplementation("com.kotoframework:koto-criteria-plugin:${version}")
 }
 
 tasks.test {

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 /**
  * 将Criteria.() -> Boolean 转为 Criteria的插件
  */
-class CriteriaParserPlugin: KotlinCompilerPluginSupportPlugin {
+class KotoGradlePlugin: KotlinCompilerPluginSupportPlugin {
 
   lateinit var project: Project
   lateinit var pluginId: String
@@ -60,5 +60,5 @@ class CriteriaParserPlugin: KotlinCompilerPluginSupportPlugin {
    * then [applyToCompilation] may be called later.
    */
   override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean = project.plugins.hasPlugin(
-    CriteriaParserPlugin::class.java)
+    KotoGradlePlugin::class.java)
 }
