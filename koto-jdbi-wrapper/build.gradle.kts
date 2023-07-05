@@ -1,8 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.net.URL
 
 plugins {
-    kotlin("jvm") version "1.8.0"
+    kotlin("jvm")
     id("signing")
     id("maven-publish")
 }
