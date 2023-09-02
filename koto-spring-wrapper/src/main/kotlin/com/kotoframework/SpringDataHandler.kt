@@ -1,14 +1,9 @@
 package com.kotoframework
 
-import com.kotoframework.utils.Printer
-import com.kotoframework.utils.Log
-import com.kotoframework.utils.Jdbc
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KJdbcWrapper
 import com.kotoframework.interfaces.KQueryHandler
-import com.kotoframework.utils.isAssignableFrom
-import com.kotoframework.utils.lineToHump
-import com.kotoframework.utils.toKPojo
+import com.kotoframework.utils.*
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.dao.IncorrectResultSizeDataAccessException
 import org.springframework.jdbc.core.SingleColumnRowMapper
@@ -64,6 +59,11 @@ class SpringDataHandler : KQueryHandler() {
                 Printer.errorPrintln("You are using 【queryForObject】 to get a single column, but the result set is empty.If you want to query for a nullable column, use 【queryForObjectOrNull】 instead.")
             }
             throw e
+        } catch (e: NullPointerException) {
+            if (!withoutErrorPrintln) {
+                Printer.errorPrintln("You are using 【queryForObject】 to get a single column, but the result set is empty.If you want to query for a nullable column, use 【queryForObjectOrNull】 instead.")
+            }
+            throw e
         }
     }
 
@@ -78,6 +78,8 @@ class SpringDataHandler : KQueryHandler() {
         } catch (e: NoSuchElementException) {
             null
         } catch (e: EmptyResultDataAccessException) {
+            null
+        } catch (e: NullPointerException) {
             null
         } catch (e: IncorrectResultSizeDataAccessException) {
             Printer.errorPrintln("You are using 【queryForObjectOrNull】 on a query that returns more than one row. This is not supported. Use 【queryForList】 instead.")
