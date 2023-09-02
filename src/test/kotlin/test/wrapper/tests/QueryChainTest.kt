@@ -2,7 +2,6 @@ package test.wrapper.tests
 
 import com.kotoframework.KotoApp
 import com.kotoframework.beans.KResultSet.Companion.convertCountSql
-import com.kotoframework.enums.JoinType
 import com.kotoframework.orm.query.from
 import com.kotoframework.orm.query.join
 import com.kotoframework.utils.deleted

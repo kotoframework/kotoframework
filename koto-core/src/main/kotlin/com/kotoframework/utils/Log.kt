@@ -24,7 +24,7 @@ object Log {
     internal var out: String? = "console"
     internal var simpleLog: Boolean = false
 
-    var tasks = mutableListOf<List<LogLine>>() // 任务队列
+    private var tasks = mutableListOf<List<LogLine>>() // 任务队列
 
     /**
      * It takes a SQL statement and a mode, and returns the table name from the SQL statement according to the mode.
