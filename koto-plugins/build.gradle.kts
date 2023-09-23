@@ -10,6 +10,8 @@ plugins {
 }
 
 
+val kotlin_plugin_id: String = "com.kotoframework.plugins.koto-gradle-plugin"
+val artifactId: String = "koto-gradle-plugin"
 group = rootProject.group
 version = rootProject.version
 
@@ -41,8 +43,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.8.0")
     implementation("com.google.auto.service:auto-service:1.0.1")
     kapt("com.google.auto.service:auto-service:1.0.1")
-    compileOnly(project(":koto-core"))
-    testCompileOnly(project(":koto-core"))
+    testImplementation(project(":koto-core"))
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.3")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.8.0")
     testImplementation("com.github.tschuchortdev:kotlin-compile-testing:1.5.0")
@@ -50,7 +51,7 @@ dependencies {
 
 gradlePlugin {
     plugins {
-        create("koto-gradle-plugin") {
+        create("KotoGradlePlugin") {
             id = "koto-gradle-plugin"
             implementationClass = "com.kotoframework.plugins.KotoGradlePlugin"
         }

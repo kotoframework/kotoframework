@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.kotoframework"
-version = "2.0.0-SNAPSHOT"
+version = "2.0.1-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -15,6 +15,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
+    implementation(kotlin("script-runtime"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
     testImplementation("org.jetbrains.kotlin:kotlin-reflect")
     testImplementation(kotlin("test"))

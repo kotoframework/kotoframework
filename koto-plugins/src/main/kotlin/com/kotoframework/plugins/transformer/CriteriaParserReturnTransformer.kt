@@ -3,7 +3,6 @@ package com.kotoframework.plugins.transformer
 import com.kotoframework.plugins.utils.createBuildScope
 import com.kotoframework.plugins.utils.setSimpleCriteriaIr
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.ir.builders.irBlock

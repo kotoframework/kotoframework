@@ -1,22 +1,13 @@
 package com.kotoframework.plugins.utils
 
-import com.kotoframework.definition.SelectField
 import com.kotoframework.plugins.KotoBuildScope
 import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
-import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.util.properties
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 
 @OptIn(FirIncompatiblePluginAPI::class)
 fun KotoBuildScope.addOrderByFieldSymbol() =
@@ -46,7 +37,7 @@ fun KotoBuildScope.getOrderByFields(element: IrElement): List<IrExpression> {
         }
 
         is IrCall -> {
-            val args = element.argumentsNot(SelectField::class)
+            val args = element.argumentsNot("SelectField")
             if (element.funcName == "plus") {
                 args.forEach {
                     if (it is IrCall) {

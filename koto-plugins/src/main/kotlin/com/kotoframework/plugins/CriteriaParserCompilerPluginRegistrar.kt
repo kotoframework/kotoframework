@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
 
 @OptIn(ExperimentalCompilerApi::class)
-@AutoService(CompilerPluginRegistrar::class) // don't forget it
+@AutoService(CompilerPluginRegistrar::class)
 class CriteriaParserCompilerPluginRegistrar : CompilerPluginRegistrar() {
 
     override val supportsK2: Boolean

@@ -1,6 +1,5 @@
 package com.kotoframework.plugins.utils
 
-import com.kotoframework.definition.CriteriaField
 import com.kotoframework.plugins.KotoBuildScope
 import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
@@ -134,7 +133,7 @@ fun KotoBuildScope.createCriteria(
  * Adds IR for setting simple criteria. example: criteriaField.setCriteria(tmp)
  *
  * @receiver KotoBuildScope instance.
- * @author sundaiyue
+ * @author OUSC
  */
 fun KotoBuildScope.setSimpleCriteriaIr() = builder.irCall(criteriaFieldSetterSymbol()).apply {
     dispatchReceiver = builder.irGet(function.extensionReceiverParameter!!)
@@ -169,7 +168,7 @@ fun KotoBuildScope.buildCriteria(element: IrElement, setNot: Boolean = false): I
         is IrCall -> {
             val funcName = element.funcName
             type = funcName
-            val args = element.argumentsNot(CriteriaField::class)
+            val args = element.argumentsNot("CriteriaField")
             if (funcName == "not") {
                 if (args.size == 1) { // !(a in b) -> a !in b
                     return buildCriteria(args[0], true)
@@ -192,7 +191,7 @@ fun KotoBuildScope.buildCriteria(element: IrElement, setNot: Boolean = false): I
 
                     "lt", "gt", "le", "ge" -> {
                         val compareToIrCall = args[0]
-                        val compareToArgs = (compareToIrCall as IrCallImpl).argumentsNot(CriteriaField::class)
+                        val compareToArgs = (compareToIrCall as IrCallImpl).argumentsNot("CriteriaField")
                         parameterName = getParameterName(compareToArgs[0])
                         value = compareToArgs[1]
                         tableName = getTableName(compareToArgs[0])
@@ -280,8 +279,8 @@ val IrCall.funcName
 
 //获取函数参数列表（去除receiver）
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-fun IrCall.argumentsNot(field: KClass<*>): List<IrExpression> {
-    return getArguments().filter { (_, expression) -> expression.type.toKotlinType().toString() != field.simpleName }
+fun IrCall.argumentsNot(simpleName: String): List<IrExpression> {
+    return getArguments().filter { (_, expression) -> expression.type.toKotlinType().toString() != simpleName }
         .map { it.second }
 }
 

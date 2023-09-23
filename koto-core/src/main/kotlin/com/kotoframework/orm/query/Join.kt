@@ -6,6 +6,12 @@ import com.kotoframework.orm.*
 import com.kotoframework.orm.query.actions.*
 
 
+fun <T: QA> T.left() = this to JoinType.LEFT_JOIN
+fun <T: QA> T.right() = this to JoinType.RIGHT_JOIN
+fun <T: QA> T.full() = this to JoinType.FULL_JOIN
+fun <T: QA> T.cross() = this to JoinType.CROSS_JOIN
+fun <T: QA> T.inner() = this to JoinType.INNER_JOIN
+
 inline fun <reified K : KPojo, T : KPojo> Pair<SelectFrom<T>, JoinType>.join(
     t2: K = K::class.javaInstance(),
     action: AddJoin2<T, K> = { _, _ -> this }

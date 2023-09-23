@@ -7,13 +7,14 @@ import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import kotlin.test.assertEquals
 import org.junit.jupiter.api.Test
+import java.io.File
 
 class CriteriaParserTest {
   @OptIn(ExperimentalCompilerApi::class)
   @Test
   fun `IR plugin success`() {
 //    val result = compile(
-//      sourceFile = SourceFile.fromPath(File("/Users/zhangzhengtian/Github/KtIRPlugin/src/test/kotlin/com/sankuai/demo/test/main.kt"))
+//      sourceFile = SourceFile.fromPath(File("/Users/sundaiyue/IdeaProjects/kotoframework/koto-plugins/src/test/kotlin/com/kotoframework/plugins/test/CriteriaParserTest.kt"))
 //    )
     val result = compile(
       sourceFile = SourceFile.kotlin("main.kt", """ 

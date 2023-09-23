@@ -9,6 +9,8 @@ pluginManagement {
     repositories {
         maven("https://plugins.gradle.org/m2/")
         gradlePluginPortal()
+        mavenLocal()
+        mavenCentral()
     }
     resolutionStrategy {
         eachPlugin {

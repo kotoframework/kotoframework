@@ -67,12 +67,6 @@ open class QueryAction<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPoj
         }
     }
 
-    fun <T: QA> T.left() = this to JoinType.LEFT_JOIN
-    fun <T: QA> T.right() = this to JoinType.RIGHT_JOIN
-    fun <T: QA> T.full() = this to JoinType.FULL_JOIN
-    fun <T: QA> T.cross() = this to JoinType.CROSS_JOIN
-    fun <T: QA> T.inner() = this to JoinType.INNER_JOIN
-
     open fun limit(limit: Int): QueryAction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> {
         this.limit = limit
         return this
