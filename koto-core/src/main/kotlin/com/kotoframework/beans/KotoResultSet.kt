@@ -40,8 +40,11 @@ class KotoResultSet<T>(
 
     companion object {
         fun convertCountSql(sql: String): String {
+            //去除最后一个FROM前的括号内的内容
+            val lastFrom = sql.lastIndexOf("from")
+            val suffix = sql.substring(lastFrom)
             return "select count(*) from (${
-                sql.replaceFirst("(?i)select.*?from".toRegex(), "select 1 from")
+                "select 1 $suffix"
                     .replaceFirst("(?i)limit.*".toRegex(), "")
                     .replaceFirst("(?i)offset.*".toRegex(), "")
             }) as t"
