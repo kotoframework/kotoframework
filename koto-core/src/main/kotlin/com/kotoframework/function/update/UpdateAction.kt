@@ -1,9 +1,11 @@
 package com.kotoframework.function.update
 
 import com.kotoframework.beans.KotoOperationSet
+import com.kotoframework.core.annotations.NeedTableIndexes
 import com.kotoframework.core.where.Where
 import com.kotoframework.definition.*
 import com.kotoframework.core.condition.*
+import com.kotoframework.function.create.CreateWhere
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoJdbcWrapper
 import com.kotoframework.utils.Common.currentTime
@@ -114,5 +116,31 @@ class UpdateAction<T : KPojo>(
             .build()
         paramMap.putAll(koto.paramMap)
         return KotoOperationSet(koto.sql, paramMap, jdbcWrapper = jdbcWrapper)
+    }
+
+    companion object {
+        fun <K : KPojo> Collection<UpdateAction<K>>.byId(id: Number? = null): List<KotoOperationSet<UpdateSetClause<K>, K>> {
+            return this.map { it.byId(id?:it.paramMap["id@New"] as Number) }
+        }
+
+        fun <K : KPojo> Collection<UpdateAction<K>>.byIds(ids: List<Number>): List<KotoOperationSet<UpdateSetClause<K>, K>> {
+            return this.map { it.byIds(ids) }
+        }
+
+        fun <K : KPojo> Collection<UpdateAction<K>>.by(vararg fields: Field): List<KotoOperationSet<UpdateWhere<K>, K>> {
+            return this.map { it.by(*fields) }
+        }
+
+        fun <K : KPojo> Collection<UpdateAction<K>>.where(addCondition: AddCondition<K>? = null): List<UpdateWhere<K>> {
+            return this.map { it.where(addCondition) }
+        }
+
+        fun <K : KPojo> Collection<UpdateAction<K>>.where(vararg condition: Criteria?): List<UpdateWhere<K>> {
+            return this.map { it.where(*condition) }
+        }
+
+        fun <K : KPojo> Collection<UpdateAction<K>>.except(vararg fields: Field): List<UpdateAction<K>> {
+            return this.map { it.except(*fields) }
+        }
     }
 }

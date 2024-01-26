@@ -1,6 +1,7 @@
 package com.kotoframework.function.update
 
 import com.kotoframework.definition.Field
+import com.kotoframework.function.create.CreateWhere
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoJdbcWrapper
 
@@ -14,9 +15,16 @@ fun <T: KPojo> T.update(vararg fields: Field, jdbcWrapper: KotoJdbcWrapper? = nu
 }
 
 fun <T : KPojo> update(
-    KPojo: T,
+    kPojo: T,
     vararg fields: Field,
     jdbcWrapper: KotoJdbcWrapper? = null
 ): UpdateAction<T> {
-    return UpdateAction(KPojo, fields.toList(), jdbcWrapper = jdbcWrapper)
+    return UpdateAction(kPojo, fields.toList(), jdbcWrapper = jdbcWrapper)
 }
+
+fun <T: KPojo> update(listOfKPojo: Collection<T>, vararg fields: Field, jdbcWrapper: KotoJdbcWrapper? = null): List<UpdateAction<T>> {
+    return listOfKPojo.map {
+        UpdateAction(it, fields.toList(), jdbcWrapper = jdbcWrapper)
+    }
+}
+

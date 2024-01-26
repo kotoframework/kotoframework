@@ -1,12 +1,16 @@
 package com.kotoframework.function.associate
 
+import com.kotoframework.AND
+import com.kotoframework.KotoApp
+import com.kotoframework.NoValueStrategy
 import com.kotoframework.beans.KotoResultSet
-import com.kotoframework.definition.*
-import com.kotoframework.*
 import com.kotoframework.beans.Unknown
+import com.kotoframework.core.condition.Criteria
+import com.kotoframework.core.condition.declareSql
+import com.kotoframework.core.condition.receiver
+import com.kotoframework.definition.*
 import com.kotoframework.interfaces.KPojo
 import com.kotoframework.interfaces.KotoJdbcWrapper
-import com.kotoframework.core.condition.*
 import com.kotoframework.utils.Common.deleted
 import com.kotoframework.utils.Common.smartPagination
 import com.kotoframework.utils.Extension.isAssignableFrom
@@ -100,7 +104,6 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
                 conditions.add(onConditions)
             }
         }
-        conditions.add(deleted(0, kotoJdbcWrapper, tableName, "`${tableName.lineToHump()}`.").declareSql())
         return conditions
     }
 
@@ -999,11 +1002,13 @@ class AssociateWhere<T1 : KPojo, T2 : KPojo, T3 : KPojo, T4 : KPojo, T5 : KPojo,
             whereParamMap.putAll(finalMap)
             KotoResultSet("$paginatedSql $orderBy $paginatedSuffix", whereParamMap, kotoJdbcWrapper, Unknown::class)
         } else {
+            val conditions: MutableList<Criteria> = this.tableNames.map { tableName ->
+                deleted(0, kotoJdbcWrapper, tableName, "`${tableName.lineToHump()}`.").declareSql()
+            }.toMutableList().apply {
+                add(whereConditions!!)
+            }
             val whereSql = joinSqlStatement(
-                listOf(
-                    whereConditions,
-                    deleted(0, kotoJdbcWrapper, kPojo1!!.tableName, "`${kPojo1!!.tableAlias}`.").declareSql()
-                ), whereParamMap, ifNoValueStrategy, showAlias = true
+                conditions, whereParamMap, ifNoValueStrategy, showAlias = true
             )
             whereParamMap.putAll(onParamMap)
             whereParamMap.putAll(finalMap)
