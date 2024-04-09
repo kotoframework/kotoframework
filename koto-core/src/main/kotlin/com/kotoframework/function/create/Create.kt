@@ -24,3 +24,7 @@ fun <T : KPojo> create(KPojo: T, jdbcWrapper: KotoJdbcWrapper? = null): CreateWh
 fun <T: KPojo> create(listOfKPojo: Collection<T>, jdbcWrapper: KotoJdbcWrapper? = null): List<CreateWhere<T>> {
     return listOfKPojo.map { create(it, jdbcWrapper) }
 }
+
+inline fun <reified T : KPojo> KotoJdbcWrapper.create(kPojo: T): CreateWhere<T> {
+    return com.kotoframework.function.create.create(kPojo, jdbcWrapper = this)
+}

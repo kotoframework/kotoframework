@@ -28,3 +28,8 @@ fun <T: KPojo> update(listOfKPojo: Collection<T>, vararg fields: Field, jdbcWrap
     }
 }
 
+
+
+inline fun <reified T : KPojo> KotoJdbcWrapper.update(kPojo: T, vararg fields: Field): UpdateAction<T> {
+    return com.kotoframework.function.update.update(kPojo, *fields, jdbcWrapper = this)
+}

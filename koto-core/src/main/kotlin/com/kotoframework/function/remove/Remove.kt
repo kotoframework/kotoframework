@@ -42,3 +42,7 @@ fun remove(tableName: String, jdbcWrapper: KotoJdbcWrapper? = null): RemoveActio
     )
     return RemoveAction(tableName, Unknown(), jdbcWrapper)
 }
+
+inline fun <reified T : KPojo> KotoJdbcWrapper.remove(KPojo: T): RemoveAction<T> {
+    return com.kotoframework.function.remove.remove(KPojo, jdbcWrapper = this)
+}

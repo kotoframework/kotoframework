@@ -8,7 +8,7 @@ import javax.sql.DataSource
 /**
  * Created by ousc on 2022/9/19 23:24
  */
-class JdbiWrapper : KotoJdbcWrapper() {
+class JdbiWrapper : KotoJdbcWrapper {
     var jdbi: Jdbi? = null
     var dynamic: (() -> Jdbi)? = null
     fun getJdbi(jdbi: Jdbi? = null): Jdbi {

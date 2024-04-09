@@ -12,7 +12,7 @@ import javax.sql.DataSource
 /**
  * Created by ousc on 2022/9/19 23:24
  */
-class BasicJdbcWrapper : KotoJdbcWrapper() {
+class BasicJdbcWrapper : KotoJdbcWrapper {
     var ds: DataSource? = null
     var dynamic: (() -> DataSource)? = null
     fun getDataSource(ds: DataSource? = null): DataSource {

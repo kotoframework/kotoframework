@@ -1,4 +1,9 @@
 Koto SQL Framework for Kotlin
+
+# Kotoframework 2.0 is the focus we are working towards, and we have been preparing for more than one year.
+# It has made it possible for Kotlin to write super orm by writing plugins specifically designed for the K2 compiler.
+# For more documentation, please move on [Koto 2.0 readme.md](https://github.com/ousc/kotoframework-v2/blob/main/kotoframework-v2/kotoframework-v2.md)
+
 =============================
 
 [![build](https://github.com/kotoframework/kotoframework/actions/workflows/build.yml/badge.svg)](https://github.com/kotoframework/kotoframework/actions/workflows/build.yml)
@@ -72,6 +77,8 @@ from user
 
 #### 1. Add dependency
 
+1.0.4-SNAPSHOT is the latest version, which is compatible with all versions of Kotlin.
+
 ##### maven
 
 ```xml
@@ -92,6 +99,43 @@ compile "com.kotoframework:koto-core:1.0.3"
 ```kotlin
 complie("com.kotoframework:koto-core:1.0.3")
 ```
+if use the latest snapshot version, use `1.0.4-SNAPSHOT`
+
+##### maven
+
+```xml
+<repository>
+   <id>sonatype-nexus-snapshots</id>
+   <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+   <releases>
+       <enabled>false</enabled>
+   </releases>
+   <snapshots>
+       <enabled>true</enabled>
+       <updatePolicy>daily</updatePolicy>
+       <checksumPolicy>fail</checksumPolicy>
+   </snapshots>
+</repository>
+
+<dependency>
+    <groupId>com.kotoframework</groupId>
+    <artifactId>koto-core</artifactId>
+    <version>1.0.4-SNAPSHOT</version>
+</dependency>
+```
+
+##### gradle
+
+```kotlin
+implementation("com.kotoframework:koto-core:1.0.4-SNAPSHOT")
+```
+
+##### kotlin
+
+```kotlin
+implementation("com.kotoframework:koto-core:1.0.4-SNAPSHOT")
+```
+
 
 #### 2. Configuration
 

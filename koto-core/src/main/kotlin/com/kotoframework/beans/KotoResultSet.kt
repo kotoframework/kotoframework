@@ -32,8 +32,8 @@ class KotoResultSet<T>(
     init {
         sql = sql.trim()
         if (sql.startsWith("koto_", true)) {
-            val classResoucePath = this.javaClass.classLoader.getResource("")?.path
-            sql = File("${classResoucePath}koto/sql/${sql.replace("koto_", "")}.sql").readLines().joinToString(" ")
+            val classResourcePath = this.javaClass.classLoader.getResource("")?.path
+            sql = File("${classResourcePath}koto/sql/${sql.replace("koto_", "")}.sql").readLines().joinToString(" ")
                 .rmRedundantBlk()
         }
     }

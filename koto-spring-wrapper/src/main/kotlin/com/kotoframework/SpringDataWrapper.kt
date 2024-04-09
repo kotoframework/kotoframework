@@ -8,7 +8,7 @@ import javax.sql.DataSource
 /**
  * Created by ousc on 2022/9/19 23:24
  */
-class SpringDataWrapper : KotoJdbcWrapper() {
+class SpringDataWrapper : KotoJdbcWrapper {
     var namedJdbc: NamedParameterJdbcTemplate? = null
     var dynamic: (() -> NamedParameterJdbcTemplate)? = null
     fun getNamedJdbc(jdbc: NamedParameterJdbcTemplate? = null): NamedParameterJdbcTemplate {
@@ -24,6 +24,7 @@ class SpringDataWrapper : KotoJdbcWrapper() {
         return getNamedJdbc().queryForList(sql, paramMap) ?: emptyList()
     }
 
+    @Suppress("UNSAFE_CALL_ON_PARTIALly_NULLABLE")
     override fun forMap(sql: String, paramMap: Map<String, Any?>): Map<String, Any>? {
         return getNamedJdbc().queryForMap(sql, paramMap)
     }

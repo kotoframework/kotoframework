@@ -13,4 +13,5 @@ package com.kotoframework.beans
  * @constructor Create empty Koto execute result
  * @author ousc
  */
-data class KotoExecuteResult(val affectRowNumber: Int, val lastInsertId: Int?)
+data class KotoExecuteResult(val affectRowNumber: Int, val lastInsertId: Int?){
+}
