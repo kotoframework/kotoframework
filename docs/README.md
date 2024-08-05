@@ -1,8 +1,7 @@
 Koto SQL Framework for Kotlin
 
-# Kotoframework 2.0 is the focus we are working towards, and we have been preparing for more than one year.
-# It has made it possible for Kotlin to write super orm by writing plugins specifically designed for the K2 compiler.
-# For more documentation, please move on [Koto 2.0 readme.md](https://github.com/ousc/kotoframework-v2/blob/main/kotoframework-v2/kotoframework-v2.md)
+# 🎉[Kronos ORM (Koto v2.0)](https://github.com/Kronos-orm/Kronos-orm) has been open sourced and is constantly being improved. It is based on the compiler plug-in developed for Kotlin K2, and its performance and ease of use have been greatly improved. Welcome to follow
+> 📖 [Offical Website and Document](https://www.kotlinorm.com)
 
 =============================
 
