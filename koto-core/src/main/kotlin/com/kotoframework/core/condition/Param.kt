@@ -3,10 +3,12 @@ package com.kotoframework.core.condition
 import com.kotoframework.*
 import com.kotoframework.definition.Field
 import com.kotoframework.definition.columnName
+import com.kotoframework.interfaces.KPojo
 import com.kotoframework.utils.Extension.tableAlias
 import com.kotoframework.utils.Extension.tableName
 import com.kotoframework.utils.SqlGenerator
 import kotlin.reflect.*
+import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.javaMethod
 
@@ -268,6 +270,8 @@ fun KCallable<*>.eq(
     }
     return Condition(name, this).eq(value, false, receiver.tableName)
 }
+
+val <T: KPojo> T.eq get() = this::class.memberProperties.map { it.eq }.arbitrary()
 
 val KCallable<*>.eq get() = eq()
 
