@@ -18,7 +18,7 @@ import kotlin.reflect.KClass
 /**
  * Created by ousc on 2022/7/20 09:31
  */
-class SpringDataHandler : KotoQueryHandler() {
+class SpringDataHandler : KotoQueryHandler {
     override fun forList(
         jdbc: KotoJdbcWrapper?,
         sql: String,
@@ -76,6 +76,8 @@ class SpringDataHandler : KotoQueryHandler() {
     ): Any? {
         return try {
             forObject(jdbc, sql, paramMap, true, kClass)
+        } catch (e: NullPointerException) {
+            null
         } catch (e: NoSuchElementException) {
             null
         } catch (e: EmptyResultDataAccessException) {
