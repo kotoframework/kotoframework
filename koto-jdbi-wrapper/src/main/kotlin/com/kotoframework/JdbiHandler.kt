@@ -15,7 +15,7 @@ import kotlin.reflect.KClass
 /**
  * Created by ousc on 2022/7/20 09:31
  */
-class JdbiHandler : KotoQueryHandler() {
+class JdbiHandler : KotoQueryHandler {
     override fun forList(
         jdbc: KotoJdbcWrapper?,
         sql: String,
